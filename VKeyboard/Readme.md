@@ -17,11 +17,11 @@ It should be noted that the system VK handler will alter the layout when, for ex
 
 **Author(s)** 
 
-* Peardox (supportforums.blackberry.com/t5/user/viewprofilepage/user-id/325249)
+* [Peardox] (http://supportforums.blackberry.com/t5/user/viewprofilepage/user-id/325249)
 
 ## Set up
 
-Copy the community.VKeyboard into the Framework\ext folder of the WebWorks SDK
+Copy community.VKeyboard into the Framework\ext folder of the WebWorks SDK
 
 ## Use
 
@@ -59,7 +59,7 @@ community.deviceInfo.VKgetHeight()
 
 The simple sample application in vkbtest shows all functionality on a touch-only device, note that the first four keyboard layouts only change one key each (left of space)
 
-On a keyboard equipped device it'll tell you it's got a keyboard and nothing else.
+On a keyboard equipped device it'll tell you it's got a keyboard, nothing else has any effect.
 
 ## Contributing Changes
 
