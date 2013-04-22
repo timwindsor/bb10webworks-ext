@@ -33,12 +33,12 @@ community.VKeyboard.VKhasPhysicalKeyboard()
 
 <pre>
 // Show the Virtual Keyboard
-community.deviceInfo.VKshow()
+community.VKeyboard.VKshow()
 </pre>	
 
 <pre>
 // Hide the Virtual Keyboard
-community.deviceInfo.VKhide()
+community.VKeyboard.VKhide()
 </pre>	
 
 <pre>
@@ -46,13 +46,13 @@ community.deviceInfo.VKhide()
 var VKLayout = { DEFAULT=0, URL=1, EMAIL=2, WEB=3, NUM_PUNC=4, SYMBOL=5, PHONE=6, PIN=7, PASSWORD=8, DIAL_PAD=9 };
 var VKEnter = { DEFAULT=0, GO=1, JOIN=2, NEXT=3, SEARCH=4, SEND=5, SUBMIT=6, DONE=7, CONNECT=8 };
 
-e.g. community.deviceInfo.VKsetLayout(VKLayout.PASSWORD, VKEnter.CONNECT);
+e.g. community.VKeyboard.VKsetLayout(VKLayout.PASSWORD, VKEnter.CONNECT);
 </pre>	
 
 <pre>
 // Get the Virtual Keyboard height
 // Returns height in pixels
-community.deviceInfo.VKgetHeight()
+community.VKeyboard.VKgetHeight()
 </pre>	
 
 ## Sample Application
