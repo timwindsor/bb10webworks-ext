@@ -36,10 +36,13 @@ public:
 	void VKsetLayout(const std::string& arg);
 	std::string VKgetHeight();
 	std::string VKhasPhysicalKeyboard();
+    int WaitForEvents();
+    static void SendEndEvent();
 
 private:
 	TemplateJS *m_pParent;
-	int vkbHeight;
+	int vkHeight;
+	bool vkVisible;
 };
 
 } // namespace webworks

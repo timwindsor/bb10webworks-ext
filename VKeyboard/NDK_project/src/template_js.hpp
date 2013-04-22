@@ -29,11 +29,17 @@ public:
     virtual bool CanDelete();
     virtual std::string InvokeMethod(const std::string& command);
     void NotifyEvent(const std::string& event);
+    void StartEvents();
+    void StopEvents();
+    static void* VKEventThread(void *parent);
 
 private:
     std::string m_id;
+    pthread_t m_thread;
     // Definition of a pointer to the actual native extension code
     webworks::TemplateNDK *m_pTemplateController;
+    static pthread_mutex_t m_lock;
+
 };
 
 #endif /* TemplateJS_HPP_ */
