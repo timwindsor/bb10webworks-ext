@@ -64,6 +64,21 @@ JNEXT.Template = function () {
 		return Number(JNEXT.invoke(self.m_id, "VKhasPhysicalKeyboard"));
 	};
 	
+	self.onEvent = function (strData) {
+		var arData = strData.split(" "),
+			strEventDesc = arData[0],
+			jsonData;
+		// Event names are set in native code when fired,
+		// and must be checked here.
+		if (strEventDesc === "community.VKeyboard.VKvisible") {
+			_event.trigger("community.VKeyboard.VKvisible");
+		} else if (strEventDesc === "community.VKeyboard.VKhidden") {
+			_event.trigger("community.VKeyboard.VKhidden");
+		} else if (strEventDesc === "community.VKeyboard.VKchangeHeight") {
+			_event.trigger("community.VKeyboard.VKchangeHeight");
+		}
+	};
+
 	// ************************
 	// End of methods to edit
 	// ************************

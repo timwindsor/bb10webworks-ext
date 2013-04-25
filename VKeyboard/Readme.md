@@ -33,12 +33,12 @@ community.VKeyboard.VKhasPhysicalKeyboard()
 
 <pre>
 // Show the Virtual Keyboard
-community.VKeyboard.VKshow()
+community.deviceInfo.VKshow()
 </pre>	
 
 <pre>
 // Hide the Virtual Keyboard
-community.VKeyboard.VKhide()
+community.deviceInfo.VKhide()
 </pre>	
 
 <pre>
@@ -46,20 +46,29 @@ community.VKeyboard.VKhide()
 var VKLayout = { DEFAULT=0, URL=1, EMAIL=2, WEB=3, NUM_PUNC=4, SYMBOL=5, PHONE=6, PIN=7, PASSWORD=8, DIAL_PAD=9 };
 var VKEnter = { DEFAULT=0, GO=1, JOIN=2, NEXT=3, SEARCH=4, SEND=5, SUBMIT=6, DONE=7, CONNECT=8 };
 
-e.g. community.VKeyboard.VKsetLayout(VKLayout.PASSWORD, VKEnter.CONNECT);
+e.g. community.deviceInfo.VKsetLayout(VKLayout.PASSWORD, VKEnter.CONNECT);
 </pre>	
+
+## Currently not working properly
 
 <pre>
 // Get the Virtual Keyboard height
 // Returns height in pixels
-community.VKeyboard.VKgetHeight()
+community.deviceInfo.VKgetHeight()
 </pre>	
+
+<pre>
+// Events
+community.VKeyboard.VKvisible
+community.VKeyboard.VKhidden
+community.VKeyboard.VKchangeHeight
+</pre>
 
 ## Sample Application
 
 The simple sample application in vkbtest shows all functionality on a touch-only device, note that the first four keyboard layouts only change one key each (left of space)
 
-On a keyboard equipped device it'll tell you it's got a keyboard, nothing else has any effect.
+On a keyboard equipped device it'll tell you it's got a keyboard, nothing else has any effect
 
 ## Contributing Changes
 

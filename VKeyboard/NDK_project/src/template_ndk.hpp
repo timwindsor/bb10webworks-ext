@@ -28,21 +28,29 @@ class TemplateNDK {
 public:
 	explicit TemplateNDK(TemplateJS *parent = NULL);
 	virtual ~TemplateNDK();
+	std::string templateStartThread();
+	std::string templateStopThread();
+	bool isThreadHalt();
 
 	// The extension methods are defined here
-
 	void VKshow();
 	void VKhide();
 	void VKsetLayout(const std::string& arg);
 	std::string VKgetHeight();
 	std::string VKhasPhysicalKeyboard();
-    int WaitForEvents();
-    static void SendEndEvent();
+    void getEvents();
+
+	int vkHeight;
+
+//	void templateThreadCallback();
 
 private:
 	TemplateJS *m_pParent;
-	int vkHeight;
 	bool vkVisible;
+	bool threadHalt;
+	pthread_t m_thread;
+	pthread_cond_t cond;
+	pthread_mutex_t mutex;
 };
 
 } // namespace webworks

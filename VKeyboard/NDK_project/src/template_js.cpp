@@ -21,56 +21,6 @@
 
 using namespace std;
 
-static bool eventsInitialized = false;
-
-// Notifies JavaScript of an event
-void TemplateJS::NotifyEvent(const std::string& event)
-{
-    std::string eventString = m_id;
-    eventString.append(" ");
-    eventString.append(event);
-    SendPluginEvent(eventString.c_str(), m_pContext);
-}
-
-void TemplateJS::StartEvents()
-{
-    if (!m_thread) {
-        eventsInitialized = false;
-        int error = pthread_create(&m_thread, NULL, VKEventThread, static_cast<void *>(this));
-
-        if (error) {
-            m_thread = 0;
-        }
-    }
-}
-
-void TemplateJS::StopEvents()
-{
-    if (m_thread) {
-        // Ensure that the secondary thread was initialized
-        while (!eventsInitialized);
-
-        webworks::TemplateNDK::SendEndEvent();
-        eventsInitialized = false;
-        pthread_join(m_thread, NULL);
-        m_thread = 0;
-    }
-}
-
-void* TemplateJS::VKEventThread(void *parent)
-{
-    // Parent object is casted so we can use it
-	TemplateJS *pParent = static_cast<TemplateJS *>(parent);
-
-    webworks::TemplateNDK *VKEvents = new webworks::TemplateNDK(pParent);
-
-    eventsInitialized = true;
-    VKEvents->WaitForEvents();
-
-    return NULL;
-}
-
-
 /**
  * Default constructor.
  */
@@ -139,8 +89,15 @@ string TemplateJS::InvokeMethod(const string& command) {
 	} else if (strCommand == "VKhasPhysicalKeyboard") {
 		return m_pTemplateController->VKhasPhysicalKeyboard();
 	}
-
+	
 	strCommand.append(";");
 	strCommand.append(command);
 	return strCommand;
+}
+
+// Notifies JavaScript of an event
+void TemplateJS::NotifyEvent(const std::string& event) {
+	std::string eventString = m_id + " ";
+	eventString.append(event);
+	SendPluginEvent(eventString.c_str(), m_pContext);
 }
