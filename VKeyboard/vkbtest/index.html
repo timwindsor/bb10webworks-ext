@@ -121,14 +121,17 @@ function changeenter(delta) {
 
 document.addEventListener("community.VKeyboard.VKchangeHeight", function() {
 //	alert('height');
+	showkbheight();
 	}, false);
 
 document.addEventListener("community.VKeyboard.VKhidden", function() {
 //	alert('hide');
+	showkbheight();
 	}, false);
 
 document.addEventListener("community.VKeyboard.VKvisible", function() {
 //	alert('show');
+	showkbheight();
 	}, false);
 
 	
@@ -137,15 +140,15 @@ document.addEventListener("community.VKeyboard.VKvisible", function() {
 </head>
 <body style="margin: auto; height: 100%;">
 
-<input id='ip1' disabled type="button" value="-" onclick="changelayout(-1);" />
+<input id='ip1' disabled type="button" value="-" onclick="changelayout(-1); showkbheight();" />
 <span id="kblayout"></span>
-<input id='ip2' disabled type="button" value="+" onclick="changelayout(+1);" />
+<input id='ip2' disabled type="button" value="+" onclick="changelayout(+1); showkbheight();" />
 <br /><br />
-<input id='ip3' disabled type="button" value="-" onclick="changeenter(-1);" />
+<input id='ip3' disabled type="button" value="-" onclick="changeenter(-1); showkbheight();" />
 <span id="kbenter"></span>
-<input id='ip4' disabled type="button" value="+" onclick="changeenter(+1);" />
+<input id='ip4' disabled type="button" value="+" onclick="changeenter(+1); showkbheight();" />
 <br /><br />
-<input id='ip5' disabled type="button" value="Hide" onclick="community.VKeyboard.VKhide();" />
+<input id='ip5' disabled type="button" value="Hide" onclick="community.VKeyboard.VKhide(); showkbheight();" />
 <span id="kbheight">Kbd Height = 0</span>
 <input id='ip6' disabled type="button" value="Show" onclick="community.VKeyboard.VKshow(); showkbheight();" />
 <br /><br />
