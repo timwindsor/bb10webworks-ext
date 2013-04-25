@@ -27,7 +27,7 @@
 	<content src="index.html"/>
 	<icon src="icon.png"/>
 	
-	<feature id="community.ScreenDisplay" />
+	<feature id="community.screendisplay" />
 	
 	<access subdomains="true" uri="*"/>
 

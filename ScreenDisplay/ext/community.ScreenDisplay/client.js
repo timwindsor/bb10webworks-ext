@@ -22,8 +22,8 @@ var _self = {},
 	// in the index.js of the Extension
 
 	// Simple Synchronous test function to get a string
-	_self.SDgetSize = function () {
-		return window.webworks.execSync(_ID, "SDgetSize", null);
+	_self.sdgetsize = function () {
+		return window.webworks.execSync(_ID, "sdgetsize", null);
 	};
 
 module.exports = _self;

@@ -48,8 +48,8 @@ JNEXT.Template = function () {
 	// ************************
 
 	// calls into InvokeMethod(string command) in template_js.cpp
-	self.SDgetSize = function () {
-		return JSON.parse(JNEXT.invoke(self.m_id, "SDgetSize"));
+	self.sdgetsize = function () {
+		return JSON.parse(JNEXT.invoke(self.m_id, "sdgetsize"));
 	};
 	// ************************
 	// End of methods to edit

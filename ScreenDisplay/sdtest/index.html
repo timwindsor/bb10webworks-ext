@@ -57,8 +57,8 @@ document.addEventListener('webworksready', function(e) {
 	if (rippleLoaded) return;
 	rippleLoaded = true;
 	
-	if (community.ScreenDisplay) {
-		var sd = community.ScreenDisplay.SDgetSize();
+	if (community.screendisplay) {
+		var sd = community.screendisplay.sdgetsize();
 		sdinfo = '<br /><br />Pixel Size = ' + sd.pixelWidth + ' x ' + sd.pixelHeight + '<br />' +
 				 'Physical Size (mm) = ' + sd.physicalWidth + ' x ' + sd.physicalHeight + '<br /><br />' +
 				 'Pixels Per mm = ' + Math.round(sd.ppmm * 1000) / 1000 + '<br />' +

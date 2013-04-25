@@ -16,12 +16,15 @@
 
 #include <string>
 #include <sstream>
+#include <math.h>
 #include <json/writer.h>
 #include <pthread.h>
 #include "template_ndk.hpp"
 #include "template_js.hpp"
 
 #include <bb/device/DisplayInfo>
+
+#define MMPERINCH 25.4;
 
 namespace webworks {
 
@@ -39,10 +42,38 @@ std::string TemplateNDK::SDgetSize() {
 	Json::FastWriter writer;
 	Json::Value root;
 
-	root["physicalWidth"] = display.physicalSize().width();
-	root["physicalHeight"] = display.physicalSize().height();
-	root["pixelWidth"] = display.pixelSize().width();
-	root["pixelHeight"] = display.pixelSize().height();
+	double physx = display.physicalSize().width();
+	double physy = display.physicalSize().height();
+	int pixx = display.pixelSize().width();
+	int pixy = display.pixelSize().height();
+	double ppmm = 0;
+	double ppmmx = 0;
+	double ppmmy = 0;
+	double pshape = 0;
+
+	double physdiag = 0; // Diagonal metrics
+	double pixdiag = 0;
+
+	if((pixx > 0) && (pixy > 0) && (physx > 0) && (physy > 0)) {
+		ppmmx = pixx / physx;
+		ppmmy = pixy / physy;
+		pshape = (ppmmx / ppmmy);
+		physdiag = sqrt((physx * physx) + (physy * physy));
+		pixdiag = sqrt((pixx * pixx) + (pixy * pixy));
+		ppmm = pixdiag / physdiag;
+	}
+
+	root["physicalWidth"] = physx;
+	root["physicalHeight"] = physy;
+	root["pixelWidth"] = pixx;
+	root["pixelHeight"] = pixy;
+	root["ppmm"] = ppmm;
+	root["ppmmX"] = ppmmx;
+	root["ppmmY"] = ppmmy;
+	root["ppi"] = ppmm * MMPERINCH;
+	root["ppiX"] = ppmmx * MMPERINCH;
+	root["ppiY"] = ppmmy * MMPERINCH;
+	root["pixelShape"] = pshape;
 
  	return writer.write(root);
 }

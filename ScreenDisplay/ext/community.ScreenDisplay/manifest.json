@@ -1,5 +1,5 @@
 {
     "global": false,
-    "namespace": "community.ScreenDisplay",
+    "namespace": "community.screendisplay",
     "dependencies": ["utils"]
 }

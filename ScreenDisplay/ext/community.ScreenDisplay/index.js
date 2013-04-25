@@ -26,7 +26,7 @@ module.exports = {
 
 	// These methods call into templateJNEXT.js which handles the
 	// communication through the JNEXT plugin to template_js.cpp
-	SDgetSize: function (success, fail) {
-		success(template.getInstance().SDgetSize());
+	sdgetsize: function (success, fail) {
+		success(template.getInstance().sdgetsize());
 	}
 };
