@@ -2,6 +2,12 @@
 
 This extension provides additional APIs supplying information about the device screen display.
 
+The API returns the information about the screen directly from the device. The returned values are the physical metrics of the screen without the browser applying any scaling etc.
+
+The single most valuable figure returned from this API is ppi. The ppi value allows you to make the text and images in your app look the same size on any device by adjusting the font-size and image widths / heights based on the ppi.
+
+A simple example is that you design for a 36px font on a device with 356 ppi (a Z10). If you get a 600 ppi device all you have to do is alter the font-sizes using newFontSize = Math.round((device.ppi / 356) * 36) giving a 61px font size on a 600 ppi device. The same holds true for lower ppi devices - a Q10 would end up with a 34px font.
+
 **Tested On**
 
 * BlackBerry 10.1.0.1483 (Z10 LE)
