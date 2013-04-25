@@ -99,36 +99,35 @@ std::string TemplateNDK::VKhasPhysicalKeyboard() {
 void TemplateNDK::getEvents() {
     bps_event_t *event = NULL;
 
-    if(bps_get_event(&event, 0) == BPS_SUCCESS) {
-    	if (event) {
-    		int event_domain = bps_event_get_domain(event);
+    if(bps_get_event(&event, 100) == BPS_SUCCESS) {
+   		vkHeight++; // Hack to see how far we get
+    	if(event) {
+       		if (bps_event_get_domain(event) == virtualkeyboard_get_domain()) {
+   				uint16_t code = bps_event_get_code(event);
 
-    		if (event_domain == virtualkeyboard_get_domain()) {
-    			uint16_t code = bps_event_get_code(event);
-
-    			switch (code)
-    			{
-    				case VIRTUALKEYBOARD_EVENT_VISIBLE:
-    				{
-    					vkVisible = true;
-    					m_pParent->NotifyEvent("community.VKeyboard.VKvisible");
-    					break;
-    				}
-    				case VIRTUALKEYBOARD_EVENT_HIDDEN:
-    				{
-    					vkVisible = false;
-    					m_pParent->NotifyEvent("community.VKeyboard.VKhidden");
-    					break;
-    				}
-    				case VIRTUALKEYBOARD_EVENT_INFO:
-    				{
-    					vkHeight = virtualkeyboard_event_get_height(event);
-    					m_pParent->NotifyEvent("community.VKeyboard.VKchangeHeight");
-    					break;
-    				}
-    			}
-    		}
-        }
+   				switch (code)
+   				{
+   					case VIRTUALKEYBOARD_EVENT_VISIBLE:
+   					{
+   						vkVisible = true;
+   						m_pParent->NotifyEvent("community.VKeyboard.VKvisible");
+   						break;
+   					}
+   					case VIRTUALKEYBOARD_EVENT_HIDDEN:
+   					{
+   						vkVisible = false;
+   						m_pParent->NotifyEvent("community.VKeyboard.VKhidden");
+   						break;
+   					}
+   					case VIRTUALKEYBOARD_EVENT_INFO:
+   					{
+   						vkHeight = virtualkeyboard_event_get_height(event);
+   						m_pParent->NotifyEvent("community.VKeyboard.VKchangeHeight");
+   						break;
+   					}
+   				}
+   			}
+   		}
     }
 }
 
@@ -140,13 +139,14 @@ void TemplateNDK::getEvents() {
 // Loops and runs the callback method
 void* TemplateThread(void* parent) {
 	TemplateNDK *pParent = static_cast<TemplateNDK *>(parent);
-
+//	pParent->vkHeight = 12341;
 	// Loop calls the callback function and continues until stop is set
 	while (!pParent->isThreadHalt()) {
+		// Event loop returns when no more events allowing callbacks to also be hooked if required
 		if(vkestatus == BPS_SUCCESS) {
 			pParent->getEvents();
+//			sleep(1);
 		}
-		sleep(1);
 	}
 
 	return NULL;
