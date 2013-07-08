@@ -25,7 +25,7 @@ var _self = {},
 	_self.stop = function () {
 		window.webworks.execSync(_ID, "stop", null);
 	};
-	_self.VKsetLayout = function (args) {
+	_self.start = function (args) {
 		return window.webworks.execSync(_ID, "start", args);
 	};
 
