@@ -83,6 +83,7 @@ std::string TemplateNDK::start(const std::string& arg) {
  			rval["status"] = true;
  			rval["error"] = false;
  			rval["command_errors"] = ecount;
+ 			rval["command_ok"] = memberNames.size() - ecount;
  	 	 	rval["listening_ports"] = mg_get_option(ctx, "listening_ports");
  	 	 	rval["document_root"] = mg_get_option(ctx, "document_root");
  	 	 	rval["mongoose_version"] = mg_version();
