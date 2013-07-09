@@ -46,43 +46,6 @@ static struct mg_context *mgctx;      // Set by start_mongoose()
 
 #define ISXDIGIT(x) (isxdigit((int) ((unsigned char)x)))
 
-char* urldecode(const char *string)
-{
-  size_t alloc = strlen(string)+1;
-  char *ns = malloc(alloc);
-  unsigned char in;
-  size_t strindex=0;
-  unsigned long hex;
-
-  if(!ns)
-    return NULL;
-
-  while(--alloc > 0) {
-    in = *string;
-    if(('%' == in) && (alloc > 2) &&
-       ISXDIGIT(string[1]) && ISXDIGIT(string[2])) {
-      /* this is two hexadecimal digits following a '%' */
-      char hexstr[3];
-      char *ptr;
-      hexstr[0] = string[1];
-      hexstr[1] = string[2];
-      hexstr[2] = 0;
-
-      hex = strtoul(hexstr, &ptr, 16);
-
-      in = (unsigned char)(hex & (unsigned long) 0xFF);
-      string+=2;
-      alloc-=2;
-    }
-
-    ns[strindex++] = in;
-    string++;
-  }
-  ns[strindex]=0; /* terminate it */
-
-  return ns;
-}
-
 int verify_document_root(const char *root) {
   const char *p, *path;
   char buf[PATH_MAX];
@@ -121,7 +84,7 @@ int set_option(char **options, const char *name, const char *value) {
   for (i = 0; i < MAX_OPTIONS - 3; i++) {
     if (options[i] == NULL) {
       options[i] = sdup(name);
-      options[i + 1] = unescape(value);
+      options[i + 1] = sdup(value);
       options[i + 2] = NULL;
       break;
     }
