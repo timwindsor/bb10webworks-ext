@@ -30,8 +30,8 @@ public:
 	virtual ~TemplateNDK();
 
 	// The extension methods are defined here
-	std::string start(const std::string& arg);
-	std::string stop();
+	std::string MGstart(const std::string& arg);
+	std::string MGstop();
 
 private:
 	TemplateJS *m_pParent;

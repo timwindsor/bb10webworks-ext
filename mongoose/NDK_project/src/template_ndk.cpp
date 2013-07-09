@@ -38,19 +38,29 @@ TemplateNDK::TemplateNDK(TemplateJS *parent) {
 }
 
 TemplateNDK::~TemplateNDK() {
-	stop();
+	MGstop();
 }
 
 
 // These methods are the true native code we intend to reach from WebWorks
 
-std::string TemplateNDK::start(const std::string& arg) {
+std::string TemplateNDK::MGstart(const std::string& arg) {
 	int res = 0;
 	char *options[MAX_OPTIONS];
+	char *cline;
 	Json::Reader reader;
 	Json::FastWriter writer;
 	Json::Value root;
 	Json::Value rval;
+    char ptemp[MAXPATHLEN];
+    getcwd(ptemp, MAXPATHLEN);
+
+    efromstart = (char *) malloc(1024);
+	strcpy(efromstart, "");
+
+	cline = (char *) malloc(1024);
+	strcpy(cline, "");
+
 
 	bool parse = reader.parse(arg, root);
 
@@ -62,10 +72,13 @@ std::string TemplateNDK::start(const std::string& arg) {
 	} else {
 
  	if (parse) {
+ 		root["document_root"] = ptemp;
+
  		Json::Value::Members memberNames = root.getMemberNames();
  		int ecount = 0;
 
- 		for(unsigned int i=0; i<memberNames.size(); ++i) {
+
+  		for(unsigned int i=0; i<memberNames.size(); ++i) {
  		  std::string memberName = memberNames[i];
  		  options[i++] = sdup(memberName.c_str());
  		  options[i++] = sdup(root[memberName].asCString());
@@ -75,17 +88,16 @@ std::string TemplateNDK::start(const std::string& arg) {
  		ecount = start_mongoose(options);
 
 	    for (int idx = 0; options[idx] != NULL; idx++) {
+		      strcat(cline, options[idx]);
+		      strcat(cline, " ");
  		  free(options[idx]);
  		  }
-
 
  		if(ecount >= 0) {
  			rval["status"] = true;
  			rval["error"] = false;
  			rval["command_errors"] = ecount;
  			rval["command_ok"] = memberNames.size() - ecount;
- 	 	 	rval["listening_ports"] = mg_get_option(ctx, "listening_ports");
- 	 	 	rval["document_root"] = mg_get_option(ctx, "document_root");
  	 	 	rval["mongoose_version"] = mg_version();
 
  	 	 	is_running = true;
@@ -95,6 +107,7 @@ std::string TemplateNDK::start(const std::string& arg) {
  			rval["status"] = false;
  			rval["error"] = "Unable to start server";
  			rval["command_errors"] = ecount;
+ 	 	 	rval["cline"] = cline;
  		}
 
 	} else {
@@ -104,14 +117,16 @@ std::string TemplateNDK::start(const std::string& arg) {
 
 	}
 
-	char temp[MAXPATHLEN];
+//    rval["arg"] = arg;
 
-	rval["cwd"] = getcwd(temp, MAXPATHLEN);
+	rval["errmg"] = efromstart;
+
+    rval["cwd"] = ptemp;
 
 	return writer.write(rval);
 }
 
-std::string TemplateNDK::stop() {
+std::string TemplateNDK::MGstop() {
 	Json::FastWriter writer;
 	Json::Value rval;
 

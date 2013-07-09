@@ -23,7 +23,7 @@ var _self = {},
 
 	// Simple Synchronous test function to get a string
 	_self.stop = function () {
-		window.webworks.execSync(_ID, "stop", null);
+		return window.webworks.execSync(_ID, "stop", null);
 	};
 	_self.start = function (args) {
 		return window.webworks.execSync(_ID, "start", args);

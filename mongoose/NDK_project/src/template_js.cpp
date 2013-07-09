@@ -79,9 +79,9 @@ string TemplateJS::InvokeMethod(const string& command) {
 
 	// based on the command given, run the appropriate method in template_ndk.cpp
 	if (strCommand == "start") {
-		m_pTemplateController->start(arg);
+		return m_pTemplateController->MGstart(arg);
 	} else if (strCommand == "stop") {
-		m_pTemplateController->stop();
+		return m_pTemplateController->MGstop();
 	}
 	
 	strCommand.append(";");

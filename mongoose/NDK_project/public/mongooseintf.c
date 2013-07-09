@@ -42,6 +42,46 @@
 #define MAX_CONF_FILE_LINE_SIZE (8 * 1024)
 
 static char server_name[40];        // Set by init_server_name()
+static struct mg_context *mgctx;      // Set by start_mongoose()
+
+#define ISXDIGIT(x) (isxdigit((int) ((unsigned char)x)))
+
+char* urldecode(const char *string)
+{
+  size_t alloc = strlen(string)+1;
+  char *ns = malloc(alloc);
+  unsigned char in;
+  size_t strindex=0;
+  unsigned long hex;
+
+  if(!ns)
+    return NULL;
+
+  while(--alloc > 0) {
+    in = *string;
+    if(('%' == in) && (alloc > 2) &&
+       ISXDIGIT(string[1]) && ISXDIGIT(string[2])) {
+      /* this is two hexadecimal digits following a '%' */
+      char hexstr[3];
+      char *ptr;
+      hexstr[0] = string[1];
+      hexstr[1] = string[2];
+      hexstr[2] = 0;
+
+      hex = strtoul(hexstr, &ptr, 16);
+
+      in = (unsigned char)(hex & (unsigned long) 0xFF);
+      string+=2;
+      alloc-=2;
+    }
+
+    ns[strindex++] = in;
+    string++;
+  }
+  ns[strindex]=0; /* terminate it */
+
+  return ns;
+}
 
 int verify_document_root(const char *root) {
   const char *p, *path;
@@ -61,7 +101,7 @@ int verify_document_root(const char *root) {
   return EXIT_SUCCESS;
 }
 
-static char *sdup(const char *str) {
+char *sdup(const char *str) {
   char *p;
   if ((p = (char *) malloc(strlen(str) + 1)) != NULL) {
     strcpy(p, str);
@@ -81,7 +121,7 @@ int set_option(char **options, const char *name, const char *value) {
   for (i = 0; i < MAX_OPTIONS - 3; i++) {
     if (options[i] == NULL) {
       options[i] = sdup(name);
-      options[i + 1] = sdup(value);
+      options[i + 1] = unescape(value);
       options[i + 2] = NULL;
       break;
     }
@@ -103,11 +143,11 @@ int process_command_line_arguments(char *argv[], char **options) {
 
   // Handle command line flags.
   for (i = cmd_line_opts_start; argv[i] != NULL; i += 2) {
-    if(set_option(options, &argv[i][1], argv[i + 1]) == EXIT_FAILURE) {
+    if(set_option(options, &argv[i][0], &argv[i + 1][0]) == EXIT_FAILURE) {
 	  errs++;
 	}
   }
-return EXIT_SUCCESS;
+return errs;
 }
 
 static void init_server_name(void) {
@@ -123,6 +163,12 @@ int start_mongoose(char *argv[]) {
   	  	  	  	  	  	   // <error count> if any commands were bad
   	  	  	  	  	  	   // 0 - (<error count> + 1) on error
 
+
+  for(i=0; i<MAX_OPTIONS;i++)
+  {
+	  options[i] = NULL;
+  }
+
   init_server_name();
 
   /* Update config based on command line arguments */
@@ -130,12 +176,15 @@ int start_mongoose(char *argv[]) {
 
   /* Start Mongoose */
   memset(&callbacks, 0, sizeof(callbacks));
-  ctx = mg_start(&callbacks, NULL, (const char **) options);
+
+//  callbacks.begin_request = begin_request_handler;
+
+  mgctx = mg_start(&callbacks, NULL, (const char **) options);
   for (i = 0; options[i] != NULL; i++) {
     free(options[i]);
   }
 
-  if (ctx == NULL) {
+  if (mgctx == NULL) {
 	  command_err_cnt++;
 	  command_err_cnt = 0 - command_err_cnt;
   }
@@ -143,6 +192,6 @@ int start_mongoose(char *argv[]) {
 }
 
 int stop_mongoose() {
-  mg_stop(ctx);
+  mg_stop(mgctx);
   return EXIT_SUCCESS;
 }

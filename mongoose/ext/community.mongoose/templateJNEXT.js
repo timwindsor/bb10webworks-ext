@@ -52,7 +52,7 @@ JNEXT.Template = function () {
 		return JNEXT.invoke(self.m_id, "stop");
 	};
 	self.start = function (input) {
-		return JSON.parse(JNEXT.invoke(self.m_id, "start " + JSON.stringify(input)));
+		return JNEXT.invoke(self.m_id, "start " + JSON.stringify(input));
 	};
 	// ************************
 	// End of methods to edit

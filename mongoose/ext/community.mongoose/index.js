@@ -30,7 +30,6 @@ module.exports = {
 		success(template.getInstance().stop());
 	},
 	start: function (success, fail, args) {
-		var jargs = JSON.parse(decodeURIComponent(args));
-		success(template.getInstance().start(jargs));
+		success(template.getInstance().start(args));
 	}
 };
