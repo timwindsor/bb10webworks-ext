@@ -47,20 +47,14 @@ TemplateNDK::~TemplateNDK() {
 std::string TemplateNDK::MGstart(const std::string& arg) {
 	int res = 0;
 	char *options[MAX_OPTIONS];
-	char *cline;
 	Json::Reader reader;
 	Json::FastWriter writer;
 	Json::Value root;
 	Json::Value rval;
-    char ptemp[MAXPATHLEN];
-    getcwd(ptemp, MAXPATHLEN);
 
-    efromstart = (char *) malloc(1024);
-	strcpy(efromstart, "");
-
-	cline = (char *) malloc(1024);
-	strcpy(cline, "");
-
+	char ptemp[MAXPATHLEN]; // Build default document root in case missing
+	getcwd(ptemp, MAXPATHLEN);
+	strcat(ptemp,"/data");
 
 	bool parse = reader.parse(arg, root);
 
@@ -72,7 +66,9 @@ std::string TemplateNDK::MGstart(const std::string& arg) {
 	} else {
 
  	if (parse) {
- 		root["document_root"] = ptemp;
+  		if(!root.isMember("document_root")) {
+ 		    root["document_root"] = ptemp;
+ 		}
 
  		Json::Value::Members memberNames = root.getMemberNames();
  		int ecount = 0;
@@ -81,15 +77,13 @@ std::string TemplateNDK::MGstart(const std::string& arg) {
   		for(unsigned int i=0; i<memberNames.size(); ++i) {
  		  std::string memberName = memberNames[i];
  		  options[i++] = sdup(memberName.c_str());
- 		  options[i++] = sdup(root[memberName].asCString());
+ 		  options[i++] = urldecode(root[memberName].asCString());
  		  options[i] = NULL;
  		  }
 
  		ecount = start_mongoose(options);
 
 	    for (int idx = 0; options[idx] != NULL; idx++) {
-		      strcat(cline, options[idx]);
-		      strcat(cline, " ");
  		  free(options[idx]);
  		  }
 
@@ -97,8 +91,9 @@ std::string TemplateNDK::MGstart(const std::string& arg) {
  			rval["status"] = true;
  			rval["error"] = false;
  			rval["command_errors"] = ecount;
- 			rval["command_ok"] = memberNames.size() - ecount;
- 	 	 	rval["mongoose_version"] = mg_version();
+
+ 	 	 	rval["document_root"] = mongoose_get_option("document_root");
+ 	 	 	rval["listening_ports"] = mongoose_get_option("listening_ports");
 
  	 	 	is_running = true;
 
@@ -107,7 +102,6 @@ std::string TemplateNDK::MGstart(const std::string& arg) {
  			rval["status"] = false;
  			rval["error"] = "Unable to start server";
  			rval["command_errors"] = ecount;
- 	 	 	rval["cline"] = cline;
  		}
 
 	} else {
@@ -116,12 +110,6 @@ std::string TemplateNDK::MGstart(const std::string& arg) {
 	}
 
 	}
-
-//    rval["arg"] = arg;
-
-	rval["errmg"] = efromstart;
-
-    rval["cwd"] = ptemp;
 
 	return writer.write(rval);
 }

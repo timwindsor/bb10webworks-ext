@@ -30,6 +30,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "mongoose.h"
 #include "mongooseintf.h"
@@ -45,6 +46,47 @@ static char server_name[40];        // Set by init_server_name()
 static struct mg_context *mgctx;      // Set by start_mongoose()
 
 #define ISXDIGIT(x) (isxdigit((int) ((unsigned char)x)))
+
+char* urldecode(const char *string) {
+  size_t alloc = strlen(string)+1;
+  char *ns = malloc(alloc);
+  unsigned char in;
+  size_t strindex=0;
+  unsigned long hex;
+  bool isquote=false;
+
+  if(!ns)
+    return NULL;
+
+  while(--alloc > 0) {
+    isquote = false;
+    in = *string;
+    if(('%' == in) && (alloc > 2) &&
+       ISXDIGIT(string[1]) && ISXDIGIT(string[2])) {
+      char hexstr[3];
+      char *ptr;
+      hexstr[0] = string[1];
+      hexstr[1] = string[2];
+      hexstr[2] = 0;
+      if(strcmp(hexstr, "22")==0) {
+    	  isquote = true;
+      }
+      hex = strtoul(hexstr, &ptr, 16);
+
+      in = (unsigned char)(hex & (unsigned long) 0xFF);
+      string+=2;
+      alloc-=2;
+    }
+
+  if(!isquote) {
+	  ns[strindex++] = in;
+  }
+  string++;
+  }
+  ns[strindex]=0;
+
+  return ns;
+}
 
 int verify_document_root(const char *root) {
   const char *p, *path;
@@ -157,4 +199,8 @@ int start_mongoose(char *argv[]) {
 int stop_mongoose() {
   mg_stop(mgctx);
   return EXIT_SUCCESS;
+}
+
+const char *mongoose_get_option(const char *name) {
+	return mg_get_option(mgctx, name);
 }

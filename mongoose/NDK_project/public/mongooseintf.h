@@ -9,7 +9,10 @@ extern "C" {
 
 int start_mongoose(char *argv[]);
 int stop_mongoose();
+const char *mongoose_get_option(const char *name);
+
 char *sdup(const char *str);
+char* urldecode(const char *string);
 
 #ifdef __cplusplus
 }

@@ -61,52 +61,24 @@ document.addEventListener('webworksready', function(e) {
 	var res = false;
 	
 	blackberry.io.sandbox = false;
-	bsfs = blackberry.io.sharedFolder;
 
-    window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, initFS , errorHandler );
-
-	});
-	
-function initFS(fs) {
-             // in order to access the shared folder,
-             // config.xml must declare the "access_shared" permission
-			 bfs = fs;
-		if (community.mongoose) {
-			var home = blackberry.io.home;
-			res = community.mongoose.start( { document_root : home } );
-			alert(res);
+	if (community.mongoose) {
+		var home = blackberry.io.home;
+		community.mongoose.stop(); // Just in case we're running in the web debugger
+		
+		// document_root = home will be our dir/data so chop off /data for demo so you can browse most places
+		res = JSON.parse(community.mongoose.start( { document_root : home.substr(0, home.length - 5)  } ));
+		if(res.status) {
 			var frame = document.getElementById('testframe');
 			frame.src = 'http://localhost:8080/';
 			frame.width = window.innerWidth;
 			frame.height = window.innerHeight;
 			}
-        }
+		}
+	});
 	
-function errorHandler(e) {
-    var msg = '';
-
-    switch (e.code) {
-    case FileError.QUOTA_EXCEEDED_ERR:
-        msg = 'QUOTA_EXCEEDED_ERR';
-        break;
-    case FileError.NOT_FOUND_ERR:
-        msg = 'NOT_FOUND_ERR';
-        break;
-    case FileError.SECURITY_ERR:
-         msg = 'SECURITY_ERR';
-         break;
-    case FileError.INVALID_MODIFICATION_ERR:
-         msg = 'INVALID_MODIFICATION_ERR';
-         break;
-    case FileError.INVALID_STATE_ERR:
-         msg = 'INVALID_STATE_ERR';
-         break;
-    default:
-         msg = 'Unknown Error';
-        break;
-    };
-}	
-
+	
+	
 </script>  
 
 </head>

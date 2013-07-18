@@ -5260,7 +5260,6 @@ struct mg_context *mg_start(const struct mg_callbacks *callbacks,
     if ((i = get_option_index(name)) == -1) {
       cry(fc(ctx), "Invalid option: %s", name);
       free_context(ctx);
-      strcpy(efromstart, name);
       return NULL;
     } else if ((value = *options++) == NULL) {
       cry(fc(ctx), "%s: option value cannot be NULL", name);

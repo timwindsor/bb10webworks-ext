@@ -31,8 +31,6 @@ extern "C" {
 struct mg_context;     // Handle for the HTTP service itself
 struct mg_connection;  // Handle for the individual connection
 
-char *efromstart;
-
 // This structure contains information about the HTTP request.
 struct mg_request_info {
   const char *request_method; // "GET", "POST", etc

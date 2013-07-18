@@ -16,7 +16,7 @@
 -->
 <widget xmlns="http://www.w3.org/ns/widgets" 
         xmlns:rim="http://www.blackberry.com/ns/widgets" 
-        version="1.0.0.3" id="community.extension.webtest" xml:lang="en">
+        version="1.0.0.4" id="community.extension.webtest" xml:lang="en">
 	
 	<name>Mongoose</name>
 	<description>Mongoose Extension</description>

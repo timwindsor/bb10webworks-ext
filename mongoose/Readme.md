@@ -6,9 +6,7 @@ This BlackBerry 10 WebWorks extension provides additional APIs supplying an embe
 The API gives you the ability to serve files outside the protexted application directory.
 
 The reason for writing this API is that you can't download media from an external server and display it within a WebWorks application. 
-This API overcomes this limitation allowing access of, for example, the SD card using a URI like http://localhost:8080/
-
-Additionally the server includes base LUA extensions (but just LUA itself with no specific bindings for DBs or anything)
+This API overcomes this limitation allowing access of the Apps data or tmp directories using a URI like http://localhost:8080/
 
 ** Tested On **
 
@@ -26,10 +24,6 @@ BlackBerry 10 Dev Alpha C 10.2.0.341
 2. Package the sample in the sdtest folder. Use the [Ant Build Script](https://github.com/blackberry/BB10-WebWorks-Community-Samples/tree/master/Ant-Build-Script), or you can do this with the WebWorks packager command:
 	__bbwp__ sdtest -g _signingpassword_
 3. Load it on your phone using the Ant Build Script, or with the _blackberry-deploy_ command found in the dependencies/tools folder of your WebWorks SDK.
-4. When the application runs, an informational page will be displayed as in the screenshots below.
-
-![Screenshot](sshotz10.png) &nbsp;
-![Screenshot](sshotdac.png)
 
 ## Including the feature in your application
 Whenever you use the below feature id in any of your WebWorks applications this extension will be loaded for use.
@@ -48,10 +42,7 @@ Result is a javascript object with the following properties - status and error a
 
 status,          // Did the server start - true or false
 error,           // false or an error message
-
 command_errors   // Number of passed options that were invalid
-
-command_ok,      // Number of passed options that were parsed
 listening_ports, // Port the web server is running on
 document_root,   // Base path documents are being served from
 mongoose_version // Version of Mongoose in this release
@@ -100,8 +91,9 @@ These options should be passed as a JSON object with document_root being the VIT
 
 e.g.
 
-var options = { 'document_root' : 'shared/images', 'index_files' : 'no' };
+var options = { 'document_root' : 'shared/images' };
 
+If supplied with an empty object the extension defaults to {home}/data
 
 ## Building the extension from source
 
@@ -125,9 +117,7 @@ for the project. Select Device-Release and Simulator-Debug and click ok.
 
 ### Copying the Extension to the SDK</a>
 
-1. Under the ext folder in this project should be the community.mongoose folder with the following file structure underneath it:
-
-![Screenshot](files.png)
+1. Under the ext folder in this project should be the community.mongoose folder with the extension files underneath it:
 
 If you wish to do the copying manually, continue with these steps:
 
@@ -153,7 +143,7 @@ With the extension copied into your WebWorks SDK as explained above, you can use
 All the methods in the extension will be prefixed by that feature id, so a method called start() supplied in the community.mongoose extension will be called in JavaScript like so:
 
 ```javascript
-community.mongoose.start({'document_root' : 'shared/images' });
+community.mongoose.start({});
 ```
 
 ### Modifying the Extension
