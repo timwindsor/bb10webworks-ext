@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+environment/project/com.qnx.qcc.configuration.sharedLib.debug.1058503070/SUBLIBS/delimiter=;
+environment/project/com.qnx.qcc.configuration.sharedLib.debug.1058503070/SUBLIBS/operation=replace
+environment/project/com.qnx.qcc.configuration.sharedLib.debug.1058503070/SUBLIBS/value=-l/${ProjDirPath}/lib/{CPUVARDIR}/libunrar.so
+environment/project/com.qnx.qcc.configuration.sharedLib.debug.1058503070/append=true
+environment/project/com.qnx.qcc.configuration.sharedLib.debug.1058503070/appendContributed=true
+environment/project/com.qnx.qcc.configuration.sharedLib.release.556356666/SUBLIBS/delimiter=;
+environment/project/com.qnx.qcc.configuration.sharedLib.release.556356666/SUBLIBS/operation=replace
+environment/project/com.qnx.qcc.configuration.sharedLib.release.556356666/SUBLIBS/value=-l/${ProjDirPath}/lib/{CPUVARDIR}/libunrar.so
+environment/project/com.qnx.qcc.configuration.sharedLib.release.556356666/append=true
+environment/project/com.qnx.qcc.configuration.sharedLib.release.556356666/appendContributed=true
