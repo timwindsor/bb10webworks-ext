@@ -1,4 +1,4 @@
-#include "../src/rar.hpp"
+#include "rar.hpp"
 
 void Unpack::CopyString20(uint Length,uint Distance)
 {

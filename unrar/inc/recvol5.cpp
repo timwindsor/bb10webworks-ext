@@ -1,4 +1,4 @@
-#include "../src/rar.hpp"
+#include "rar.hpp"
 
 static const uint MaxVolumes=65535;
 

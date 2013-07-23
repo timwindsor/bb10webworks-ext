@@ -1,7 +1,7 @@
-#include "../src/rar.hpp"
+#include "rar.hpp"
 
-#include "../inc/recvol3.cpp"
-#include "../inc/recvol5.cpp"
+#include "recvol3.cpp"
+#include "recvol5.cpp"
 
 
 

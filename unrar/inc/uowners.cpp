@@ -1,4 +1,4 @@
-#include "../src/archive.hpp"
+#include "archive.hpp"
 #include "rartypes.hpp"
 #include "os.hpp"
 #include "unicode.hpp"

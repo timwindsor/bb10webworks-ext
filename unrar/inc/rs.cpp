@@ -1,4 +1,4 @@
-#include "../src/rar.hpp"
+#include "rar.hpp"
 
 #define Clean(D,S)  {for (int I=0;I<(S);I++) (D)[I]=0;}
 

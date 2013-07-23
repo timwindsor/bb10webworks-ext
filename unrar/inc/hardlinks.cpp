@@ -1,5 +1,5 @@
 #include "rartypes.hpp"
-#include "../src/filefn.hpp"
+#include "filefn.hpp"
 
 bool ExtractHardlink(wchar *NameNew,wchar *NameExisting,size_t NameExistingSize)
 {
