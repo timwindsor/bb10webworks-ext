@@ -1,0 +1,5 @@
+cp rar.cpp strlist.cpp strfn.cpp pathfn.cpp smallfn.cpp global.cpp file.cpp filefn.cpp filcreat.cpp archive.cpp arcread.cpp unicode.cpp system.cpp isnt.cpp crypt.cpp crc.cpp rawread.cpp encname.cpp resource.cpp match.cpp timefn.cpp rdwrfn.cpp obj
+cp consio.cpp options.cpp errhnd.cpp rarvm.cpp secpassword.cpp rijndael.cpp getbits.cpp sha1.cpp sha256.cpp blake2s.cpp hash.cpp extinfo.cpp extract.cpp volume.cpp list.cpp find.cpp unpack.cpp headers.cpp threadpool.cpp rs16.cpp cmddata.cpp obj
+cp rar.hpp strlist.hpp strfn.hpp pathfn.hpp smallfn.hpp global.hpp file.hpp filefn.hpp filcreat.hpp archive.hpp unicode.hpp system.hpp isnt.hpp crypt.hpp crc.hpp rawread.hpp encname.hpp resource.hpp match.hpp timefn.hpp rdwrfn.hpp obj
+cp consio.hpp options.hpp errhnd.hpp rarvm.hpp secpassword.hpp rijndael.hpp getbits.hpp sha1.hpp sha256.hpp blake2s.hpp hash.hpp extinfo.hpp extract.hpp volume.hpp list.hpp find.hpp unpack.hpp headers.hpp threadpool.hpp rs16.hpp cmddata.hpp obj
+ 
