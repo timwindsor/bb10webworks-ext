@@ -39,13 +39,21 @@
 	typedef struct AppData_tag {
 	    SC_Client_h client;
 	    SC_Score_h score;
-	    SC_UserController_h userController;
-	    SC_ScoreController_h scoreController;
-	    SC_ScoresController_h scoresController;
-	    SC_LocalAchievementsController_h achievementsController;
+	    SC_AchievementsController_h achievementsController;
+	    SC_ActivitiesController_h activitiesController;
 	    SC_ChallengeController_h challengeController;
 	    SC_ChallengesController_h challengesController;
-	    UserInfo_t *UserInfo;	/* Todo: Turn into dynamic array */
+	    SC_GameItemController_h gameItemController;
+	    SC_GameItemsController_h gameItemsController;
+	    SC_GamesController_h gamesController;
+	    SC_LocalAchievementsController_h localAchievementsController;
+	    SC_MessageController_h messageController;
+	    SC_RankingController_h rankingController;
+	    SC_ScoreController_h scoreController;
+	    SC_ScoresController_h scoresController;
+	    SC_UserController_h userController;
+	    SC_UsersController_h usersController;
+	    UserInfo_t *UserInfo;
 	} AppData_t;
 
 	void init();

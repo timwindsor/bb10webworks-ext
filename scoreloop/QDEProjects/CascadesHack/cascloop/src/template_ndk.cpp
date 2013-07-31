@@ -109,19 +109,53 @@ void stop() {
 	}
 }
 
+void usersControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_UsersController_Release(app->usersController); /* Cleanup Controller */
+		return;
+	}
+
+	SC_UserList_h buddies = SC_UsersController_GetUsers(app->usersController);
+
+	if(buddies) {
+		unsigned int ulist = SC_UserList_GetCount(buddies);
+		for(unsigned int i=0; i< ulist; i++) {
+			SC_User_h buddy = SC_UserList_GetAt(buddies, i);
+		}
+	}
+}
+
+void getbuddies(AppData_t *app) {
+	//create user controller
+	SC_Error_t rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
+
+    /* Make the asynchronous request */
+    rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
+    if (rc != SC_OK) {
+        SC_UserController_Release(app->userController);
+        return;
+    }
+
+}
+
 void userControllerCallback(void *userData, SC_Error_t completionStatus)
 {
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
     UserInfo_t *uinfo;
 
-    if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_UserController_Release(app->userController); /* Cleanup Controller */
+		return;
+	}
 
-		/* Check completion status */
-		if (completionStatus != SC_OK) {
-			SC_UserController_Release(app->userController); /* Cleanup Controller */
-			return;
-		}
+    if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
 
 		/* Get the session from the client. */
 		SC_Session_h session = SC_Client_GetSession(app->client);
@@ -148,6 +182,8 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 
 		app->UserInfo = uinfo;
 
+		getbuddies(app);
+
 		/* We don't need the UserController anymore, so release it */
 		SC_UserController_Release(app->userController);
     }
@@ -164,7 +200,6 @@ void getuser(AppData_t *app) {
         SC_UserController_Release(app->userController);
         return;
     }
-
 }
 
 // Thread functions
@@ -228,6 +263,7 @@ std::string templateStopThread() {
 
 	// Tidy Up
 	SC_User_Release(app.UserInfo->user);
+	free(app.UserInfo);
 	SC_Client_Release(app.client);
 
 	return "Thread stopped";
