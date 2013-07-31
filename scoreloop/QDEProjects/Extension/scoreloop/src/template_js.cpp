@@ -78,11 +78,12 @@ string TemplateJS::InvokeMethod(const string& command) {
 	std::string arg = command.substr(index + 1, command.length());
 
 	// based on the command given, run the appropriate method in template_ndk.cpp
-/*
- 	if (strCommand == "sdgetsize") {
-		return m_pTemplateController->SDgetSize();
+ 	if (strCommand == "start") {
+		return m_pTemplateController->start();
+	} else if (strCommand == "stop") {
+		m_pTemplateController->stop();
 	}
-*/
+
 	strCommand.append(";");
 	strCommand.append(command);
 	return strCommand;

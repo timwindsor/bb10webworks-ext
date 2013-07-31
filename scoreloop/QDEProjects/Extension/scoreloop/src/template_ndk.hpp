@@ -30,10 +30,22 @@ public:
 	virtual ~TemplateNDK();
 
 	// The extension methods are defined here
-//	std::string SDgetSize();
+	std::string start();
+	void stop();
+
+
+	std::string templateStartThread();
+	std::string templateStopThread();
+	bool isThreadHalt();
+	void templateThreadCallback();
 
 private:
 	TemplateJS *m_pParent;
+	int templateProperty;
+	bool threadHalt;
+	pthread_t m_thread;
+	pthread_cond_t cond;
+	pthread_mutex_t mutex;
 };
 
 } // namespace webworks
