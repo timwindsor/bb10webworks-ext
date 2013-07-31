@@ -21,20 +21,21 @@
 #include "json/reader.h"
 #include <pthread.h>
 #include "template_ndk.hpp"
+#include <string.h>
+#include <stdlib.h>
 
 #include <scoreloop/scoreloopcore.h>
 #include <pthread.h>
 
 #include <unistd.h>
 
-SC_Error_t errCode;
-SC_Client_h client;
+AppData_t app;
+
 SC_InitData_t initData;
 bool threadHalt;
 pthread_t m_thread;
 pthread_cond_t cond;
 pthread_mutex_t mutex;
-
 
 void init() {
 	m_thread = 0;
@@ -59,6 +60,10 @@ void kill() {
 	}
 }
 
+void userget() {
+	getuser(&app);
+}
+
 
 // These methods are the true native code we intend to reach from WebWorks
 
@@ -67,6 +72,8 @@ std::string start() {
 	Json::Reader reader;
 	Json::Value root;
 	Json::Value res;
+
+    memset(&app, 0, sizeof(AppData_t));
 
 	char *aGameId = (char *) "cdc1ee7e-403b-4d68-ac1a-cb1ebf36f782";
 	char *aGameSecret = (char *) "dNVkPkrrp68BOeOu4NqUx1ZeF+iWY21BEFF4hT4A7spAuIYUhiE49w==";
@@ -83,12 +90,13 @@ std::string start() {
 	if(threadHalt) {
 		initData.runLoopType = SC_RUN_LOOP_TYPE_CUSTOM;
 
-		errCode = SC_Client_New(&client, &initData, aGameId, aGameSecret, aGameVersion, aCurrency, aLanguageCode);
+		errCode = SC_Client_New(&app.client, &initData, aGameId, aGameSecret, aGameVersion, aCurrency, aLanguageCode);
 
 		if(errCode == SC_OK) {
 			templateStartThread();
 		}
 	}
+
 
 	res["errCode"] = errCode;
 	return writer.write(res);
@@ -99,6 +107,64 @@ void stop() {
 	if(!threadHalt) {
 		templateStopThread();
 	}
+}
+
+void userControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+    UserInfo_t *uinfo;
+
+    if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
+
+		/* Check completion status */
+		if (completionStatus != SC_OK) {
+			SC_UserController_Release(app->userController); /* Cleanup Controller */
+			return;
+		}
+
+		/* Get the session from the client. */
+		SC_Session_h session = SC_Client_GetSession(app->client);
+
+		/* Get the session user from the session. */
+		SC_User_h user = SC_Session_GetUser(session);
+
+		/* Keep hold of user data until we're done with it */
+		SC_User_Retain(user);
+
+		/* Get user data */
+		uinfo->user = user;
+		uinfo->login = SC_String_GetData(SC_User_GetLogin(user));
+		uinfo->email = SC_String_GetData(SC_User_GetEmail(user));
+		uinfo->imgurl = SC_String_GetData(SC_User_GetImageUrl(user));
+		uinfo->buddy_c = SC_User_GetBuddiesCount(user);
+		uinfo->games_c = SC_User_GetGamesCount(user);
+		uinfo->achievements_c = SC_User_GetGlobalAchievementsCount(user);
+		uinfo->challenge = SC_User_IsChallengable(user);
+		uinfo->state = SC_User_GetState(user);
+		uinfo->handle = SC_User_GetHandle(user);
+		uinfo->ctx = SC_User_GetContext(user);
+		uinfo->nationality = SC_String_GetData(SC_User_GetNationality(user));
+
+		app->UserInfo = uinfo;
+
+		/* We don't need the UserController anymore, so release it */
+		SC_UserController_Release(app->userController);
+    }
+}
+
+
+void getuser(AppData_t *app) {
+	//create user controller
+	SC_Error_t rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
+
+    /* Make the asynchronous request */
+    rc = SC_UserController_LoadUser(app->userController);
+    if (rc != SC_OK) {
+        SC_UserController_Release(app->userController);
+        return;
+    }
+
 }
 
 // Thread functions
@@ -159,7 +225,10 @@ std::string templateStopThread() {
 
 	m_thread = 0;
 	threadHalt = true;
-	SC_Client_Release(client);
+
+	// Tidy Up
+	SC_User_Release(app.UserInfo->user);
+	SC_Client_Release(app.client);
 
 	return "Thread stopped";
 }

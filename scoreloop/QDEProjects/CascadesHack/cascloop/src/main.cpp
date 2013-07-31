@@ -22,6 +22,8 @@ Q_DECL_EXPORT int main(int argc, char **argv)
     init();
     start();
 
+    userget();
+
     // localization support
     QTranslator translator;
     QString locale_string = QLocale().name();
