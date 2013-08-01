@@ -19,6 +19,45 @@
 
 #include <string>
 #include <pthread.h>
+#include <scoreloop/scoreloopcore.h>
+
+typedef struct UserInfo_tag {
+	SC_User_h user;
+	const char* login;
+	const char* imgurl;
+	int buddy_c;
+	int games_c;
+	int achievements_c;
+	SC_Bool_t challenge;
+	SC_UserState_t state;
+	SC_UserHandle_h handle;
+	SC_Context_h ctx;
+	void** buddies;
+	const char* email;			/* Pointless? */
+} UserInfo_t;
+
+typedef struct AppData_tag {
+	SC_Client_h client;
+	SC_Score_h score;
+	SC_AchievementsController_h achievementsController;
+	SC_ActivitiesController_h activitiesController;
+	SC_ChallengeController_h challengeController;
+	SC_ChallengesController_h challengesController;
+	SC_GameItemController_h gameItemController;
+	SC_GameItemsController_h gameItemsController;
+	SC_GamesController_h gamesController;
+	SC_LocalAchievementsController_h localAchievementsController;
+	SC_MessageController_h messageController;
+	SC_RankingController_h rankingController;
+	SC_ScoreController_h scoreController;
+	SC_ScoresController_h scoresController;
+	SC_UserController_h userController;
+	SC_UsersController_h usersController;
+	UserInfo_t *UserInfo;
+	int buddy_c;
+	UserInfo_t **buddies;
+} AppData_t;
+
 
 class TemplateJS;
 
@@ -33,6 +72,8 @@ public:
 	std::string start();
 	void stop();
 
+	void scgetuser(AppData_t *app);
+	void scgetbuddies(AppData_t *app);
 
 	std::string templateStartThread();
 	std::string templateStopThread();
@@ -46,6 +87,7 @@ private:
 	pthread_t m_thread;
 	pthread_cond_t cond;
 	pthread_mutex_t mutex;
+	AppData_t app;
 };
 
 } // namespace webworks

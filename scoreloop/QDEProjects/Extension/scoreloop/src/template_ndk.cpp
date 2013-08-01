@@ -26,10 +26,11 @@
 #include <scoreloop/scoreloopcore.h>
 #include <pthread.h>
 
+/* Some simple logging */
+#define LOG(fmt, args...)   do { fprintf(stdout, "[Scoreloop Sample] " fmt "\n", ##args); fflush(stdout); } while (0);
+
 namespace webworks {
 
-SC_Error_t errCode;
-SC_Client_h client;
 SC_InitData_t initData;
 
 TemplateNDK::TemplateNDK(TemplateJS *parent) {
@@ -65,6 +66,8 @@ std::string TemplateNDK::start() {
 	Json::Value root;
 	Json::Value res;
 
+    memset(&app, 0, sizeof(AppData_t));
+
 	char *aGameId = (char *) "cdc1ee7e-403b-4d68-ac1a-cb1ebf36f782";
 	char *aGameSecret = (char *) "dNVkPkrrp68BOeOu4NqUx1ZeF+iWY21BEFF4hT4A7spAuIYUhiE49w==";
 	char *aGameVersion = (char *) "1.0";
@@ -80,7 +83,7 @@ std::string TemplateNDK::start() {
 	if(threadHalt) {
 		initData.runLoopType = SC_RUN_LOOP_TYPE_CUSTOM;
 
-		errCode = SC_Client_New(&client, &initData, aGameId, aGameSecret, aGameVersion, aCurrency, aLanguageCode);
+		errCode = SC_Client_New(&app.client, &initData, aGameId, aGameSecret, aGameVersion, aCurrency, aLanguageCode);
 
 		if(errCode == SC_OK) {
 			templateStartThread();
@@ -98,13 +101,120 @@ void TemplateNDK::stop() {
 	}
 }
 
+UserInfo_t *GetUserInfo(SC_User_h user, bool isBuddy) {
+	UserInfo_t *uinfo;
+	if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
+		/* Get user data */
+		uinfo->user = user;
+		uinfo->login = SC_String_GetData(SC_User_GetLogin(user));
+		if(isBuddy) { // Buddy doesn't have access to email
+			uinfo->email = NULL;
+		} else {
+			uinfo->email = SC_String_GetData(SC_User_GetEmail(user));
+		}
+		uinfo->imgurl = SC_String_GetData(SC_User_GetImageUrl(user));
+		uinfo->buddy_c = SC_User_GetBuddiesCount(user);
+		uinfo->games_c = SC_User_GetGamesCount(user);
+		uinfo->achievements_c = SC_User_GetGlobalAchievementsCount(user);
+		uinfo->challenge = SC_User_IsChallengable(user);
+		uinfo->state = SC_User_GetState(user);
+		uinfo->handle = SC_User_GetHandle(user);
+		uinfo->ctx = SC_User_GetContext(user);
+		}
+
+	return uinfo;
+}
+
+void usersControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+    SC_User_h buddy;
+    UserInfo_t *uinfo;
+    void **buddylist = NULL;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_UsersController_Release(app->usersController); /* Cleanup Controller */
+		return;
+	}
+
+	SC_UserList_h buddies = SC_UsersController_GetUsers(app->usersController);
+
+	if(buddies) {
+		unsigned int ulist = SC_UserList_GetCount(buddies);
+		UserInfo_t **buddylist = (UserInfo_t **) malloc(sizeof(UserInfo_t) * ulist);
+		for(unsigned int i=0; i< ulist; i++) {
+			buddy = SC_UserList_GetAt(buddies, i);
+			buddylist[i] = GetUserInfo(buddy, true);
+	        LOG("User: %s", buddylist[i]->login);
+		}
+
+		app->buddy_c = ulist;
+		app->buddies = buddylist;
+	}
+    SC_UsersController_Release(app->usersController);
+}
+
+void TemplateNDK::scgetbuddies(AppData_t *app) {
+	//create user controller
+	SC_Error_t rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
+
+    /* Make the asynchronous request */
+    rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
+    if (rc != SC_OK) {
+        SC_UsersController_Release(app->usersController);
+        return;
+    }
+
+}
+
+void userControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_UserController_Release(app->userController); /* Cleanup Controller */
+		return;
+	}
+
+
+	/* Get the session from the client. */
+	SC_Session_h session = SC_Client_GetSession(app->client);
+
+	/* Get the session user from the session. */
+	SC_User_h user = SC_Session_GetUser(session);
+
+	app->UserInfo = GetUserInfo(user, false);
+
+	/* We don't need the UserController anymore, so release it */
+	SC_UserController_Release(app->userController);
+}
+
+
+void TemplateNDK::scgetuser(AppData_t *app) {
+	//create user controller
+	SC_Error_t rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
+
+	if(rc == SC_OK) {
+		/* Make the asynchronous request */
+		rc = SC_UserController_LoadUser(app->userController);
+		if (rc != SC_OK) {
+			SC_UserController_Release(app->userController);
+			return;
+		}
+	}
+}
+
 // Thread functions
 // The following functions are for controlling the main Scoreloop Thread
 
 // The actual thread (must appear before the startThread method)
 // Loops and runs the Scoreloop event loop
 
-void* TemplateThread(void* unused) {
+void* TemplateThread(void* parent) {
 	TemplateNDK *pParent = static_cast<TemplateNDK *>(parent);
 
 	// Loop calls the callback function and continues until stop is set
@@ -159,7 +269,12 @@ std::string TemplateNDK::templateStopThread() {
 
 	m_thread = 0;
 	threadHalt = true;
-	SC_Client_Release(client);
+
+	// Tidy Up
+	SC_User_Release(app.UserInfo->user);
+	free(app.UserInfo);
+	SC_Client_Release(app.client);
+
 
 	return "Thread stopped";
 }
