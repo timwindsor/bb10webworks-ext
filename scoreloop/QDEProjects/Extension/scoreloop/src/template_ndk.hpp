@@ -72,8 +72,8 @@ public:
 	std::string start();
 	void stop();
 
-	void scgetuser(AppData_t *app);
-	void scgetbuddies(AppData_t *app);
+	SC_Error_t scgetuser(AppData_t *app);
+	SC_Error_t scgetbuddies(AppData_t *app);
 
 	std::string templateStartThread();
 	std::string templateStopThread();

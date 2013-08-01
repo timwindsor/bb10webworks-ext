@@ -65,8 +65,9 @@
 	// The extension methods are defined here
 	std::string start();
 	void stop();
-	void scgetuser(AppData_t *app);
-	void scgetbuddies(AppData_t *app);
+	SC_Error_t scgetuser(AppData_t *app);
+	SC_Error_t scgetbuddies(AppData_t *app);
+	SC_Error_t scgetscore(AppData_t *app, double aScore, double *aMinorScore = NULL);
 
 	std::string templateStartThread();
 	std::string templateStopThread();

@@ -156,17 +156,21 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
     SC_UsersController_Release(app->usersController);
 }
 
-void TemplateNDK::scgetbuddies(AppData_t *app) {
+SC_Error_t TemplateNDK::scgetbuddies(AppData_t *app) {
+	SC_Error_t rc;
+
 	//create user controller
-	SC_Error_t rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
+	rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
 
-    /* Make the asynchronous request */
-    rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
-    if (rc != SC_OK) {
-        SC_UsersController_Release(app->usersController);
-        return;
-    }
+	if(rc == SC_OK) {
+		/* Make the asynchronous request */
+		rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
 
+		if (rc != SC_OK) {
+			SC_UsersController_Release(app->usersController);
+		}
+	}
+	return rc;
 }
 
 void userControllerCallback(void *userData, SC_Error_t completionStatus)
@@ -194,18 +198,21 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 }
 
 
-void TemplateNDK::scgetuser(AppData_t *app) {
+SC_Error_t TemplateNDK::scgetuser(AppData_t *app) {
+	SC_Error_t rc;
+
 	//create user controller
-	SC_Error_t rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
+	rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
 
 	if(rc == SC_OK) {
 		/* Make the asynchronous request */
 		rc = SC_UserController_LoadUser(app->userController);
+
 		if (rc != SC_OK) {
 			SC_UserController_Release(app->userController);
-			return;
 		}
 	}
+	return rc;
 }
 
 // Thread functions
