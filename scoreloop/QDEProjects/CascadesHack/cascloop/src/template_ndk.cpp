@@ -23,11 +23,15 @@
 #include "template_ndk.hpp"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <scoreloop/scoreloopcore.h>
 #include <pthread.h>
 
 #include <unistd.h>
+
+/* Some simple logging */
+#define LOG(fmt, args...)   do { fprintf(stdout, "[Scoreloop Sample] " fmt "\n", ##args); fflush(stdout); } while (0);
 
 AppData_t app;
 
@@ -61,7 +65,7 @@ void kill() {
 }
 
 void userget() {
-	getuser(&app);
+	scgetuser(&app);
 }
 
 
@@ -109,10 +113,37 @@ void stop() {
 	}
 }
 
+UserInfo_t *GetUserInfo(SC_User_h user, bool isBuddy) {
+	UserInfo_t *uinfo;
+	if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
+		/* Get user data */
+		uinfo->user = user;
+		uinfo->login = SC_String_GetData(SC_User_GetLogin(user));
+		if(isBuddy) { // Buddy doesn't have access to email
+			uinfo->email = NULL;
+		} else {
+			uinfo->email = SC_String_GetData(SC_User_GetEmail(user));
+		}
+		uinfo->imgurl = SC_String_GetData(SC_User_GetImageUrl(user));
+		uinfo->buddy_c = SC_User_GetBuddiesCount(user);
+		uinfo->games_c = SC_User_GetGamesCount(user);
+		uinfo->achievements_c = SC_User_GetGlobalAchievementsCount(user);
+		uinfo->challenge = SC_User_IsChallengable(user);
+		uinfo->state = SC_User_GetState(user);
+		uinfo->handle = SC_User_GetHandle(user);
+		uinfo->ctx = SC_User_GetContext(user);
+		}
+
+	return uinfo;
+}
+
 void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 {
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
+    SC_User_h buddy;
+    UserInfo_t *uinfo;
+    void **buddylist = NULL;
 
 	/* Check completion status */
 	if (completionStatus != SC_OK) {
@@ -124,20 +155,27 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 
 	if(buddies) {
 		unsigned int ulist = SC_UserList_GetCount(buddies);
+		UserInfo_t **buddylist = (UserInfo_t **) malloc(sizeof(UserInfo_t) * ulist);
 		for(unsigned int i=0; i< ulist; i++) {
-			SC_User_h buddy = SC_UserList_GetAt(buddies, i);
+			buddy = SC_UserList_GetAt(buddies, i);
+			buddylist[i] = GetUserInfo(buddy, true);
+	        LOG("User: %s", buddylist[i]->login);
 		}
+
+		app->buddy_c = ulist;
+		app->buddies = buddylist;
 	}
+    SC_UsersController_Release(app->usersController);
 }
 
-void getbuddies(AppData_t *app) {
+void scgetbuddies(AppData_t *app) {
 	//create user controller
 	SC_Error_t rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
 
     /* Make the asynchronous request */
     rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
     if (rc != SC_OK) {
-        SC_UserController_Release(app->userController);
+        SC_UsersController_Release(app->usersController);
         return;
     }
 
@@ -147,7 +185,6 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 {
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
-    UserInfo_t *uinfo;
 
 	/* Check completion status */
 	if (completionStatus != SC_OK) {
@@ -155,51 +192,34 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 		return;
 	}
 
-    if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
 
-		/* Get the session from the client. */
-		SC_Session_h session = SC_Client_GetSession(app->client);
+	/* Get the session from the client. */
+	SC_Session_h session = SC_Client_GetSession(app->client);
 
-		/* Get the session user from the session. */
-		SC_User_h user = SC_Session_GetUser(session);
+	/* Get the session user from the session. */
+	SC_User_h user = SC_Session_GetUser(session);
 
-		/* Keep hold of user data until we're done with it */
-		SC_User_Retain(user);
+	app->UserInfo = GetUserInfo(user, false);
 
-		/* Get user data */
-		uinfo->user = user;
-		uinfo->login = SC_String_GetData(SC_User_GetLogin(user));
-		uinfo->email = SC_String_GetData(SC_User_GetEmail(user));
-		uinfo->imgurl = SC_String_GetData(SC_User_GetImageUrl(user));
-		uinfo->buddy_c = SC_User_GetBuddiesCount(user);
-		uinfo->games_c = SC_User_GetGamesCount(user);
-		uinfo->achievements_c = SC_User_GetGlobalAchievementsCount(user);
-		uinfo->challenge = SC_User_IsChallengable(user);
-		uinfo->state = SC_User_GetState(user);
-		uinfo->handle = SC_User_GetHandle(user);
-		uinfo->ctx = SC_User_GetContext(user);
-		uinfo->nationality = SC_String_GetData(SC_User_GetNationality(user));
+	scgetbuddies(app);
 
-		app->UserInfo = uinfo;
-
-		getbuddies(app);
-
-		/* We don't need the UserController anymore, so release it */
-		SC_UserController_Release(app->userController);
-    }
+	/* We don't need the UserController anymore, so release it */
+	SC_UserController_Release(app->userController);
 }
 
 
-void getuser(AppData_t *app) {
+void scgetuser(AppData_t *app) {
 	//create user controller
 	SC_Error_t rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
 
-    /* Make the asynchronous request */
-    rc = SC_UserController_LoadUser(app->userController);
-    if (rc != SC_OK) {
-        SC_UserController_Release(app->userController);
-        return;
-    }
+	if(rc == SC_OK) {
+		/* Make the asynchronous request */
+		rc = SC_UserController_LoadUser(app->userController);
+		if (rc != SC_OK) {
+			SC_UserController_Release(app->userController);
+			return;
+		}
+	}
 }
 
 // Thread functions

@@ -32,8 +32,8 @@
 		SC_UserState_t state;
 		SC_UserHandle_h handle;
 		SC_Context_h ctx;
+		void** buddies;
 		const char* email;			/* Pointless? */
-		const char* nationality;	/* Pointless / Depreciated? */
 	} UserInfo_t;
 
 	typedef struct AppData_tag {
@@ -54,6 +54,8 @@
 	    SC_UserController_h userController;
 	    SC_UsersController_h usersController;
 	    UserInfo_t *UserInfo;
+		int buddy_c;
+	    UserInfo_t **buddies;
 	} AppData_t;
 
 	void init();
@@ -63,8 +65,8 @@
 	// The extension methods are defined here
 	std::string start();
 	void stop();
-
-	void getuser(AppData_t *);
+	void scgetuser(AppData_t *app);
+	void scgetbuddies(AppData_t *app);
 
 	std::string templateStartThread();
 	std::string templateStopThread();
