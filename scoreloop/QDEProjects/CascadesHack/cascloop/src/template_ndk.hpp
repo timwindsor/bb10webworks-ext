@@ -67,6 +67,7 @@
 	SC_Error_t scgetuser(AppData_t *app);
 	SC_Error_t scgetbuddies(AppData_t *app);
 	SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
+	SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength);
 
 	std::string templateStartThread();
 	std::string templateStopThread();

@@ -30,8 +30,10 @@
 
 #include <unistd.h>
 
+#include <QDebug>
+
 /* Some simple logging */
-#define LOG(fmt, args...)   do { fprintf(stdout, "[Scoreloop Sample] " fmt "\n", ##args); fflush(stdout); } while (0);
+// #define LOG(fmt, args...)   do { fprintf(stdout, "[Scoreloop Test] " fmt "\n", ##args); fflush(stdout); } while (0);
 
 AppData_t app;
 
@@ -65,16 +67,10 @@ void kill() {
 }
 
 void userget() {
-	double aScore = rand() % 10001;
-	double aMinorScore = (rand() % 10001) / 100;
-	unsigned int aLevel = rand() % 10;
-	unsigned int aMode = rand() % 5;
 	SC_Error_t rc;
 
 	if((rc = scgetuser(&app)) == SC_OK) {
-		rc = scsetscore(&app, aScore, &aMinorScore, &aLevel, &aMode);
-	}
-
+		}
 }
 
 
@@ -127,13 +123,13 @@ UserInfo_t *GetUserInfo(SC_User_h user, bool isBuddy) {
 	if(NULL != (uinfo = (UserInfo_t *) calloc(1, sizeof(UserInfo_t)))) {
 		/* Get user data */
 		uinfo->user = user;
-		uinfo->login = SC_String_GetData(SC_User_GetLogin(user));
+		uinfo->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
 		if(isBuddy) { // Buddy doesn't have access to email
 			uinfo->email = NULL;
 		} else {
-			uinfo->email = SC_String_GetData(SC_User_GetEmail(user));
+			uinfo->email = strdup(SC_String_GetData(SC_User_GetEmail(user)));
 		}
-		uinfo->imgurl = SC_String_GetData(SC_User_GetImageUrl(user));
+		uinfo->imgurl = strdup(SC_String_GetData(SC_User_GetImageUrl(user)));
 		uinfo->buddy_c = SC_User_GetBuddiesCount(user);
 		uinfo->games_c = SC_User_GetGamesCount(user);
 		uinfo->achievements_c = SC_User_GetGlobalAchievementsCount(user);
@@ -153,6 +149,7 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
     SC_User_h buddy;
     UserInfo_t *uinfo;
     void **buddylist = NULL;
+	SC_Error_t rc;
 
 	/* Check completion status */
 	if (completionStatus != SC_OK) {
@@ -160,7 +157,7 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 		return;
 	}
 
-	SC_UserList_h buddies = SC_UsersController_GetUsers(app->usersController);
+	SC_UserList_h buddies = SC_UsersController_GetUsers(app->usersController); // SBHack
 
 	if(buddies) {
 		unsigned int ulist = SC_UserList_GetCount(buddies);
@@ -168,13 +165,19 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 		for(unsigned int i=0; i< ulist; i++) {
 			buddy = SC_UserList_GetAt(buddies, i);
 			buddylist[i] = GetUserInfo(buddy, true);
-	        LOG("User: %s", buddylist[i]->login);
+//	        LOG("User: %s", buddylist[i]->login);
+	        qDebug() << "User:  " << buddylist[i]->login;
 		}
 
 		app->buddy_c = ulist;
 		app->buddies = buddylist;
 	}
-    SC_UsersController_Release(app->usersController);
+
+	srand(time(NULL));
+	unsigned int aMode = rand() % 10; // SBHack
+    scgetscores(app, aMode, SC_SCORES_SEARCH_LIST_ALL, 100); // SBHack
+
+	SC_UsersController_Release(app->usersController);
 }
 
 SC_Error_t scgetbuddies(AppData_t *app) {
@@ -248,6 +251,8 @@ void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
 
+    scgetscores(app, 0, SC_SCORES_SEARCH_LIST_ALL, 100); // SBHack
+
 	SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
 }
 
@@ -302,11 +307,13 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 
 void rankingControllerCallback(void *userData, SC_Error_t completionStatus)
 {
-	unsigned int  urank;
+	unsigned int urank;
 
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
     urank = SC_RankingController_GetRanking(app->rankingController);
+//    LOG("Rank: %u", urank);
+    qDebug() << "Rank: " << urank;
 
     // Process Rank - watch for SC_SCORE_RANK_OUT_OF_RANGE
 
@@ -316,14 +323,38 @@ void rankingControllerCallback(void *userData, SC_Error_t completionStatus)
 void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 {
 	SC_ScoreList_h slist;
+	SC_Score_h oScore;
+	unsigned int scount;
 
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
     slist = SC_ScoresController_GetScores(app->scoresController);
+    scount = SC_ScoreList_GetCount(slist);
+
+ 	for(unsigned int i=0; i< scount; i++) {
+		oScore = SC_ScoreList_GetAt(slist, i);
+		SC_User_h user = SC_Score_GetUser(oScore);
+		const char* login = login = SC_String_GetData(SC_User_GetLogin(user));
+		double score = SC_Score_GetResult(oScore);
+		double minorScore = SC_Score_GetMinorResult(oScore);
+		unsigned int mode = SC_Score_GetMode(oScore);
+		unsigned int level = SC_Score_GetLevel(oScore);
+		unsigned int rank = SC_Score_GetRank(oScore);
+
+	}
 
     // Process Leaderboard
 
+	srand(time(NULL));
+	double aScore = rand() % 10001; // SBHack
+	double aMinorScore = (rand() % 10001) / 100; // SBHack
+	unsigned int aLevel = rand() % 10; // SBHack
+	unsigned int aMode = rand() % 10; // SBHack
+	scsetscore(app, aScore, &aMinorScore, &aLevel, &aMode); // SBHack
+//    LOG("Score: %d, MinorScore: %d, Level: %u, Mode: %u", aScore, aMinorScore, aLevel, aMode);
+
 	SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+
 }
 
 // searchList = SC_SCORES_SEARCH_LIST_ALL | SC_SCORES_SEARCH_LIST_24H | SC_SCORES_SEARCH_LIST_USER_COUNTRY.
@@ -372,7 +403,7 @@ void* TemplateThread(void* unused) {
 	while (!isThreadHalt()) {
 		SC_HandleCustomEvent(&initData, SC_FALSE);
 
-		sleep(1);
+		usleep(10);
 	}
 
 	return NULL;
