@@ -67,7 +67,7 @@
 	void stop();
 	SC_Error_t scgetuser(AppData_t *app);
 	SC_Error_t scgetbuddies(AppData_t *app);
-	SC_Error_t scgetscore(AppData_t *app, double aScore, double *aMinorScore = NULL);
+	SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
 
 	std::string templateStartThread();
 	std::string templateStopThread();

@@ -65,7 +65,16 @@ void kill() {
 }
 
 void userget() {
-	scgetuser(&app);
+	double aScore = 1234;
+	double aMinorScore = 789;
+	unsigned int aLevel = 5;
+	unsigned int aMode = 3;
+	SC_Error_t rc;
+
+	if((rc = scgetuser(&app)) == SC_OK) {
+		rc = scsetscore(&app, aScore, &aMinorScore, &aLevel, &aMode);
+	}
+
 }
 
 
@@ -172,15 +181,23 @@ SC_Error_t scgetbuddies(AppData_t *app) {
 	SC_Error_t rc;
 
 	//create user controller
-	rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
+	if(app->client != NULL) {
+		rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
 
-	if(rc == SC_OK) {
-		/* Make the asynchronous request */
-		rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
+		if(rc == SC_OK) {
+			/* Make the asynchronous request */
+			if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
+				rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
 
-		if (rc != SC_OK) {
-			SC_UsersController_Release(app->usersController);
+				if (rc != SC_OK) {
+					SC_UsersController_Release(app->usersController);
+				}
+			} else {
+				rc = SC_INVALID_STATE;
+			}
 		}
+	} else {
+		rc = SC_INVALID_STATE;
 	}
 	return rc;
 }
@@ -216,40 +233,82 @@ SC_Error_t scgetuser(AppData_t *app) {
 	SC_Error_t rc;
 
 	//create user controller
-	rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
+	if(app->client != NULL) {
+		rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
 
-	if(rc == SC_OK) {
-		/* Make the asynchronous request */
-		rc = SC_UserController_LoadUser(app->userController);
+		if(rc == SC_OK) {
+			/* Make the asynchronous request */
+			rc = SC_UserController_LoadUser(app->userController);
 
-		if (rc != SC_OK) {
-			SC_UserController_Release(app->userController);
+			if (rc != SC_OK) {
+				SC_UserController_Release(app->userController);
+			}
 		}
+	} else {
+		rc = SC_INVALID_STATE;
 	}
 	return rc;
 }
 
-SC_Error_t scgetscore(AppData_t *app, double aScore, double *aMinorScore = NULL) {
+void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
+}
+
+SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL, unsigned int *aLevel = NULL, unsigned int *aMode = NULL) {
 	SC_Error_t rc;
 
 	// Create Score object
-	rc = SC_Client_CreateScore(app->client, app->score);
-
-	if(rc == SC_OK) {
-		rc = SC_Score_SetResult(app->score, aScore);
-		rc = SC_Score_SetMinorResult(app->score, aMinorScore);
-
-		//create user controller
-		rc = SC_Client_CreateScoreController(app->client, &app->scoreController, scoreControllerCallback, app);
+	if(app->client != NULL) {
+		rc = SC_Client_CreateScore(app->client, &app->score);
 
 		if(rc == SC_OK) {
-			/* Make the asynchronous request */
-//			rc = SC_UserController_LoadUser(app->userController);
 
-			if (rc != SC_OK) {
-				SC_ScoreController_Release(app->userController);
+			rc = SC_Score_SetResult(app->score, aScore);
+
+			if(rc == SC_OK) {
+				if(aMinorScore != NULL) {
+					rc = SC_Score_SetMinorResult(app->score, *aMinorScore);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						return rc;
+					}
+				}
+
+				if(aLevel != NULL) {
+					rc = SC_Score_SetLevel(app->score, *aLevel);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						return rc;
+					}
+				}
+
+				if(aMode != NULL) {
+					rc = SC_Score_SetMode(app->score, *aMode);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						return rc;
+					}
+				}
+
+				//create user controller
+				rc = SC_Client_CreateScoreController(app->client, &app->scoreController, scoreControllerCallback, app);
+
+				if(rc == SC_OK) {
+					/* Make the asynchronous request */
+					rc = SC_ScoreController_SubmitScore(app->scoreController, app->score);
+
+					if (rc != SC_OK) {
+						SC_ScoreController_Release(app->scoreController);
+					}
+				}
 			}
 		}
+	} else {
+		rc = SC_INVALID_STATE;
 	}
 	return rc;
 }
