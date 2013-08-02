@@ -32,7 +32,6 @@
 		SC_UserState_t state;
 		SC_UserHandle_h handle;
 		SC_Context_h ctx;
-		void** buddies;
 		const char* email;			/* Pointless? */
 	} UserInfo_t;
 

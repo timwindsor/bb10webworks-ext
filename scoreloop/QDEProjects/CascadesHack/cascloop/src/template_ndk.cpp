@@ -65,10 +65,10 @@ void kill() {
 }
 
 void userget() {
-	double aScore = 1234;
-	double aMinorScore = 789;
-	unsigned int aLevel = 5;
-	unsigned int aMode = 3;
+	double aScore = rand() % 10001;
+	double aMinorScore = (rand() % 10001) / 100;
+	unsigned int aLevel = rand() % 10;
+	unsigned int aMode = rand() % 5;
 	SC_Error_t rc;
 
 	if((rc = scgetuser(&app)) == SC_OK) {
@@ -182,17 +182,14 @@ SC_Error_t scgetbuddies(AppData_t *app) {
 
 	//create user controller
 	if(app->client != NULL) {
-		rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app);
-
-		if(rc == SC_OK) {
+		if((rc = SC_Client_CreateUsersController(app->client, &app->usersController, usersControllerCallback, app)) == SC_OK) {
 			/* Make the asynchronous request */
 			if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
-				rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user);
-
-				if (rc != SC_OK) {
+				if((rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user)) != SC_OK) {
 					SC_UsersController_Release(app->usersController);
 				}
 			} else {
+				SC_UsersController_Release(app->usersController);
 				rc = SC_INVALID_STATE;
 			}
 		}
@@ -234,13 +231,9 @@ SC_Error_t scgetuser(AppData_t *app) {
 
 	//create user controller
 	if(app->client != NULL) {
-		rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app);
-
-		if(rc == SC_OK) {
+		if((rc = SC_Client_CreateUserController(app->client, &app->userController, userControllerCallback, app)) == SC_OK) {
 			/* Make the asynchronous request */
-			rc = SC_UserController_LoadUser(app->userController);
-
-			if (rc != SC_OK) {
+			if((rc = SC_UserController_LoadUser(app->userController)) != SC_OK) {
 				SC_UserController_Release(app->userController);
 			}
 		}
@@ -263,9 +256,7 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 
 	// Create Score object
 	if(app->client != NULL) {
-		rc = SC_Client_CreateScore(app->client, &app->score);
-
-		if(rc == SC_OK) {
+		if((rc = SC_Client_CreateScore(app->client, &app->score)) == SC_OK) {
 
 			rc = SC_Score_SetResult(app->score, aScore);
 
@@ -294,14 +285,10 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 					}
 				}
 
-				//create user controller
-				rc = SC_Client_CreateScoreController(app->client, &app->scoreController, scoreControllerCallback, app);
-
-				if(rc == SC_OK) {
+				//create score controller
+				if((rc = SC_Client_CreateScoreController(app->client, &app->scoreController, scoreControllerCallback, app)) == SC_OK) {
 					/* Make the asynchronous request */
-					rc = SC_ScoreController_SubmitScore(app->scoreController, app->score);
-
-					if (rc != SC_OK) {
+					if((rc = SC_ScoreController_SubmitScore(app->scoreController, app->score)) != SC_OK) {
 						SC_ScoreController_Release(app->scoreController);
 					}
 				}
@@ -310,6 +297,66 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 	} else {
 		rc = SC_INVALID_STATE;
 	}
+	return rc;
+}
+
+void rankingControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	unsigned int  urank;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+    urank = SC_RankingController_GetRanking(app->rankingController);
+
+    // Process Rank - watch for SC_SCORE_RANK_OUT_OF_RANGE
+
+	SC_RankingController_Release(app->rankingController); /* Cleanup Controller */
+}
+
+void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	SC_ScoreList_h slist;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+    slist = SC_ScoresController_GetScores(app->scoresController);
+
+    // Process Leaderboard
+
+	SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+}
+
+// searchList = SC_SCORES_SEARCH_LIST_ALL | SC_SCORES_SEARCH_LIST_24H | SC_SCORES_SEARCH_LIST_USER_COUNTRY.
+SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength) {
+	SC_Error_t rc;
+	//create user controller
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateScoresController(app->client, &app->scoresController, scoresControllerCallback, app)) == SC_OK) {
+			if((rc = SC_Client_CreateRankingController(app->client, &app->rankingController, rankingControllerCallback, app)) == SC_OK) {
+				if((rc = SC_ScoresController_SetSearchList(app->scoresController, searchList)) == SC_OK) {
+					if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
+						if((rc = SC_ScoresController_SetMode(app->scoresController, sMode)) == SC_OK) {
+							if((rc = SC_RankingController_LoadRankingForUserInMode(app->rankingController, app->UserInfo->user, sMode)) == SC_OK) {		// Triggers rankingControllerCallback
+								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) == SC_OK) {	// Triggers scoresControllerCallback
+
+								}
+							}
+						}
+					} else {
+					rc = SC_INVALID_STATE;
+					}
+				} else {
+					SC_RankingController_Release(app->rankingController);
+					SC_ScoreController_Release(app->scoreController);
+				}
+			} else {
+				SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+			}
+		}
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+
 	return rc;
 }
 
