@@ -77,8 +77,14 @@ SC_Error_t userget();
 SC_Error_t start();
 SC_Error_t scgetuser(AppData_t *app);
 SC_Error_t scgetbuddies(AppData_t *app);
+
 SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
 SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength);
+SC_Error_t scfreescores(AppData_t *app);
+SC_Bool_t schasprevrange(AppData_t *app);
+SC_Bool_t schasnextrange(AppData_t *app);
+SC_Error_t scgetnextrange(AppData_t *app);
+SC_Error_t scgetprevrange(AppData_t *app);
 
 std::string templateStartThread();
 std::string templateStopThread();

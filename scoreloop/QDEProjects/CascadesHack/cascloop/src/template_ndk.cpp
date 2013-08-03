@@ -360,6 +360,16 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
+
+	if(app->leaders != NULL) {
+		for(unsigned int i=0; i< app->leaders_c; i++) {
+			free((void *) app->leaders[i]->login);
+		}
+		free(app->leaders);
+		app->leaders_c = 0;
+		app->leaders = NULL;
+	}
+
     slist = SC_ScoresController_GetScores(app->scoresController);
     scount = SC_ScoreList_GetCount(slist);
 
@@ -368,15 +378,6 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 		oScore = SC_ScoreList_GetAt(slist, i);
 		SC_User_h user = SC_Score_GetUser(oScore);
 		leaderlist[i] = GetLeaderInfo(user, oScore);
-/*
-		leaderlist[i]->user = SC_Score_GetUser(oScore);
-		leaderlist[i]->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
-		leaderlist[i]->majorScore = SC_Score_GetResult(oScore);
-		leaderlist[i]->minorScore = SC_Score_GetMinorResult(oScore);
-		leaderlist[i]->mode = SC_Score_GetMode(oScore);
-		leaderlist[i]->level = SC_Score_GetLevel(oScore);
-		leaderlist[i]->rank = SC_Score_GetRank(oScore);
-*/
 	}
 
 	app->leaders_c = scount;
@@ -392,20 +393,81 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 	scsetscore(app, aScore, &aMinorScore, &aLevel, &aMode); // SBHack
 //    LOG("Score: %d, MinorScore: %d, Level: %u, Mode: %u", aScore, aMinorScore, aLevel, aMode);
 
-	SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
-	app->scoresController = NULL;
+//	SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+//	app->scoresController = NULL;
 }
 
-void freeleaders(AppData_t app) {
-	for(unsigned int i=0; i< app.leaders_c; i++) {
-		free((void *) app.leaders[i]->login);
+SC_Bool_t schasnextrange(AppData_t *app) {
+	SC_Bool_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_HasNextRange(app->scoresController);
+		app->scoresController = NULL;
+	} else {
+		rc = false;
 	}
+
+	return rc;
+}
+
+SC_Error_t scgetnextrange(AppData_t *app) {
+	SC_Error_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_LoadNextRange(app->scoresController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Bool_t schasprevrange(AppData_t *app) {
+	SC_Bool_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_HasPreviousRange(app->scoresController);
+		app->scoresController = NULL;
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Error_t scgetprevrange(AppData_t *app) {
+	SC_Error_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_LoadPreviousRange(app->scoresController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Error_t scfreescores(AppData_t *app) {
+	SC_Error_t rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_OK;
+		SC_ScoresController_Release(app->scoresController);
+		app->scoresController = NULL;
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+
+	return rc;
 }
 
 // searchList = SC_SCORES_SEARCH_LIST_ALL | SC_SCORES_SEARCH_LIST_24H | SC_SCORES_SEARCH_LIST_USER_COUNTRY.
 SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength) {
 	SC_Error_t rc;
 	//create user controller
+	if(app->scoresController != NULL) {
+		return SC_INVALID_STATE;
+	}
 	if(app->client != NULL) {
 		if((rc = SC_Client_CreateScoresController(app->client, &app->scoresController, scoresControllerCallback, app)) == SC_OK) {
 			if((rc = SC_Client_CreateRankingController(app->client, &app->rankingController, rankingControllerCallback, app)) == SC_OK) {
@@ -413,34 +475,14 @@ SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearch
 					if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
 						if((rc = SC_ScoresController_SetMode(app->scoresController, sMode)) == SC_OK) {
 							if((rc = SC_RankingController_LoadRankingForUserInMode(app->rankingController, app->UserInfo->user, sMode)) == SC_OK) {		// Triggers rankingControllerCallback
-								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) != SC_OK) {	// Triggers scoresControllerCallback
-									SC_RankingController_Release(app->rankingController);
-									SC_ScoresController_Release(app->scoresController);
-									app->scoresController = NULL;
-									app->rankingController = NULL;
+								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) == SC_OK) {	// Triggers scoresControllerCallback
+									SC_ScoresController_Retain(app->scoresController);
 								}
-							} else {
-								SC_RankingController_Release(app->rankingController);
-								SC_ScoresController_Release(app->scoresController);
-								app->scoresController = NULL;
-								app->rankingController = NULL;
 							}
-
-						} else {
-							SC_RankingController_Release(app->rankingController);
-							SC_ScoresController_Release(app->scoresController);
-							app->scoresController = NULL;
-							app->rankingController = NULL;
 						}
-
-					} else {
-						rc = SC_INVALID_STATE;
-						SC_RankingController_Release(app->rankingController);
-						SC_ScoresController_Release(app->scoresController);
-						app->scoresController = NULL;
-						app->rankingController = NULL;
 					}
-				} else {
+				}
+				if(rc != SC_OK) {
 					SC_RankingController_Release(app->rankingController);
 					SC_ScoresController_Release(app->scoresController);
 					app->scoresController = NULL;
@@ -519,7 +561,9 @@ std::string templateStopThread() {
 
 	// Tidy Up
 	if(app.leaders) {
-		freeleaders(app);
+		for(unsigned int i=0; i< app.leaders_c; i++) {
+			free((void *) app.leaders[i]->login);
+		}
 		free(app.leaders);
 		app.leaders_c = 0;
 	}
