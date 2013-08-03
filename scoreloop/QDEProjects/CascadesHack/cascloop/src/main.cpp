@@ -19,10 +19,10 @@ Q_DECL_EXPORT int main(int argc, char **argv)
     // this is where the server is started etc
     Application app(argc, argv);
 
-    init();
-    start();
-
-   	userget();
+	init();
+	if((rc = start()) == SC_OK) {
+		rc = userget();
+	}
 
     // localization support
     QTranslator translator;
@@ -37,7 +37,7 @@ Q_DECL_EXPORT int main(int argc, char **argv)
     // we complete the transaction started in the app constructor and start the client event loop here
     rc = Application::exec();
     // when loop is exited the Application deletes the scene which deletes all its children (per qt rules for children)
-    stop();
+
     kill();
 
     return rc;

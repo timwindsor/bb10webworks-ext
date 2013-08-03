@@ -66,21 +66,24 @@ void kill() {
 	}
 }
 
-void userget() {
+SC_Error_t userget() {
 	SC_Error_t rc;
 
 	if((rc = scgetuser(&app)) == SC_OK) {
 		}
+
+	return rc;
 }
 
 
 // These methods are the true native code we intend to reach from WebWorks
 
-std::string start() {
+SC_Error_t start() {
 	Json::FastWriter writer;
 	Json::Reader reader;
 	Json::Value root;
 	Json::Value res;
+	SC_Error_t rc;
 
     memset(&app, 0, sizeof(AppData_t));
 
@@ -89,7 +92,6 @@ std::string start() {
 	char *aGameVersion = (char *) "1.0";
 	char *aCurrency = (char *) "ACF";
 	char *aLanguageCode = (char *) "en";
-	int errCode = 0;
 
 	// aGameId, aGameSecret and aCurrency are const char strings that you obtain from Scoreloop.
 	// aGameVersion should be your current game version.
@@ -99,24 +101,17 @@ std::string start() {
 	if(threadHalt) {
 		initData.runLoopType = SC_RUN_LOOP_TYPE_CUSTOM;
 
-		errCode = SC_Client_New(&app.client, &initData, aGameId, aGameSecret, aGameVersion, aCurrency, aLanguageCode);
+		rc = SC_Client_New(&app.client, &initData, aGameId, aGameSecret, aGameVersion, aCurrency, aLanguageCode);
 
-		if(errCode == SC_OK) {
+		if(rc == SC_OK) {
 			templateStartThread();
 		}
 	}
 
 
-	res["errCode"] = errCode;
-	return writer.write(res);
+	return rc;
 }
 
-
-void stop() {
-	if(!threadHalt) {
-		templateStopThread();
-	}
-}
 
 UserInfo_t *GetUserInfo(SC_User_h user, bool isBuddy) {
 	UserInfo_t *uinfo;
@@ -142,6 +137,21 @@ UserInfo_t *GetUserInfo(SC_User_h user, bool isBuddy) {
 	return uinfo;
 }
 
+
+LeaderInfo_t *GetLeaderInfo(SC_User_h user, SC_Score_h oScore) {
+	LeaderInfo_t *leader;
+	if(NULL != (leader = (LeaderInfo_t *) calloc(1, sizeof(LeaderInfo_t)))) {
+		leader->user = SC_Score_GetUser(oScore);
+		leader->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
+		leader->majorScore = SC_Score_GetResult(oScore);
+		leader->minorScore = SC_Score_GetMinorResult(oScore);
+		leader->mode = SC_Score_GetMode(oScore);
+		leader->level = SC_Score_GetLevel(oScore);
+		leader->rank = SC_Score_GetRank(oScore);
+	}
+	return leader;
+}
+
 void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 {
     /* Get the application from userData argument */
@@ -154,6 +164,7 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 	/* Check completion status */
 	if (completionStatus != SC_OK) {
 		SC_UsersController_Release(app->usersController); /* Cleanup Controller */
+		app->usersController = NULL;
 		return;
 	}
 
@@ -161,7 +172,7 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 
 	if(buddies) {
 		unsigned int ulist = SC_UserList_GetCount(buddies);
-		UserInfo_t **buddylist = (UserInfo_t **) malloc(sizeof(UserInfo_t) * ulist);
+		UserInfo_t **buddylist = (UserInfo_t **) calloc(sizeof(UserInfo_t *), ulist);
 		for(unsigned int i=0; i< ulist; i++) {
 			buddy = SC_UserList_GetAt(buddies, i);
 			buddylist[i] = GetUserInfo(buddy, true);
@@ -169,7 +180,7 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 	        qDebug() << "User:  " << buddylist[i]->login;
 		}
 
-		app->buddy_c = ulist;
+		app->buddies_c = ulist;
 		app->buddies = buddylist;
 	}
 
@@ -178,6 +189,15 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
     scgetscores(app, aMode, SC_SCORES_SEARCH_LIST_ALL, 100); // SBHack
 
 	SC_UsersController_Release(app->usersController);
+	app->usersController = NULL;
+}
+
+void freebuddies(AppData_t app) {
+	for(unsigned int i=0; i< app.buddies_c; i++) {
+		free((void *) app.buddies[i]->login);
+		free((void *) app.buddies[i]->email);
+		free((void *) app.buddies[i]->imgurl);
+	}
 }
 
 SC_Error_t scgetbuddies(AppData_t *app) {
@@ -190,10 +210,12 @@ SC_Error_t scgetbuddies(AppData_t *app) {
 			if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
 				if((rc = SC_UsersController_LoadBuddies(app->usersController, app->UserInfo->user)) != SC_OK) {
 					SC_UsersController_Release(app->usersController);
+					app->usersController = NULL;
 				}
 			} else {
 				SC_UsersController_Release(app->usersController);
 				rc = SC_INVALID_STATE;
+				app->usersController = NULL;
 			}
 		}
 	} else {
@@ -210,6 +232,7 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 	/* Check completion status */
 	if (completionStatus != SC_OK) {
 		SC_UserController_Release(app->userController); /* Cleanup Controller */
+		app->userController = NULL;
 		return;
 	}
 
@@ -226,6 +249,7 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 
 	/* We don't need the UserController anymore, so release it */
 	SC_UserController_Release(app->userController);
+	app->userController = NULL;
 }
 
 
@@ -238,6 +262,7 @@ SC_Error_t scgetuser(AppData_t *app) {
 			/* Make the asynchronous request */
 			if((rc = SC_UserController_LoadUser(app->userController)) != SC_OK) {
 				SC_UserController_Release(app->userController);
+				app->userController = NULL;
 			}
 		}
 	} else {
@@ -251,9 +276,10 @@ void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
 
-    scgetscores(app, 0, SC_SCORES_SEARCH_LIST_ALL, 100); // SBHack
+//    scgetscores(app, 0, SC_SCORES_SEARCH_LIST_ALL, 100); // SBHack
 
 	SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
+	app->scoreController = NULL;
 }
 
 SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL, unsigned int *aLevel = NULL, unsigned int *aMode = NULL) {
@@ -270,6 +296,7 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 					rc = SC_Score_SetMinorResult(app->score, *aMinorScore);
 					if(rc != SC_OK) {
 						SC_Score_Release(app->score);
+						app->score = NULL;
 						return rc;
 					}
 				}
@@ -278,6 +305,7 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 					rc = SC_Score_SetLevel(app->score, *aLevel);
 					if(rc != SC_OK) {
 						SC_Score_Release(app->score);
+						app->score = NULL;
 						return rc;
 					}
 				}
@@ -286,6 +314,7 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 					rc = SC_Score_SetMode(app->score, *aMode);
 					if(rc != SC_OK) {
 						SC_Score_Release(app->score);
+						app->score = NULL;
 						return rc;
 					}
 				}
@@ -295,6 +324,7 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 					/* Make the asynchronous request */
 					if((rc = SC_ScoreController_SubmitScore(app->scoreController, app->score)) != SC_OK) {
 						SC_ScoreController_Release(app->scoreController);
+						app->scoreController = NULL;
 					}
 				}
 			}
@@ -318,6 +348,7 @@ void rankingControllerCallback(void *userData, SC_Error_t completionStatus)
     // Process Rank - watch for SC_SCORE_RANK_OUT_OF_RANGE
 
 	SC_RankingController_Release(app->rankingController); /* Cleanup Controller */
+	app->rankingController = NULL;
 }
 
 void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
@@ -325,23 +356,31 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 	SC_ScoreList_h slist;
 	SC_Score_h oScore;
 	unsigned int scount;
+	LeaderInfo_t **leaderlist = NULL;;
 
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
     slist = SC_ScoresController_GetScores(app->scoresController);
     scount = SC_ScoreList_GetCount(slist);
 
+    leaderlist = (LeaderInfo_t **) calloc(sizeof(LeaderInfo_t *), scount);
  	for(unsigned int i=0; i< scount; i++) {
 		oScore = SC_ScoreList_GetAt(slist, i);
 		SC_User_h user = SC_Score_GetUser(oScore);
-		const char* login = login = SC_String_GetData(SC_User_GetLogin(user));
-		double score = SC_Score_GetResult(oScore);
-		double minorScore = SC_Score_GetMinorResult(oScore);
-		unsigned int mode = SC_Score_GetMode(oScore);
-		unsigned int level = SC_Score_GetLevel(oScore);
-		unsigned int rank = SC_Score_GetRank(oScore);
-
+		leaderlist[i] = GetLeaderInfo(user, oScore);
+/*
+		leaderlist[i]->user = SC_Score_GetUser(oScore);
+		leaderlist[i]->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
+		leaderlist[i]->majorScore = SC_Score_GetResult(oScore);
+		leaderlist[i]->minorScore = SC_Score_GetMinorResult(oScore);
+		leaderlist[i]->mode = SC_Score_GetMode(oScore);
+		leaderlist[i]->level = SC_Score_GetLevel(oScore);
+		leaderlist[i]->rank = SC_Score_GetRank(oScore);
+*/
 	}
+
+	app->leaders_c = scount;
+	app->leaders = leaderlist;
 
     // Process Leaderboard
 
@@ -354,7 +393,13 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 //    LOG("Score: %d, MinorScore: %d, Level: %u, Mode: %u", aScore, aMinorScore, aLevel, aMode);
 
 	SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+	app->scoresController = NULL;
+}
 
+void freeleaders(AppData_t app) {
+	for(unsigned int i=0; i< app.leaders_c; i++) {
+		free((void *) app.leaders[i]->login);
+	}
 }
 
 // searchList = SC_SCORES_SEARCH_LIST_ALL | SC_SCORES_SEARCH_LIST_24H | SC_SCORES_SEARCH_LIST_USER_COUNTRY.
@@ -368,20 +413,42 @@ SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearch
 					if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
 						if((rc = SC_ScoresController_SetMode(app->scoresController, sMode)) == SC_OK) {
 							if((rc = SC_RankingController_LoadRankingForUserInMode(app->rankingController, app->UserInfo->user, sMode)) == SC_OK) {		// Triggers rankingControllerCallback
-								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) == SC_OK) {	// Triggers scoresControllerCallback
-
+								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) != SC_OK) {	// Triggers scoresControllerCallback
+									SC_RankingController_Release(app->rankingController);
+									SC_ScoresController_Release(app->scoresController);
+									app->scoresController = NULL;
+									app->rankingController = NULL;
 								}
+							} else {
+								SC_RankingController_Release(app->rankingController);
+								SC_ScoresController_Release(app->scoresController);
+								app->scoresController = NULL;
+								app->rankingController = NULL;
 							}
+
+						} else {
+							SC_RankingController_Release(app->rankingController);
+							SC_ScoresController_Release(app->scoresController);
+							app->scoresController = NULL;
+							app->rankingController = NULL;
 						}
+
 					} else {
-					rc = SC_INVALID_STATE;
+						rc = SC_INVALID_STATE;
+						SC_RankingController_Release(app->rankingController);
+						SC_ScoresController_Release(app->scoresController);
+						app->scoresController = NULL;
+						app->rankingController = NULL;
 					}
 				} else {
 					SC_RankingController_Release(app->rankingController);
-					SC_ScoreController_Release(app->scoreController);
+					SC_ScoresController_Release(app->scoresController);
+					app->scoresController = NULL;
+					app->rankingController = NULL;
 				}
 			} else {
-				SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+				SC_ScoresController_Release(app->scoresController);
+				app->scoresController = NULL;
 			}
 		}
 	} else {
@@ -451,8 +518,17 @@ std::string templateStopThread() {
 	threadHalt = true;
 
 	// Tidy Up
+	if(app.leaders) {
+		freeleaders(app);
+		free(app.leaders);
+		app.leaders_c = 0;
+	}
+	if(app.buddies) {
+		freebuddies(app);
+		free(app.buddies);
+		app.buddies_c = 0;
+	}
 	SC_User_Release(app.UserInfo->user);
-	free(app.UserInfo);
 	SC_Client_Release(app.client);
 
 	return "Thread stopped";
