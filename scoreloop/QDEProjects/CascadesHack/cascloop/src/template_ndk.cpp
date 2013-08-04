@@ -30,8 +30,6 @@
 
 #include <unistd.h>
 
-#include <QDebug>
-
 /* Some simple logging */
 // #define LOG(fmt, args...)   do { fprintf(stdout, "[Scoreloop Test] " fmt "\n", ##args); fflush(stdout); } while (0);
 
@@ -70,6 +68,7 @@ SC_Error_t userget() {
 	SC_Error_t rc;
 
 	if((rc = scgetuser(&app)) == SC_OK) {
+		rc = scgetgames(&app, SC_GAMES_SEARCH_LIST_ALL, 100);
 		}
 
 	return rc;
@@ -137,29 +136,12 @@ UserInfo_t *GetUserInfo(SC_User_h user, bool isBuddy) {
 	return uinfo;
 }
 
-
-LeaderInfo_t *GetLeaderInfo(SC_User_h user, SC_Score_h oScore) {
-	LeaderInfo_t *leader;
-	if(NULL != (leader = (LeaderInfo_t *) calloc(1, sizeof(LeaderInfo_t)))) {
-		leader->user = SC_Score_GetUser(oScore);
-		leader->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
-		leader->majorScore = SC_Score_GetResult(oScore);
-		leader->minorScore = SC_Score_GetMinorResult(oScore);
-		leader->mode = SC_Score_GetMode(oScore);
-		leader->level = SC_Score_GetLevel(oScore);
-		leader->rank = SC_Score_GetRank(oScore);
-	}
-	return leader;
-}
-
 void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 {
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
     SC_User_h buddy;
-    UserInfo_t *uinfo;
-    void **buddylist = NULL;
-	SC_Error_t rc;
+    UserInfo_t **buddylist = NULL;
 
 	/* Check completion status */
 	if (completionStatus != SC_OK) {
@@ -172,12 +154,11 @@ void usersControllerCallback(void *userData, SC_Error_t completionStatus)
 
 	if(buddies) {
 		unsigned int ulist = SC_UserList_GetCount(buddies);
-		UserInfo_t **buddylist = (UserInfo_t **) calloc(sizeof(UserInfo_t *), ulist);
+		buddylist = (UserInfo_t **) calloc(sizeof(UserInfo_t *), ulist);
 		for(unsigned int i=0; i< ulist; i++) {
 			buddy = SC_UserList_GetAt(buddies, i);
 			buddylist[i] = GetUserInfo(buddy, true);
-//	        LOG("User: %s", buddylist[i]->login);
-	        qDebug() << "User:  " << buddylist[i]->login;
+			fprintf(stdout, "[Scoreloop Test] Buddy: %s\n", buddylist[i]->login); fflush(stdout);
 		}
 
 		app->buddies_c = ulist;
@@ -236,7 +217,6 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 		return;
 	}
 
-
 	/* Get the session from the client. */
 	SC_Session_h session = SC_Client_GetSession(app->client);
 
@@ -276,7 +256,12 @@ void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
 
-//    scgetscores(app, 0, SC_SCORES_SEARCH_LIST_ALL, 100); // SBHack
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
+		app->scoreController = NULL;
+		return;
+	}
 
 	SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
 	app->scoreController = NULL;
@@ -335,17 +320,46 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 	return rc;
 }
 
+/*
+ * Leaderboard functions
+ *
+ * Requires call to scfreescores to start an new scgetscores
+ *
+ */
+
+LeaderInfo_t *GetLeaderInfo(SC_User_h user, SC_Score_h oScore) {
+	LeaderInfo_t *leader;
+	if(NULL != (leader = (LeaderInfo_t *) calloc(1, sizeof(LeaderInfo_t)))) {
+		leader->user = SC_Score_GetUser(oScore);
+		leader->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
+		leader->majorScore = SC_Score_GetResult(oScore);
+		leader->minorScore = SC_Score_GetMinorResult(oScore);
+		leader->mode = SC_Score_GetMode(oScore);
+		leader->level = SC_Score_GetLevel(oScore);
+		leader->rank = SC_Score_GetRank(oScore);
+	}
+	return leader;
+}
+
 void rankingControllerCallback(void *userData, SC_Error_t completionStatus)
 {
 	unsigned int urank;
 
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_RankingController_Release(app->rankingController); /* Cleanup Controller */
+		app->rankingController = NULL;
+		return;
+	}
+
     urank = SC_RankingController_GetRanking(app->rankingController);
-//    LOG("Rank: %u", urank);
-    qDebug() << "Rank: " << urank;
 
     // Process Rank - watch for SC_SCORE_RANK_OUT_OF_RANGE
+
+    app->rank = urank;
 
 	SC_RankingController_Release(app->rankingController); /* Cleanup Controller */
 	app->rankingController = NULL;
@@ -360,6 +374,13 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+		app->scoresController = NULL;
+		return;
+	}
 
 	if(app->leaders != NULL) {
 		for(unsigned int i=0; i< app->leaders_c; i++) {
@@ -378,6 +399,7 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 		oScore = SC_ScoreList_GetAt(slist, i);
 		SC_User_h user = SC_Score_GetUser(oScore);
 		leaderlist[i] = GetLeaderInfo(user, oScore);
+		fprintf(stdout, "[Scoreloop Test] Leader: %u %f %s\n", leaderlist[i]->rank, leaderlist[i]->majorScore, leaderlist[i]->login); fflush(stdout);
 	}
 
 	app->leaders_c = scount;
@@ -391,18 +413,13 @@ void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
 	unsigned int aLevel = rand() % 10; // SBHack
 	unsigned int aMode = rand() % 10; // SBHack
 	scsetscore(app, aScore, &aMinorScore, &aLevel, &aMode); // SBHack
-//    LOG("Score: %d, MinorScore: %d, Level: %u, Mode: %u", aScore, aMinorScore, aLevel, aMode);
-
-//	SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
-//	app->scoresController = NULL;
 }
 
-SC_Bool_t schasnextrange(AppData_t *app) {
+SC_Bool_t scscoreshasnextrange(AppData_t *app) {
 	SC_Bool_t  rc;
 
 	if(app->scoresController != NULL) {
 		rc = SC_ScoresController_HasNextRange(app->scoresController);
-		app->scoresController = NULL;
 	} else {
 		rc = false;
 	}
@@ -410,7 +427,7 @@ SC_Bool_t schasnextrange(AppData_t *app) {
 	return rc;
 }
 
-SC_Error_t scgetnextrange(AppData_t *app) {
+SC_Error_t scscoresgetnextrange(AppData_t *app) {
 	SC_Error_t  rc;
 
 	if(app->scoresController != NULL) {
@@ -422,12 +439,11 @@ SC_Error_t scgetnextrange(AppData_t *app) {
 	return rc;
 }
 
-SC_Bool_t schasprevrange(AppData_t *app) {
+SC_Bool_t scscoreshasprevrange(AppData_t *app) {
 	SC_Bool_t  rc;
 
 	if(app->scoresController != NULL) {
 		rc = SC_ScoresController_HasPreviousRange(app->scoresController);
-		app->scoresController = NULL;
 	} else {
 		rc = false;
 	}
@@ -435,7 +451,7 @@ SC_Bool_t schasprevrange(AppData_t *app) {
 	return rc;
 }
 
-SC_Error_t scgetprevrange(AppData_t *app) {
+SC_Error_t scscoresgetprevrange(AppData_t *app) {
 	SC_Error_t  rc;
 
 	if(app->scoresController != NULL) {
@@ -447,7 +463,7 @@ SC_Error_t scgetprevrange(AppData_t *app) {
 	return rc;
 }
 
-SC_Error_t scfreescores(AppData_t *app) {
+SC_Error_t scscoresfree(AppData_t *app) {
 	SC_Error_t rc;
 
 	if(app->scoresController != NULL) {
@@ -476,7 +492,7 @@ SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearch
 						if((rc = SC_ScoresController_SetMode(app->scoresController, sMode)) == SC_OK) {
 							if((rc = SC_RankingController_LoadRankingForUserInMode(app->rankingController, app->UserInfo->user, sMode)) == SC_OK) {		// Triggers rankingControllerCallback
 								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) == SC_OK) {	// Triggers scoresControllerCallback
-									SC_ScoresController_Retain(app->scoresController);
+//									SC_ScoresController_Retain(app->scoresController);
 								}
 							}
 						}
@@ -500,7 +516,155 @@ SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearch
 	return rc;
 }
 
-// Thread functions
+
+
+
+/*
+ * Game listing functions
+ *
+ *      SC_GAMES_SEARCH_LIST_ALL
+ *      SC_GAMES_SEARCH_LIST_BUDDIES
+ *      SC_GAMES_SEARCH_LIST_FEATURED
+ *      SC_GAMES_SEARCH_LIST_POPULAR
+ *      SC_GAMES_SEARCH_LIST_NEW
+ *
+ */
+
+GameInfo_t *GetGameInfo(SC_Game_h oGame) {
+	GameInfo_t *game = NULL;
+
+	if(NULL != (game = (GameInfo_t *) calloc(1, sizeof(GameInfo_t)))) {
+		game->name = strdup(SC_String_GetData(SC_Game_GetName(oGame)));
+		game->imgurl = strdup(SC_String_GetData(SC_Game_GetImageUrl(oGame)));
+		game->publisher = strdup(SC_String_GetData(SC_Game_GetPublisherName(oGame)));
+		game->version = strdup(SC_String_GetData(SC_Game_GetVersion(oGame)));
+		game->dlurl = strdup(SC_String_GetData(SC_Game_GetDownloadUrl(oGame)));
+		game->desc = strdup(SC_String_GetData(SC_Game_GetDescription(oGame)));
+		game->modes = SC_Game_GetModeCount(oGame);
+	}
+	return game;
+}
+
+SC_Bool_t scgameshasnextrange(AppData_t *app) {
+	SC_Bool_t  rc;
+
+	if(app->gamesController != NULL) {
+		rc = SC_GamesController_HasNextRange(app->gamesController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Error_t scgamesgetnextrange(AppData_t *app) {
+	SC_Error_t  rc;
+
+	if(app->gamesController != NULL) {
+		rc = SC_GamesController_LoadNextRange(app->gamesController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Bool_t scgameshasprevrange(AppData_t *app) {
+	SC_Bool_t  rc;
+
+	if(app->gamesController != NULL) {
+		rc = SC_GamesController_HasPreviousRange(app->gamesController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Error_t scgamesgetprevrange(AppData_t *app) {
+	SC_Error_t  rc;
+
+	if(app->gamesController != NULL) {
+		rc = SC_GamesController_LoadPreviousRange(app->gamesController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+void gamesControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	SC_GameList_h glist;
+	SC_Game_h oGame;
+	unsigned int gcount;
+	GameInfo_t **gamelist;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_GamesController_Release(app->gamesController); /* Cleanup Controller */
+		app->gamesController = NULL;
+		return;
+	}
+
+/*
+	if(app->games != NULL) {
+		for(unsigned int i=0; i< app->games_c; i++) {
+			free((void *) app->games[i]->login);
+		}
+		free(app->games);
+		app->games_c = 0;
+		app->games = NULL;
+	}
+*/
+
+    glist = SC_GamesController_GetGames(app->gamesController);
+    gcount = SC_GameList_GetCount(glist);
+
+    gamelist = (GameInfo_t **) calloc(sizeof(GameInfo_t *), gcount);
+ 	for(unsigned int i=0; i< gcount; i++) {
+		oGame = SC_GameList_GetAt(glist, i);
+		gamelist[i] = GetGameInfo(oGame);
+		fprintf(stdout, "[Scoreloop Test] Game: %s v %s by %s - %s\n", gamelist[i]->name, gamelist[i]->version, gamelist[i]->publisher, gamelist[i]->dlurl); fflush(stdout);
+	}
+
+	app->games_c = gcount;
+	app->games = gamelist;
+
+}
+
+SC_Error_t scgetgames(AppData_t *app, SC_GamesSearchList_t filter, unsigned int rangeLength = 0) {
+	SC_Error_t rc;
+	SC_Range_t range;
+
+	range.offset = 0;
+	range.length = rangeLength;
+
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateGamesController(app->client, &app->gamesController, gamesControllerCallback, app)) == SC_OK) {
+			if((rc = SC_GamesController_LoadGames(app->gamesController, filter, range)) == SC_OK) {	// Triggers gamesControllerCallback
+			}
+		}
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+
+	return rc;
+}
+
+
+
+
+/*
+ * Thread functions
+ *
+ * Requires call to scfreescores to start an new scgetscores
+ *
+ */
+
 // The following functions are for controlling the main Scoreloop Thread
 
 // The actual thread (must appear before the startThread method)
@@ -521,11 +685,10 @@ void* TemplateThread(void* unused) {
 // Starts the thread and returns a message on status
 std::string templateStartThread() {
 	if (!m_thread) {
-		int rc;
-	    rc = pthread_mutex_lock(&mutex);
+	    pthread_mutex_lock(&mutex);
 	    threadHalt = false;
-	    rc = pthread_cond_signal(&cond);
-	    rc = pthread_mutex_unlock(&mutex);
+	    pthread_cond_signal(&cond);
+	    pthread_mutex_unlock(&mutex);
 
 		pthread_attr_t thread_attr;
 		pthread_attr_init(&thread_attr);
@@ -541,16 +704,15 @@ std::string templateStartThread() {
 
 // Sets the stop value
 std::string templateStopThread() {
-	int rc;
 	// Request thread to set prevent sleep to false and terminate
-	rc = pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex);
 	threadHalt = true;
-	rc = pthread_cond_signal(&cond);
-	rc = pthread_mutex_unlock(&mutex);
+	pthread_cond_signal(&cond);
+	pthread_mutex_unlock(&mutex);
 
     // Wait for the thread to terminate.
     void *exit_status;
-    rc = pthread_join(m_thread, &exit_status) ;
+    pthread_join(m_thread, &exit_status) ;
 
 	// Clean conditional variable and mutex
 	pthread_cond_destroy(&cond);
@@ -587,11 +749,10 @@ void templateThreadCallback() {
 
 // getter for the stop value
 bool isThreadHalt() {
-	int rc;
 	bool isThreadHalt;
-	rc = pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex);
 	isThreadHalt = threadHalt;
-	rc = pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&mutex);
 	return isThreadHalt;
 }
 

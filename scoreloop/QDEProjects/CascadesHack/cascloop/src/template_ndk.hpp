@@ -31,6 +31,16 @@ typedef struct LeaderInfo_tag {
 	unsigned int rank;
 } LeaderInfo_t;
 
+typedef struct GameInfo_tag {
+	const char* name;
+	const char* imgurl;
+	const char* publisher;
+	const char* version;
+	const char* dlurl;
+	const char* desc;
+	unsigned int modes;
+} GameInfo_t;
+
 typedef struct UserInfo_tag {
 	SC_User_h user;
 	const char* login;
@@ -62,15 +72,19 @@ typedef struct AppData_tag {
 	SC_ScoresController_h scoresController;
 	SC_UserController_h userController;
 	SC_UsersController_h usersController;
+	unsigned int rank;
 	UserInfo_t *UserInfo;
 	unsigned int buddies_c;
 	UserInfo_t **buddies;
 	unsigned int leaders_c;
 	LeaderInfo_t **leaders;
+	unsigned int games_c;
+	GameInfo_t **games;
 } AppData_t;
 
 void init();
 void kill();
+
 SC_Error_t userget();
 
 // The extension methods are defined here
@@ -80,11 +94,17 @@ SC_Error_t scgetbuddies(AppData_t *app);
 
 SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
 SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength);
-SC_Error_t scfreescores(AppData_t *app);
-SC_Bool_t schasprevrange(AppData_t *app);
-SC_Bool_t schasnextrange(AppData_t *app);
-SC_Error_t scgetnextrange(AppData_t *app);
-SC_Error_t scgetprevrange(AppData_t *app);
+SC_Error_t scscoresfree(AppData_t *app);
+SC_Bool_t scscoreshasprevrange(AppData_t *app);
+SC_Bool_t scscoreshasnextrange(AppData_t *app);
+SC_Error_t scscoresgetnextrange(AppData_t *app);
+SC_Error_t scscoresgetprevrange(AppData_t *app);
+
+SC_Error_t scgetgames(AppData_t *app, SC_GamesSearchList_t filter, unsigned int rangeLength);
+SC_Bool_t scgameshasprevrange(AppData_t *app);
+SC_Bool_t scgameshasnextrange(AppData_t *app);
+SC_Error_t scgamesgetnextrange(AppData_t *app);
+SC_Error_t scgamesgetprevrange(AppData_t *app);
 
 std::string templateStartThread();
 std::string templateStopThread();
