@@ -207,6 +207,8 @@ SC_Error_t scgetbuddies(AppData_t *app) {
 
 void userControllerCallback(void *userData, SC_Error_t completionStatus)
 {
+	static int refcount = 0;
+
     /* Get the application from userData argument */
     AppData_t *app = (AppData_t *) userData;
 
@@ -225,7 +227,14 @@ void userControllerCallback(void *userData, SC_Error_t completionStatus)
 
 	app->UserInfo = GetUserInfo(user, false);
 
-	scgetbuddies(app);
+	SC_Money_h money_h = SC_Session_GetBalance(session);
+	unsigned long cash = SC_Money_GetAmount(money_h);
+
+	app->cash = cash;
+
+	scgetbuddies(app);  // SBHack
+
+	refcount++;
 
 	/* We don't need the UserController anymore, so release it */
 	SC_UserController_Release(app->userController);
@@ -593,6 +602,26 @@ SC_Error_t scgamesgetprevrange(AppData_t *app) {
 	return rc;
 }
 
+void scgamesfree(AppData_t *app) {
+	if(app->games != NULL) {
+		for(unsigned int i=0; i< app->games_c; i++) {
+			free((void *) app->games[i]->name);
+			free((void *) app->games[i]->imgurl);
+			free((void *) app->games[i]->publisher);
+			free((void *) app->games[i]->version);
+			free((void *) app->games[i]->dlurl);
+			free((void *) app->games[i]->desc);
+			free((void *) app->games[i]->modes);
+		}
+
+		free(app->games);
+		app->games_c = 0;
+		app->games = NULL;
+	}
+
+
+}
+
 void gamesControllerCallback(void *userData, SC_Error_t completionStatus)
 {
 	SC_GameList_h glist;
@@ -610,16 +639,9 @@ void gamesControllerCallback(void *userData, SC_Error_t completionStatus)
 		return;
 	}
 
-/*
 	if(app->games != NULL) {
-		for(unsigned int i=0; i< app->games_c; i++) {
-			free((void *) app->games[i]->login);
-		}
-		free(app->games);
-		app->games_c = 0;
-		app->games = NULL;
+		scgamesfree(app);
 	}
-*/
 
     glist = SC_GamesController_GetGames(app->gamesController);
     gcount = SC_GameList_GetCount(glist);
@@ -647,6 +669,58 @@ SC_Error_t scgetgames(AppData_t *app, SC_GamesSearchList_t filter, unsigned int 
 		if((rc = SC_Client_CreateGamesController(app->client, &app->gamesController, gamesControllerCallback, app)) == SC_OK) {
 			if((rc = SC_GamesController_LoadGames(app->gamesController, filter, range)) == SC_OK) {	// Triggers gamesControllerCallback
 			}
+		}
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+
+	return rc;
+}
+
+
+
+
+/*
+ * Money functions
+ *
+ *
+ */
+
+SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount) {
+	SC_Error_t rc;
+
+	app->money = NULL;
+
+	if(app->client != NULL) {
+		SC_Session_h session = SC_Client_GetSession(app->client);
+		SC_Money_h money_h = SC_Session_GetBalance(session);
+		rc = SC_Client_CreateMoney(app->client, &app->money, amount);
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+
+	return rc;
+}
+
+
+
+
+/*
+ * Challenge functions
+ *
+ *
+ */
+
+SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against = NULL) {
+	SC_Error_t rc;
+
+	if(app->client != NULL) {
+		if(app->money != NULL) {
+			if(sccreatemoney(app, amount)) {
+				rc = SC_Client_CreateChallenge(app->client, app->money, against, mode, level, &app->challenge);
+			}
+		} else {
+			rc = SC_INVALID_STATE;
 		}
 	} else {
 		rc = SC_INVALID_STATE;
@@ -722,6 +796,10 @@ std::string templateStopThread() {
 	threadHalt = true;
 
 	// Tidy Up
+	if(app.games != NULL) {
+		scgamesfree(&app);
+	}
+
 	if(app.leaders) {
 		for(unsigned int i=0; i< app.leaders_c; i++) {
 			free((void *) app.leaders[i]->login);

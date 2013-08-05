@@ -58,6 +58,9 @@ typedef struct UserInfo_tag {
 typedef struct AppData_tag {
 	SC_Client_h client;
 	SC_Score_h score;
+	SC_Challenge_h challenge;
+	SC_Money_h money;
+
 	SC_AchievementsController_h achievementsController;
 	SC_ActivitiesController_h activitiesController;
 	SC_ChallengeController_h challengeController;
@@ -72,6 +75,7 @@ typedef struct AppData_tag {
 	SC_ScoresController_h scoresController;
 	SC_UserController_h userController;
 	SC_UsersController_h usersController;
+
 	unsigned int rank;
 	UserInfo_t *UserInfo;
 	unsigned int buddies_c;
@@ -80,6 +84,7 @@ typedef struct AppData_tag {
 	LeaderInfo_t **leaders;
 	unsigned int games_c;
 	GameInfo_t **games;
+	unsigned long cash;
 } AppData_t;
 
 void init();
@@ -105,6 +110,12 @@ SC_Bool_t scgameshasprevrange(AppData_t *app);
 SC_Bool_t scgameshasnextrange(AppData_t *app);
 SC_Error_t scgamesgetnextrange(AppData_t *app);
 SC_Error_t scgamesgetprevrange(AppData_t *app);
+void scgamesfree(AppData_t *app);
+
+SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount);
+
+SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against);
+
 
 std::string templateStartThread();
 std::string templateStopThread();
