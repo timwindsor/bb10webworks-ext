@@ -260,6 +260,11 @@ SC_Error_t scgetuser(AppData_t *app) {
 	return rc;
 }
 
+/*
+ * Scores functions
+ *
+ */
+
 void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
 {
     /* Get the application from userData argument */
@@ -274,6 +279,10 @@ void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
 
 	SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
 	app->scoreController = NULL;
+
+	unsigned int aLevel = rand() % 10; // SBHack
+	unsigned int aMode = rand() % 10; // SBHack
+	sccreatechallenge(app, 25, aMode, aLevel, NULL); // SBHack
 }
 
 SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL, unsigned int *aLevel = NULL, unsigned int *aMode = NULL) {
@@ -692,8 +701,8 @@ SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount) {
 	app->money = NULL;
 
 	if(app->client != NULL) {
-		SC_Session_h session = SC_Client_GetSession(app->client);
-		SC_Money_h money_h = SC_Session_GetBalance(session);
+//		SC_Session_h session = SC_Client_GetSession(app->client);
+//		SC_Money_h money_h = SC_Session_GetBalance(session);
 		rc = SC_Client_CreateMoney(app->client, &app->money, amount);
 	} else {
 		rc = SC_INVALID_STATE;
@@ -711,16 +720,33 @@ SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount) {
  *
  */
 
+void challengeControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ChallengeController_Release(app->challengeController); /* Cleanup Controller */
+		app->challengeController = NULL;
+		return;
+	}
+
+
+}
+
 SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against = NULL) {
 	SC_Error_t rc;
 
 	if(app->client != NULL) {
-		if(app->money != NULL) {
-			if(sccreatemoney(app, amount)) {
-				rc = SC_Client_CreateChallenge(app->client, app->money, against, mode, level, &app->challenge);
+		if(sccreatemoney(app, amount) == SC_OK) {
+			if((rc = SC_Client_CreateChallengeController(app->client, &app->challengeController, challengeControllerCallback, app)) == SC_OK) {
+				if((rc = SC_Client_CreateChallenge(app->client, app->money, against, mode, level, &app->challenge)) == SC_OK) {
+					if(SC_ChallengeController_SetChallenge(app->challengeController, app->challenge) == SC_OK) {
+						scgetchallengelist(app); // SBHack
+					}
+				}
 			}
-		} else {
-			rc = SC_INVALID_STATE;
 		}
 	} else {
 		rc = SC_INVALID_STATE;
@@ -729,6 +755,54 @@ SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int m
 	return rc;
 }
 
+void challengesControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	SC_ChallengeList_h clist;
+	SC_Challenge_h oChallenge;
+	unsigned int ccount;
+	ChallengeInfo_t **challengelist;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ChallengesController_Release(app->challengesController); /* Cleanup Controller */
+		app->challengesController = NULL;
+		return;
+	}
+
+/*
+	if(app->challenges != NULL) {
+		scchallengesfree(app);
+	}
+ */
+    clist = SC_ChallengesController_GetChallenges(app->challengesController);
+    ccount = SC_ChallengeList_GetCount(clist);
+
+    challengelist = (ChallengeInfo_t **) calloc(sizeof(ChallengeInfo_t *), ccount);
+ 	for(unsigned int i=0; i< ccount; i++) {
+		oChallenge = SC_ChallengeList_GetAt(clist, i);
+//		challengelist[i] = GetChallengesInfo(oChallenge);
+//		fprintf(stdout, "[Scoreloop Test] Game: %s v %s by %s - %s\n", gamelist[i]->name, gamelist[i]->version, gamelist[i]->publisher, gamelist[i]->dlurl); fflush(stdout);
+	}
+
+	app->challenges_c = ccount;
+	app->challenges = challengelist;
+
+}
+
+SC_Error_t scgetchallengelist(AppData_t *app) {
+	SC_Error_t rc;
+
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateChallengesController(app->client, &app->challengesController, challengesControllerCallback, app)) == SC_OK) {
+			rc = SC_ChallengesController_LoadOpenChallenges(app->challengesController);
+		}
+	}
+
+	return rc;
+}
 
 
 

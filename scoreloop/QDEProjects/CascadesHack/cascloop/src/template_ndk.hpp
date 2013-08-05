@@ -55,6 +55,19 @@ typedef struct UserInfo_tag {
 	const char* email;			/* Pointless? */
 } UserInfo_t;
 
+typedef struct ChallengeInfo_tag {
+	SC_User_h contender;
+	unsigned int contenderscore;
+	SC_User_h challenger;
+	unsigned int challengerscore;
+	unsigned int stake;
+	const char* created;
+	const char* completed;
+	unsigned int mode;
+	unsigned int level;
+	SC_Money_h prize;
+} ChallengeInfo_t;
+
 typedef struct AppData_tag {
 	SC_Client_h client;
 	SC_Score_h score;
@@ -77,6 +90,8 @@ typedef struct AppData_tag {
 	SC_UsersController_h usersController;
 
 	unsigned int rank;
+	unsigned long cash;
+
 	UserInfo_t *UserInfo;
 	unsigned int buddies_c;
 	UserInfo_t **buddies;
@@ -84,7 +99,8 @@ typedef struct AppData_tag {
 	LeaderInfo_t **leaders;
 	unsigned int games_c;
 	GameInfo_t **games;
-	unsigned long cash;
+	unsigned int challenges_c;
+	ChallengeInfo_t **challenges;
 } AppData_t;
 
 void init();
@@ -115,6 +131,8 @@ void scgamesfree(AppData_t *app);
 SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount);
 
 SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against);
+SC_Error_t scgetchallengelist(AppData_t *app);
+void challengesControllerCallback(void *userData, SC_Error_t completionStatus);
 
 
 std::string templateStartThread();
