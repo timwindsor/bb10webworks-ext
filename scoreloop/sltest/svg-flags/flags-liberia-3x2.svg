@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="600"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Liberia.svg">
+  <metadata
+     id="metadata16">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs14">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 55 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="209 : 55 : 1"
+       inkscape:persp3d-origin="104.5 : 36.666667 : 1"
+       id="perspective18" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1090"
+     inkscape:window-height="836"
+     id="namedview12"
+     showgrid="false"
+     inkscape:zoom="0.28522727"
+     inkscape:cx="104.5"
+     inkscape:cy="55"
+     inkscape:window-x="74"
+     inkscape:window-y="47"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     d="m 0,0 900,0 0,54.545455 0,54.545455 0,54.54545 0,54.54546 0,54.54545 0,54.54546 0,54.54545 0,54.54546 0,54.54545 0,54.54546 L 900,600 0,600 0,545.45455 0,490.90909 0,436.36364 0,381.81818 0,327.27273 0,0 z"
+     id="path4"
+     style="fill:#bf0a30" />
+  <path
+     d="m 0,54.545455 900,0 0,54.545455 -900,0 0,54.54545 900,0 0,54.54546 -900,-0.1998 0,54.74525 900,0 0,54.54546 -900,0 0,-54.54546 0,-218.181815 z m 0,327.272725 900,0 0,54.54546 -900,0 0,-54.54546 z m 0,109.09091 900,0 0,54.54546 -900,0 0,-54.54546 z"
+     id="path6"
+     style="fill:#ffffff" />
+  <rect
+     width="215.311"
+     height="272.72726"
+     id="rect8"
+     x="0"
+     y="0"
+     style="fill:#002868" />
+  <path
+     d="m 69.682349,202.56589 37.986071,-34.89404 38.00453,34.99615 -14.54493,-56.66705 37.9828,-34.92131 -46.94629,0 -14.49611,-56.548095 -14.516232,56.514605 -46.946855,0.0327 37.981287,34.92398 -14.504271,56.565 z"
+     id="path10"
+     style="fill:#ffffff" />
+</svg>

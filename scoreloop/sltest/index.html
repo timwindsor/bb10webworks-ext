@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+ * Copyright 2013 Research In Motion Limited.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Scoreloop Extension Test</title>
+<style>
+body {
+  color: #900;
+  font-weight: bold;
+  font-size: 38px;
+  text-align: center;
+}
+
+input {
+  color: #900;
+  font-weight: bold;
+  font-size: 38px;
+}
+
+.button {
+	color: #000000;
+	width: 350px; 
+	height: 105px; 
+	text-transform:capitalize;
+}
+
+.mbutton {
+	font-size: 48px;
+	color: #000000;
+	width: 700px; 
+	height: 105px; 
+	margin-bottom: 44px;
+}
+
+#content, #infodiv {
+	display: none;
+	height: 720px;
+	width: 720px;
+	}
+	
+#score, #flagdiv {
+	height: 500px;
+	width: 720px;
+	}
+	
+#score {
+	font-size: 72px;
+	}
+	
+</style>
+
+<script type="text/javascript" src="local:///chrome/webworks.js"></script>
+<script type="text/javascript" src="flaglist.js"></script>
+<script type="text/javascript">
+var dpr = false; // Device Pixel Resolution
+var rippleLoaded = false; // Is Ripple Loaded?
+var opts = 3; // Number of wrong answers to give user
+var qlist = []; // List or candidate answers, 1 right, [opts] wrong
+var answer = 0; // The correct answer
+var ansidx = 0; // Index of answer in qlist
+var modetext = [ 'Couch Potato', 'RV Owner', 'International Tourist', 'Jet Setter', 'World Explorer' ]; // Difficulty labels
+var modes = [ 10, 25, 50, 125, 225 ]; // Flags are sorted by population. The more flags in the question pool the more obscure the country
+
+var score = 0; // Scores are based on a exponential function based on population - round(pow((chinapop / pop), (1 / 1.3549135))) making Pitcairn Islands (pop : 66) worth 250,000
+var difficulty = 0; // To choose which mode set to use
+var qright = 0; // # of questions answered correctly
+var qasked = 0; // # of questions attempter
+
+if(typeof window.devicePixelRatio != 'undefined') // Does device support devicePixelRatio?
+	{
+	dpr = window.devicePixelRatio;
+	}
+
+var meta = document.createElement("meta");
+meta.setAttribute('name','viewport');
+if(dpr) // Set up the right meta
+	{
+	// Set mobile meta if we have DPR
+	meta.setAttribute('content','initial-scale='+ (1/window.devicePixelRatio) + ',user-scalable=no');
+	document.getElementsByTagName('head')[0].appendChild(meta); // Inject meta
+	}
+
+document.addEventListener('webworksready', function(e) {
+	// This is a hack for Ripple calling webworksready multiple times
+	if (rippleLoaded) return;
+	rippleLoaded = true;
+	var res = false;
+
+	if (community.scoreloop) {
+		
+		res = JSON.parse(community.scoreloop.start( { 
+			slGameId : "cdc1ee7e-403b-4d68-ac1a-cb1ebf36f782",
+			slGameSecret : "dNVkPkrrp68BOeOu4NqUx1ZeF+iWY21BEFF4hT4A7spAuIYUhiE49w==",
+			slGameVersion : "1.0",
+			slCurrency : "ACF",
+			slLanguageCode : "en"
+		}));
+		if(res.status) {
+			community.scoreloop.getuser(cbuserinfo);
+			}
+		}
+	});
+
+function cbuserinfo(data) {
+	if(data) {
+		}
+	}
+	
+function makeFlagQuestion() {
+	var fcount = modes[difficulty];
+	var question = 0;
+	
+	// Find a flag and the answer - assign it to qlist[0]
+	answer = Math.floor((Math.random()*fcount));
+	qlist[0] = answer;
+	
+	// Find three wrong answers - assign them to qlist[1...opts]
+	for(var i = 1; i <= opts; i++) {
+		do {
+			question = Math.floor((Math.random()*fcount));
+			} while (question == answer); 
+		qlist[i] = question;
+		}
+
+	// Mix the question array up a bit
+	for(var i = 0; i < 8; i++) {
+		qlist.sort(function(a, b) {return Math.random() - Math.random()});
+		}
+	// Locate the index of answer in the question array
+	for(var i = 0; i < qlist.length; i++) {
+		if(qlist[i] == answer) {
+			ansidx = i;
+			break;
+			}
+		}
+	}
+	
+function showFlagQuestion() {
+	var fimg = document.getElementById('flag');
+	var btns = [];
+	
+	fwidth = 720;
+	fhratio = (2 / 3);
+	
+	// Show Flag + resize it
+	fimg.src = 'svg-flags/' + flags[qlist[ansidx]].image;
+	fimg.onload = function () { 
+		fimg.width = fwidth; 
+		fimg.height = fwidth * fhratio; 
+		};
+
+	// Show answer candidates
+	for(var i = 0; i < qlist.length; i++) {
+		var fbut = document.getElementById('a' + i);
+		fbut.value = flags[qlist[i]].name;
+		}			
+
+	qasked++;
+	
+	document.getElementById('content').style.display = 'block';
+	document.getElementById('infodiv').style.display = 'none';
+	}
+	
+function answerFlagQuestion(ans) {
+	if(qlist[ans] == answer) {
+		qright++;
+		score += flags[answer].score;
+		document.getElementById('score').innerHTML = 'Correct!<br /> <br />You score ' + flags[answer].score + ' points <br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)';
+		} else {
+		document.getElementById('score').innerHTML = 'Wrong!<br />It was ...<br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score;
+		}
+		
+	document.getElementById('content').style.display = 'none';
+	document.getElementById('infodiv').style.display = 'block';
+	}
+	
+function newQuestion()
+	{
+	makeFlagQuestion();
+	showFlagQuestion();
+	}
+	
+function setMode(gmode) {
+	score = 0;
+	qright = 0;
+	qasked = 0;
+
+	difficulty = Number(gmode);
+	makeFlagQuestion();
+	document.getElementById('modesel').style.display = 'none';
+	showFlagQuestion();
+	}
+	
+function start() {
+	// Label the mode buttons
+	for(var i = 0; i < modes.length; i++) {
+		var fbut = document.getElementById('m' + i);
+		fbut.value = modetext[i];
+		}			
+	}
+	
+</script>  
+
+</head>
+<body style="margin: auto; height: 100%;" onload="start();">
+
+<div id="modesel">
+	<input id="m0" type="button" class="mbutton" value="" onclick="setMode(0);"/><br />
+	<input id="m1" type="button" class="mbutton" value="" onclick="setMode(1);"/><br />
+	<input id="m2" type="button" class="mbutton" value="" onclick="setMode(2);"/><br />
+	<input id="m3" type="button" class="mbutton" value="" onclick="setMode(3);"/><br />
+	<input id="m4" type="button" class="mbutton" value="" onclick="setMode(4);"/><br />
+</div>
+
+<div id="content">
+	<div id="flagdiv">
+		<img id="flag" src="" style="border: 2px solid black" />
+	</div>
+
+	<input id="a0" type="button" class="button" value="" onclick="answerFlagQuestion(0);"/>
+	<input id="a1" type="button" class="button" value="" onclick="answerFlagQuestion(1);"/><br />
+	<input id="a2" type="button" class="button" value="" onclick="answerFlagQuestion(2);"/>
+	<input id="a3" type="button" class="button" value="" onclick="answerFlagQuestion(3);"/>
+</div>
+
+<div id="infodiv">
+	<div id="score">
+	<!-- Win / Lose text -->
+	&nbsp;
+	</div>
+	
+	<div id="newq">
+	<input id="next" type="button" class="button" value="Next Flag" onclick="newQuestion();"/>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="900"
+   height="600"
+   id="svg3153"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Palestine.svg">
+  <metadata
+     id="metadata3167">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3165">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 300 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1200 : 300 : 1"
+       inkscape:persp3d-origin="600 : 200 : 1"
+       id="perspective3169" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="670"
+     inkscape:window-height="843"
+     id="namedview3163"
+     showgrid="false"
+     inkscape:zoom="0.41833333"
+     inkscape:cx="600"
+     inkscape:cy="300"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3153" />
+  <rect
+     width="900"
+     height="200"
+     id="rect3155"
+     x="0"
+     y="0"
+     style="fill:#000000" />
+  <rect
+     width="900"
+     height="200"
+     y="200"
+     id="rect3157"
+     x="0"
+     style="fill:#ffffff" />
+  <rect
+     width="900"
+     height="200"
+     y="400"
+     id="rect3159"
+     x="0"
+     style="fill:#007a3d" />
+  <polygon
+     points="0,600 300,300 0,0 "
+     id="polygon3161"
+     style="fill:#ce1126"
+     transform="scale(0.75,1)" />
+</svg>

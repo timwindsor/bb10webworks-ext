@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="600"
+   id="svg2844"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_the_Democratic_Republic_of_the_Congo.svg">
+  <metadata
+     id="metadata2858">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2856">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 300 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="800 : 300 : 1"
+       inkscape:persp3d-origin="400 : 200 : 1"
+       id="perspective2860" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1043"
+     inkscape:window-height="753"
+     id="namedview2854"
+     showgrid="false"
+     inkscape:zoom="0.41833333"
+     inkscape:cx="400"
+     inkscape:cy="300"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2844" />
+  <rect
+     width="899.99994"
+     height="600"
+     id="rect2846"
+     x="0"
+     y="0"
+     style="fill:#007fff" />
+  <path
+     d="M 843.75,0 0,449.99998 l 0,149.99999 0.03750001,0 56.21250299,0 L 900,149.99999 900,0 843.75,0 z"
+     id="path2848"
+     style="fill:#f7d618" />
+  <path
+     d="M 900,0 0,479.99998 l 0,119.99939 0.03779498,0 0.03779498,6e-4 L 900,119.99999 900,0 z"
+     id="path2850"
+     style="fill:#ce1021" />
+  <path
+     d="m 161.99998,41.199996 28.6848,78.376304 92.81519,0.003 -75.087,48.44235 28.67812,78.37823 -75.09111,-48.4373 -75.091125,48.43746 28.678135,-78.37822 -75.086992,-48.44235 92.815172,-0.003 28.68481,-78.376294 z"
+     id="path2852"
+     style="fill:#f7d618" />
+</svg>

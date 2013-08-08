@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg:svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   x="0.0000000"
+   y="0.0000000"
+   width="900"
+   height="600"
+   id="svg1"
+   sodipodi:version="0.32"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Saint_Lucia.svg">
+  <sodipodi:namedview
+     inkscape:window-height="712"
+     inkscape:window-width="1024"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="1.1083333"
+     inkscape:cx="299.99992"
+     inkscape:cy="150.00028"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:current-layer="svg1"
+     showgrid="false"
+     inkscape:window-maximized="0" />
+  <svg:defs
+     id="defs3">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 150 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="600 : 150 : 1"
+       inkscape:persp3d-origin="300 : 100 : 1"
+       id="perspective3346" />
+  </svg:defs>
+  <svg:metadata
+     id="metadata4">
+    <RDF
+       id="RDF5">
+      <Work
+         about=""
+         id="Work6">
+        <format
+           id="format7">image/svg+xml</format>
+        <type
+           id="type9"
+           resource="http://purl.org/dc/dcmitype/StillImage" />
+      </Work>
+    </RDF>
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </svg:metadata>
+  <svg:rect
+     width="900"
+     height="600"
+     x="-7.5000004e-05"
+     y="-0.0002746582"
+     style="fill:#0b51a1;fill-opacity:1;fill-rule:evenodd;stroke:none"
+     id="rect908" />
+  <svg:path
+     d="m 299.99992,547.20803 300.00001,0 -150,-494.416671 -150.00001,494.416671 z"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+     id="path1530" />
+  <svg:path
+     d="m 320.21868,547.20803 259.5625,0 -129.78125,-427.75 -129.78125,427.75 z"
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+     id="path2152" />
+  <svg:path
+     d="m 299.99993,548.20803 300,0 -150,-247.16667 -150,247.16667 z"
+     style="fill:#fcd116;fill-opacity:1;fill-rule:evenodd;stroke:none"
+     id="path2774" />
+</svg:svg>

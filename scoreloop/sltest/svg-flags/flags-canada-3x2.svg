@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="600"
+   id="svg3677"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Canada.svg">
+  <metadata
+     id="metadata3689">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3687">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 250 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1000 : 250 : 1"
+       inkscape:persp3d-origin="500 : 166.66667 : 1"
+       id="perspective3691" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="936"
+     inkscape:window-height="894"
+     id="namedview3685"
+     showgrid="false"
+     inkscape:zoom="0.502"
+     inkscape:cx="500"
+     inkscape:cy="250"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3677" />
+  <rect
+     width="900"
+     height="600"
+     id="rect3679"
+     x="0"
+     y="0"
+     style="fill:#ff0000" />
+  <rect
+     width="450"
+     height="600"
+     x="225"
+     id="rect3681"
+     y="0"
+     style="fill:#ffffff" />
+  <path
+     d="m 449.99305,56.25 -30.70181,76.35035 c -3.48377,8.29801 -9.72564,7.52835 -15.96752,2.89365 l -22.22729,-15.34629 16.56635,117.27253 c 3.48377,21.42503 -7.69373,21.42503 -13.20989,12.16122 l -38.79094,-57.90119 -6.29764,29.4036 c -0.72623,3.86133 -3.91933,7.91693 -8.70974,6.95113 l -49.05159,-13.75094 12.88372,62.4537 c 2.75805,13.89665 4.90941,19.65034 -2.78438,23.31551 l -17.48357,10.9563 84.43914,91.45005 c 3.34215,3.45782 5.03074,9.6804 3.84091,15.31452 l -7.39022,32.33649 c 29.07365,-4.46845 55.13947,-8.46801 84.21245,-12.93085 2.5833,-0.043 6.86689,2.88432 6.84926,6.85212 l -3.85221,118.4681 14.13575,0 -2.22513,-118.21404 c -0.0177,-3.9678 3.86695,-7.14916 6.45025,-7.10618 29.07298,4.46284 55.13884,8.4624 84.21248,12.93085 l -7.39021,-32.33649 c -1.18982,-5.63412 0.49876,-11.8567 3.8409,-15.31452 l 84.43913,-91.45005 -17.48355,-10.9563 c -7.69381,-3.66517 -5.54245,-9.41886 -2.7844,-23.31551 l 12.88375,-62.4537 -49.05162,13.75094 c -4.79041,0.9658 -7.98351,-3.0898 -8.70975,-6.95113 l -6.29764,-29.4036 -38.79092,57.90119 c -5.51617,9.26381 -16.69369,9.26381 -13.20991,-12.16122 L 518.90352,120.14771 496.67628,135.494 c -6.24203,4.6347 -12.48375,5.40436 -15.96753,-2.89365"
+     id="path3683"
+     style="fill:#ff0000" />
+</svg>

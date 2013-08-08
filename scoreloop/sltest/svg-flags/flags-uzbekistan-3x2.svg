@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="900"
+   height="600"
+   viewBox="0 0 450 300"
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Uzbekistan.svg">
+  <metadata
+     id="metadata2869">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1066"
+     inkscape:window-height="747"
+     id="namedview2867"
+     showgrid="false"
+     inkscape:zoom="1.004"
+     inkscape:cx="250"
+     inkscape:cy="125"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs9">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 125 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="500 : 125 : 1"
+       inkscape:persp3d-origin="250 : 83.333333 : 1"
+       id="perspective2871" />
+    <g
+       id="star"
+       style="fill:#ffffff">
+      <g
+         id="cone">
+        <polygon
+           points="0,1 0.5,1 0,0 "
+           transform="matrix(0.95105652,0.30901699,-0.30901699,0.95105652,0,-1)"
+           id="triangle" />
+        <use
+           transform="scale(-1,1)"
+           id="use14"
+           x="0"
+           y="0"
+           width="500"
+           height="250"
+           xlink:href="#triangle" />
+      </g>
+      <use
+         transform="matrix(0.30901699,0.95105652,-0.95105652,0.30901699,0,0)"
+         id="use16"
+         x="0"
+         y="0"
+         width="500"
+         height="250"
+         xlink:href="#cone" />
+      <use
+         transform="matrix(0.30901699,-0.95105652,0.95105652,0.30901699,0,0)"
+         id="use18"
+         x="0"
+         y="0"
+         width="500"
+         height="250"
+         xlink:href="#cone" />
+      <use
+         transform="matrix(-0.80901699,0.58778525,-0.58778525,-0.80901699,0,0)"
+         id="use20"
+         x="0"
+         y="0"
+         width="500"
+         height="250"
+         xlink:href="#cone" />
+      <use
+         transform="matrix(-0.80901699,-0.58778525,0.58778525,-0.80901699,0,0)"
+         id="use22"
+         x="0"
+         y="0"
+         width="500"
+         height="250"
+         xlink:href="#cone" />
+    </g>
+  </defs>
+  <rect
+     width="450"
+     height="96"
+     x="0"
+     y="0"
+     id="blue_stripe"
+     style="fill:#0099b5" />
+  <rect
+     width="450"
+     height="108"
+     x="0"
+     y="96"
+     id="lower_red_stripe"
+     style="fill:#ce1126" />
+  <rect
+     width="450"
+     height="96"
+     x="0"
+     y="102"
+     id="white_stripe"
+     style="fill:#ffffff" />
+  <rect
+     width="450"
+     height="96"
+     x="0"
+     y="204"
+     id="green_stripe"
+     style="fill:#1eb53a" />
+  <circle
+     cx="70"
+     cy="40"
+     r="30"
+     transform="scale(0.9,1.2)"
+     id="circle24"
+     style="fill:#ffffff"
+     sodipodi:cx="70"
+     sodipodi:cy="40"
+     sodipodi:rx="30"
+     sodipodi:ry="30" />
+  <circle
+     cx="83.5"
+     cy="40"
+     r="25"
+     transform="matrix(1.08,0,0,1.44,-18.18,-9.6)"
+     id="circle26"
+     style="fill:#0099b5"
+     sodipodi:cx="83.5"
+     sodipodi:cy="40"
+     sodipodi:rx="25"
+     sodipodi:ry="25" />
+  <use
+     transform="matrix(5.6778961,0,0,7.9601242,79.2,77.560128)"
+     id="use42"
+     x="0"
+     y="0"
+     width="500"
+     height="250"
+     xlink:href="#star" />
+  <use
+     transform="translate(21.6,0)"
+     id="use2922"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(43.2,0)"
+     id="use2924"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(64.8,0)"
+     id="use2926"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(86.4,0)"
+     id="use2928"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(21.6,-28.8)"
+     id="use2930"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(43.2,-28.8)"
+     id="use2932"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(64.8,-28.8)"
+     id="use2934"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(86.4,-28.8)"
+     id="use2936"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(43.2,-57.6)"
+     id="use2938"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(64.8,-57.6)"
+     id="use2940"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+  <use
+     transform="translate(86.4,-57.6)"
+     id="use2942"
+     x="0"
+     y="0"
+     width="250"
+     height="125"
+     xlink:href="#use42" />
+</svg>

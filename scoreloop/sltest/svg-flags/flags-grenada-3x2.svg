@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="900"
+   height="600"
+   id="svg1022"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Grenada.svg">
+  <metadata
+     id="metadata20">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="945"
+     inkscape:window-height="860"
+     id="namedview18"
+     showgrid="false"
+     inkscape:zoom="0.83666667"
+     inkscape:cx="250"
+     inkscape:cy="150"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1022" />
+  <defs
+     id="defs1024">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 150 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="500 : 150 : 1"
+       inkscape:persp3d-origin="250 : 100 : 1"
+       id="perspective22" />
+  </defs>
+  <rect
+     width="900"
+     height="600"
+     x="0"
+     y="0"
+     id="rect1031"
+     style="fill:#ce1126" />
+  <rect
+     width="748.79999"
+     height="432"
+     x="75.599998"
+     y="84"
+     id="rect2276"
+     style="fill:#007a5e" />
+  <use
+     transform="matrix(1,0,0,-1,0,600)"
+     id="use2407"
+     x="0"
+     y="0"
+     width="500"
+     height="300"
+     xlink:href="#path3519" />
+  <path
+     d="M 75.6,516 450,300 l 374.4,216 -748.8,0 0,0 z"
+     id="path3519"
+     style="fill:#fcd116" />
+  <path
+     d="m 514.8,300 a 64.8,72 0 0 1 -129.6,0 64.8,72 0 1 1 129.6,0 z"
+     id="path2394"
+     style="fill:#ce1126" />
+  <path
+     d="m 393.507,279.6083 43.16065,0 L 450,234.00004 l 13.33235,45.60826 43.16065,0 -34.91267,28.18348 13.33234,45.60826 L 450,325.21656 415.08733,353.40004 428.41967,307.79178 393.507,279.6083 z"
+     id="path2203"
+     style="fill:#fcd116" />
+  <use
+     transform="translate(-180,0)"
+     id="use2413"
+     x="0"
+     y="0"
+     width="500"
+     height="300"
+     xlink:href="#use2411" />
+  <use
+     transform="translate(-180,0)"
+     id="use2411"
+     x="0"
+     y="0"
+     width="500"
+     height="300"
+     xlink:href="#use2409" />
+  <use
+     transform="translate(360,-516)"
+     id="use2409"
+     x="0"
+     y="0"
+     width="500"
+     height="300"
+     xlink:href="#path6678" />
+  <path
+     d="m 236.619,545.95248 25.50308,0 7.87792,-26.95242 7.87792,26.95242 25.50308,0 -20.62946,16.65516 7.87792,26.95242 L 270,572.9049 249.37054,589.56006 257.24846,562.60764 236.619,545.95248 z"
+     id="path6678"
+     style="fill:#fcd116" />
+  <use
+     transform="translate(-180,0)"
+     id="use2417"
+     x="0"
+     y="0"
+     width="500"
+     height="300"
+     xlink:href="#use2415" />
+  <use
+     transform="translate(360,516)"
+     id="use2415"
+     x="0"
+     y="0"
+     width="500"
+     height="300"
+     xlink:href="#use2413" />
+  <path
+     d="m 121.94738,300.81126 c 8.10742,16.78248 23.87801,35.04578 37.64952,41.4626 0.22212,-17.02928 -5.21984,-38.8712 -12.6609,-56.27068 l -24.98862,14.80808 z"
+     id="path7321"
+     style="fill:#ce1126" />
+  <path
+     d="m 108.20202,243.2603 c 11.75116,27.22446 -30.480583,92.15128 39.8806,107.37956 -8.67996,-13.15874 -14.27517,-34.88622 -12.15854,-52.32932 14.76075,6.25198 30.29267,24.50018 36.57038,38.46402 18.41372,-74.30064 -47.23167,-69.76906 -64.29244,-93.51426 z"
+     id="path7320"
+     style="fill:#fcd116" />
+</svg>

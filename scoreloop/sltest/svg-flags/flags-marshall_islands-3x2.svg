@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   x="0.0000000"
+   y="0.0000000"
+   width="900"
+   height="600"
+   id="svg1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_the_Marshall_Islands.svg">
+  <metadata
+     id="metadata2833">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1077"
+     inkscape:window-height="765"
+     id="namedview2831"
+     showgrid="false"
+     inkscape:zoom="0.83666667"
+     inkscape:cx="285"
+     inkscape:cy="150"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs3">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 150 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="570 : 150 : 1"
+       inkscape:persp3d-origin="285 : 100 : 1"
+       id="perspective2835" />
+  </defs>
+  <g
+     id="layer1"
+     transform="matrix(1.5789474,0,0,2,0,-2.3828125e-4)">
+    <rect
+       width="237.5"
+       height="125"
+       x="125"
+       y="552.36218"
+       transform="matrix(2.4,0,0,2.4,-300,-1325.669)"
+       style="fill:#003893;fill-opacity:1;stroke:none"
+       id="rect1061" />
+    <path
+       d="m 170.63751,636.74966 -1.59895,-26.6048 -5.58328,14.65924 2.49436,-15.48692 -9.18713,12.71468 6.41767,-14.31362 -12.16488,9.90363 9.90363,-12.16488 -14.31362,6.41767 12.71468,-9.18713 -15.48692,2.49436 14.65924,-5.58328 -26.6048,-1.59895 26.6048,-1.59895 -14.65924,-5.58328 15.48692,2.49436 -12.71468,-9.18713 14.31362,6.41767 -9.90363,-12.16488 12.16488,9.90363 -6.41767,-14.31362 9.18713,12.71468 -2.49436,-15.48692 5.58328,14.65924 1.59895,-26.6048 1.59895,26.6048 5.58328,-14.65924 -2.49436,15.48692 9.18713,-12.71468 -6.41767,14.31362 12.16488,-9.90363 -9.90363,12.16488 14.31362,-6.41767 -12.71468,9.18713 15.48692,-2.49436 -14.65924,5.58328 26.6048,1.59895 -26.6048,1.59895 14.65924,5.58328 -15.48692,-2.49436 12.71468,9.18713 -14.31362,-6.41767 9.90363,12.16488 -12.16488,-9.90363 6.41767,14.31362 -9.18713,-12.71468 2.49436,15.48692 -5.58328,-14.65924 -1.59895,26.6048 z"
+       transform="matrix(2.4,0,0,2.4,-300,-1325.669)"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="path1683" />
+    <path
+       d="m 125,675.36218 237.5,-72 0,-49 -237.5,117 0,4 z"
+       transform="matrix(2.4,0,0,2.4,-300,-1325.669)"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="path2926" />
+    <path
+       d="m 125,673.36218 237.5,-94.5 0,-24.5 -237.5,117 0,2 z"
+       transform="matrix(2.4,0,0,2.4,-300,-1325.669)"
+       style="fill:#dd7500;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="path5411" />
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg 
+	xmlns="http://www.w3.org/2000/svg" 
+	width="900" 
+	height="600">
+	<rect 
+		width="900" 
+		height="600" 
+		style="fill: #da251d" />
+	<path 
+		fill="#ffff00" 
+		d="M 494.85,237.512 L 640,237.512 L 522.58,322.497 L 567.43,460 L 450,375.016 L 332.57,460 L 377.43,322.497 L 260,237.512 L 405.15,237.512 L 450,100 L 494.85,237.512 z" />
+</svg>

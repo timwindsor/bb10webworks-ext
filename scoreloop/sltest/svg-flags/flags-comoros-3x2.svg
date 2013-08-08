@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="900"
+   height="600"
+   id="svg2822"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_the_Comoros.svg">
+  <metadata
+     id="metadata2840">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2838">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 150 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="500 : 150 : 1"
+       inkscape:persp3d-origin="250 : 100 : 1"
+       id="perspective2842" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1047"
+     inkscape:window-height="705"
+     id="namedview2836"
+     showgrid="false"
+     inkscape:zoom="0.83666667"
+     inkscape:cx="250"
+     inkscape:cy="150"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2822" />
+  <rect
+     width="900"
+     height="600"
+     style="fill:#ffc61e"
+     id="rect2824"
+     x="0"
+     y="0" />
+  <rect
+     width="900"
+     height="450"
+     y="150"
+     id="rect2304"
+     style="fill:#ffffff"
+     x="0" />
+  <rect
+     width="900"
+     height="300"
+     y="300"
+     id="rect2926"
+     style="fill:#ce1126"
+     x="0" />
+  <rect
+     width="900"
+     height="150"
+     y="450"
+     id="rect3548"
+     style="fill:#3a75c4"
+     x="0" />
+  <path
+     d="M 0,600 450,300 0,0 l 0,600 0,0 z"
+     id="path4170"
+     style="fill:#3d8e33" />
+  <path
+     d="m 274.50002,299.99996 c 0,74.55846 -54.39741,135.00002 -121.50001,135.00002 -67.102613,0 -121.500023,-60.44156 -121.500023,-135.00002 0,-74.55844 54.39741,-135.00002 121.500023,-135.00002 67.1026,0 121.50001,60.44158 121.50001,135.00002 z"
+     id="path5413"
+     style="fill:#ffffff" />
+  <path
+     d="m 328.5,300 c 0,74.55842 -54.39739,134.99998 -121.5,134.99998 -67.1026,0 -121.500013,-60.44156 -121.500013,-135.00002 0,-74.55844 54.397413,-135.00002 121.500013,-135.00002 67.10261,0 121.50002,60.44158 121.50002,135.00002 l 1.6e-4,0 0,4e-5 -1.8e-4,0 z"
+     id="path5414"
+     style="fill:#3d8e33" />
+  <use
+     transform="translate(0,193.25)"
+     id="use2407"
+     xlink:href="#path6092"
+     x="0"
+     y="0"
+     width="500"
+     height="300" />
+  <path
+     d="m 158.60239,195.65 16.34776,0 5.04983,-17.275 5.04983,17.275 16.34778,0 -13.22372,10.675 5.04985,17.275 -13.22374,-10.67502 -13.2237,10.67502 5.04983,-17.275 -13.22372,-10.675 z"
+     id="path6092"
+     style="fill:#ffffff" />
+  <use
+     transform="translate(0,64.4166)"
+     id="use2403"
+     xlink:href="#path6092"
+     x="0"
+     y="0"
+     width="500"
+     height="300" />
+  <use
+     transform="translate(0,128.8332)"
+     id="use2405"
+     xlink:href="#path6092"
+     x="0"
+     y="0"
+     width="500"
+     height="300" />
+</svg>

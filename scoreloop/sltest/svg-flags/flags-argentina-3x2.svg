@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="600"
+   viewBox="-910 -585 2089.2857 1392.8571"
+   id="svg3413"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Argentina.svg">
+  <metadata
+     id="metadata3463">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3461">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 252 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="784 : 252 : 1"
+       inkscape:persp3d-origin="392 : 168 : 1"
+       id="perspective3465" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1077"
+     inkscape:window-height="968"
+     id="namedview3459"
+     showgrid="false"
+     inkscape:zoom="0.49801587"
+     inkscape:cx="392"
+     inkscape:cy="252"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3413" />
+  <title
+     id="title3415">Flag of Argentina</title>
+  <rect
+     id="blue"
+     x="-910"
+     y="-584.99988"
+     width="2089.5085"
+     height="1392.8568"
+     style="fill:#75aadb" />
+  <rect
+     id="white"
+     x="-910"
+     y="-120.71427"
+     width="2089.5085"
+     height="464.28561"
+     style="fill:#ffffff" />
+  <g
+     id="sun"
+     style="fill:#fcbf49;stroke:#843511;stroke-width:1.28305292"
+     transform="matrix(1.1480816,0,0,1.1904759,134.7543,111.42853)">
+    <g
+       id="16rays"
+       style="stroke-width:1.28305292">
+      <g
+         id="8rays"
+         style="stroke-width:1.28305292">
+        <g
+           id="4rays"
+           style="stroke-width:1.28305292">
+          <g
+             id="2rays"
+             style="stroke-width:1.28305292">
+            <path
+               d="m -8,0 6,159.5 c 0,0 0,3 2,3 2,0 2,-3 2,-3 L 8,0"
+               id="path3424"
+               style="stroke-width:1.28305292" />
+            <path
+               d="M -4,0 0,109.5 4,0"
+               id="path3426"
+               style="fill:#843511;stroke:none" />
+            <g
+               transform="matrix(0.9799247,0.19936793,-0.19936793,0.9799247,0,0)"
+               id="g3428"
+               style="stroke-width:1.28305292">
+              <path
+                 d="m -4.5,53.5 c -5,21.5 6,36 0.5,55 -5.5,19 3,32 4,40 1,8 -5,11.5 -3,13 C -1,163 5,158 5.5,147 6,136 -1.5,131.25 5,108 11.5,84.75 1,77 8,56"
+                 id="path3430"
+                 style="stroke-width:1.28305292" />
+              <path
+                 d="M -1,58 C -4,79 6,90.5 0,109 8,95 -2,81 3,59"
+                 id="path3432"
+                 style="fill:#843511;stroke:none" />
+            </g>
+          </g>
+          <use
+             xlink:href="#2rays"
+             transform="scale(-1,-1)"
+             id="use3434"
+             x="0"
+             y="0"
+             width="1820"
+             height="1170"
+             style="stroke-width:1.28305292" />
+        </g>
+        <use
+           xlink:href="#4rays"
+           transform="matrix(0,1,-1,0,0,0)"
+           id="use3436"
+           x="0"
+           y="0"
+           width="1820"
+           height="1170"
+           style="stroke-width:1.28305292" />
+      </g>
+      <use
+         xlink:href="#8rays"
+         transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,0,0)"
+         id="use3438"
+         x="0"
+         y="0"
+         width="1820"
+         height="1170"
+         style="stroke-width:1.28305292" />
+    </g>
+    <use
+       xlink:href="#16rays"
+       transform="matrix(0.92387953,0.38268343,-0.38268343,0.92387953,0,0)"
+       id="use3440"
+       x="0"
+       y="0"
+       width="1820"
+       height="1170"
+       style="stroke-width:1.28305292" />
+    <circle
+       r="65"
+       id="circle3442"
+       cx="0"
+       cy="0"
+       sodipodi:cx="0"
+       sodipodi:cy="0"
+       sodipodi:rx="65"
+       sodipodi:ry="65"
+       style="stroke-width:0.85536861"
+       d="M 65,0 C 65,35.898509 35.898509,65 0,65 -35.898509,65 -65,35.898509 -65,0 c 0,-35.898509 29.101491,-65 65,-65 35.898509,0 65,29.101491 65,65 z" />
+    <g
+       id="face_right"
+       style="fill:#843511;stroke:none">
+      <path
+         id="eyebrow_nose"
+         d="M 41,-14 C 29.5,-24 15,-25.5 7,-18 A 140,50 10 0 0 8.5,8.5 C 8,8.5 7,9 6.5,9.5 A 80,50 10 0 1 4,-19 c 11,-9 26,-10 37,5" />
+      <path
+         id="uppalpebra"
+         d="m 23,-17 c -6.5,0 -8,1.5 -11,4 -3,2.5 -4.5,2 -5,2.5 -0.5,0.5 0,2 1,1.5 1,-0.5 3,-1.5 6,-4 3,-2.5 6,-2.5 9,-2.5 9,0 14,7.5 15,7 C 39,-9 33,-17 23,-17" />
+      <path
+         id="upeyecontour"
+         d="M 34.5,-8.5 C 28,-15.5 16,-16 11,-8 h 2 c 5,-8 17,-4.5 18,-1 v 1" />
+      <circle
+         id="pupil"
+         cx="22"
+         cy="-9"
+         r="4.5"
+         d="m 26.5,-9 c 0,2.4852814 -2.014719,4.5 -4.5,4.5 -2.485281,0 -4.5,-2.0147186 -4.5,-4.5 0,-2.485281 2.014719,-4.5 4.5,-4.5 2.485281,0 4.5,2.014719 4.5,4.5 z"
+         sodipodi:cx="22"
+         sodipodi:cy="-9"
+         sodipodi:rx="4.5"
+         sodipodi:ry="4.5" />
+      <path
+         id="loweyecontour"
+         d="m 11,-8 c 5,4.5 16,5 23.5,-0.5 L 31,-9 c -5,5.5 -13,5 -18,1 v -1" />
+      <path
+         id="lowpalpebra"
+         d="M 35,-6 C 26.5,0.5 18,0 13,-3 8,-6 8,-7 9,-7 c 1,0 2,1 6,3 4,2 10,2 20,-2" />
+      <path
+         id="nose"
+         d="m 10.5,9 a 3,3 0 1 1 -4,3 C 6,13 4,16 0,16 h -1 l 1,1.5 c 1,0 4,0 6,-1.5 a 4.5,4.5 0 1 0 4.5,-7" />
+      <path
+         id="uplip"
+         d="M 16.5,30 C 12,27 10,22.5 5,22.5 4,22.5 2,23 0,24 h -1 l 1,1.5 c 2,0 5,-2.5 8.5,-0.5 3.5,2 5.5,4 8,5" />
+      <path
+         id="midlip"
+         d="M 15,30 C 5,27 3,29 0,29 h -1 l 1,2 c 4,0 6,-3 15,-1" />
+      <path
+         id="path3454"
+         d="M 16.5,30 C 5.5,29 9,35.5 0,35.5 H -1 L 0,37 c 11,0 6,-6 16.5,-7" />
+      <path
+         id="chin"
+         d="M 9,46 A 9,9 0 0 0 -9,46 9.25,9.25 0 0 1 9,46" />
+    </g>
+    <use
+       xlink:href="#face_right"
+       transform="scale(-1,1)"
+       id="use3457"
+       x="0"
+       y="0"
+       width="1820"
+       height="1170"
+       style="stroke-width:1.28305292" />
+  </g>
+</svg>

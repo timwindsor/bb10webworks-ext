@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="900"
+   height="600"
+   id="svg4639"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Jordan.svg">
+  <metadata
+     id="metadata11">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="865"
+     inkscape:window-height="935"
+     id="namedview9"
+     showgrid="false"
+     inkscape:zoom="0.83666667"
+     inkscape:cx="305.00737"
+     inkscape:cy="150"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg4639" />
+  <defs
+     id="defs4641">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 150 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="600 : 150 : 1"
+       inkscape:persp3d-origin="300 : 100 : 1"
+       id="perspective13" />
+  </defs>
+  <rect
+     width="900"
+     height="200"
+     x="0"
+     y="0"
+     id="rect4648"
+     style="fill:#000000" />
+  <rect
+     width="900"
+     height="200"
+     x="0"
+     y="200"
+     id="rect5270"
+     style="fill:#ffffff" />
+  <rect
+     width="900"
+     height="200"
+     x="0"
+     y="400"
+     id="rect5892"
+     style="fill:#007a3d" />
+  <path
+     d="M 0,0 450,300 0,600 0,0 z"
+     id="path7135"
+     style="fill:#ce1126" />
+  <path
+     d="m 142.67264,254.05664 -7.21619,24.1247 -18.60542,-7.69246 9.64682,22.56396 -16.11092,14.59896 19.24558,4.01212 -1.48454,25.89702 L 142.5,320 l 14.25973,17.69408 -1.3489,-25.9102 19.26609,-3.83288 -16.03407,-14.74856 9.76473,-22.4736 -18.64524,7.51906 -7.0897,-24.19126 z"
+     id="path7757"
+     style="fill:#ffffff" />
+</svg>

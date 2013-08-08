@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   preserveAspectRatio="xMidYMid meet"
+   zoomAndPan="magnify"
+   id="Flag_of_the_Cook_Islands"
+   viewBox="-15 -7.5 45 30"
+   width="900"
+   height="600"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_the_Cook_Islands.svg">
+  <metadata
+     id="metadata2996">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="881"
+     inkscape:window-height="716"
+     id="namedview2994"
+     showgrid="false"
+     inkscape:zoom="0.83666667"
+     inkscape:cx="300"
+     inkscape:cy="150"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Flag_of_the_Cook_Islands" />
+  <defs
+     id="defs2932">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 150 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="600 : 150 : 1"
+       inkscape:persp3d-origin="300 : 100 : 1"
+       id="perspective2998" />
+    <clipPath
+       id="border">
+      <rect
+         x="-15"
+         y="-7.5"
+         width="30"
+         height="15"
+         id="rect2935" />
+    </clipPath>
+  </defs>
+  <rect
+     x="-15"
+     y="-7.5"
+     width="45"
+     height="30"
+     id="rect2937"
+     style="fill:#00247d" />
+  <comment
+     id="comment2939">The above line is the ensign field color: #CF142B red and #00247D blue</comment>
+  <g
+     id="canton"
+     transform="matrix(0.75,0,0,1,-3.75,0)">
+    <g
+       clip-path="url(#border)"
+       id="g2942">
+      <circle
+         r="20"
+         id="circle2944"
+         d="m 20,0 c 0,11.045695 -8.954305,20 -20,20 -11.045695,0 -20,-8.954305 -20,-20 0,-11.045695 8.954305,-20 20,-20 11.045695,0 20,8.954305 20,20 z"
+         cx="0"
+         cy="0"
+         sodipodi:cx="0"
+         sodipodi:cy="0"
+         sodipodi:rx="20"
+         sodipodi:ry="20"
+         style="fill:#00247d" />
+      <path
+         d="m -20,-10 40,20 m -40,0 40,-20"
+         id="diags_white"
+         style="stroke:#ffffff;stroke-width:1.7320509" />
+      <path
+         d="m -20,-10 40,20 m -40,0 40,-20"
+         id="diags_red"
+         style="stroke:#cf142b;stroke-width:1.15470064" />
+      <path
+         d="M 0,0 20,10 H 17 L -3,0 m 3,0 20,-10 h 3 L 3,0 M 0,0 -20,10 h -3 L -3,0 m 3,0 -20,-10 h 3 L 3,0"
+         id="eraser_white"
+         style="fill:#ffffff;stroke:none" />
+      <comment
+         id="comment2949">I think the above two lines give the simplest way to make the diagonals</comment>
+      <path
+         d="M -20,0 H 20 M 0,-10 v 20"
+         id="cross_white"
+         style="stroke:#ffffff;stroke-width:2.88675117" />
+      <path
+         d="M -20,0 H 20 M 0,-10 v 20"
+         id="cross_red"
+         style="stroke:#cf142b;stroke-width:1.7320509" />
+    </g>
+  </g>
+  <g
+     id="star"
+     transform="matrix(1.6875,0,0,2.25,18.75,-2.7)"
+     style="fill:#ffffff">
+    <g
+       id="cone">
+      <polygon
+         id="triangle"
+         points="0.5,1 0,0 0,1 "
+         transform="matrix(0.95105652,0.30901699,-0.30901699,0.95105652,0,-1)" />
+      <use
+         xlink:href="#triangle"
+         transform="scale(-1,1)"
+         id="use2956"
+         x="0"
+         y="0"
+         width="30"
+         height="15" />
+    </g>
+    <use
+       xlink:href="#cone"
+       transform="matrix(0.30901699,0.95105652,-0.95105652,0.30901699,0,0)"
+       id="use2958"
+       x="0"
+       y="0"
+       width="30"
+       height="15" />
+    <use
+       xlink:href="#cone"
+       transform="matrix(0.30901699,-0.95105652,0.95105652,0.30901699,0,0)"
+       id="use2960"
+       x="0"
+       y="0"
+       width="30"
+       height="15" />
+    <use
+       xlink:href="#cone"
+       transform="matrix(-0.80901699,0.58778525,-0.58778525,-0.80901699,0,0)"
+       id="use2962"
+       x="0"
+       y="0"
+       width="30"
+       height="15" />
+    <use
+       xlink:href="#cone"
+       transform="matrix(-0.80901699,-0.58778525,0.58778525,-0.80901699,0,0)"
+       id="use2964"
+       x="0"
+       y="0"
+       width="30"
+       height="15" />
+  </g>
+  <use
+     xlink:href="#star"
+     transform="matrix(0.91354546,0.54231552,-0.30505248,0.91354546,3.9089162,-9.5200076)"
+     id="use2966"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(0.66913061,0.99085978,-0.5573586,0.66913061,10.383991,-16.097099)"
+     id="use2968"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(0.30901699,1.2680754,-0.7132924,0.30901699,18.305624,-18.594041)"
+     id="use2970"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.10452846,1.3260292,-0.7458914,-0.10452846,26.304095,-16.579084)"
+     id="use2972"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.5,1.1547005,-0.64951905,-0.5,32.996392,-10.400636)"
+     id="use2974"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.80901699,0.78371366,-0.44083893,-0.80901699,37.22536,-1.1270043)"
+     id="use2976"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.9781476,0.27721558,-0.15593377,-0.9781476,38.25977,9.638315)"
+     id="use2978"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.9781476,-0.27721558,0.15593377,-0.9781476,35.920765,20.033899)"
+     id="use2980"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.80901699,-0.78371366,0.44083893,-0.80901699,30.612776,28.262258)"
+     id="use2982"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.5,-1.1547005,0.64951905,-0.5,23.253607,32.900636)"
+     id="use2984"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(-0.10452846,-1.3260292,0.7458914,-0.10452846,15.115722,33.147012)"
+     id="use2986"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(0.30901699,-1.2680754,0.7132924,0.30901699,7.6062386,28.958786)"
+     id="use2988"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(0.66913061,-0.99085978,0.5573586,0.66913061,2.0236105,21.060141)"
+     id="use2990"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+  <use
+     xlink:href="#star"
+     transform="matrix(0.91354546,-0.54231552,0.30505248,0.91354546,-0.6668709,10.816825)"
+     id="use2992"
+     x="0"
+     y="0"
+     width="30"
+     height="15" />
+</svg>

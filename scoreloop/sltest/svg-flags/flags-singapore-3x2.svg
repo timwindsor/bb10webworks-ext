@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="600"
+   id="svg2981"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="Flag_of_Singapore.svg">
+  <metadata
+     id="metadata3004">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3002">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 1440 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="4320 : 1440 : 1"
+       inkscape:persp3d-origin="2160 : 960 : 1"
+       id="perspective3006" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="917"
+     inkscape:window-height="847"
+     id="namedview3000"
+     showgrid="false"
+     inkscape:zoom="0.087152778"
+     inkscape:cx="2160"
+     inkscape:cy="1440"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2981" />
+  <rect
+     width="900"
+     height="300"
+     id="rect2983"
+     x="0"
+     y="0"
+     style="fill:#ed2939" />
+  <rect
+     y="300"
+     width="900"
+     height="300"
+     id="rect2985"
+     x="0"
+     style="fill:#ffffff" />
+  <path
+     d="m 308.68292,150 a 112.8125,112.81251 0 0 1 -225.625007,0 112.8125,112.81251 0 1 1 225.625007,0 z"
+     id="path2987"
+     style="fill:#ffffff" />
+  <path
+     d="m 344.13229,150 a 106.61146,106.61146 0 0 1 -213.22292,0 106.61146,106.61146 0 1 1 213.22292,0 z"
+     id="path2989"
+     style="fill:#ed2939" />
+  <path
+     id="star"
+     d="m 209.83231,152.72175 -15.32509,-11.75629 -15.32122,11.76187 5.89856,-18.95714 -15.37384,-11.68575 18.97061,0.0402 5.81969,-18.98404 5.82593,18.98194 18.97059,-0.047 -15.37,11.69131 5.90477,18.95492 z"
+     style="fill:#ffffff" />
+  <use
+     xlink:href="#star"
+     transform="translate(120.24761,0)"
+     id="use2992"
+     x="0"
+     y="0"
+     width="4320"
+     height="2880" />
+  <use
+     xlink:href="#star"
+     transform="translate(60.18511,-44.627333)"
+     id="use2994"
+     x="0"
+     y="0"
+     width="4320"
+     height="2880" />
+  <use
+     xlink:href="#star"
+     transform="translate(22.499902,71.406)"
+     id="use2996"
+     x="0"
+     y="0"
+     width="4320"
+     height="2880" />
+  <use
+     xlink:href="#star"
+     transform="translate(97.74761,71.406)"
+     id="use2998"
+     x="0"
+     y="0"
+     width="4320"
+     height="2880" />
+</svg>
