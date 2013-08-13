@@ -79,6 +79,13 @@ int entry_count = 0;
 SC_Error_t scgetuser(AppData_t *app);
 SC_Error_t scgetbuddies(AppData_t *app);
 
+SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
+SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength);
+SC_Bool_t scscoreshasprevrange(AppData_t *app);
+SC_Bool_t scscoreshasnextrange(AppData_t *app);
+SC_Error_t scscoresgetnextrange(AppData_t *app);
+SC_Error_t scscoresgetprevrange(AppData_t *app);
+
 TemplateNDK::TemplateNDK(TemplateJS *parent) {
 	m_pParent = parent;
 	m_thread = 0;
@@ -215,16 +222,130 @@ std::string TemplateNDK::start(const std::string& arg) {
  *
  */
 
-void TemplateNDK::getUser() {
-	scgetuser(&app);
+std::string TemplateNDK::getUser() {
+	Json::FastWriter writer;
+	Json::Value res;
+	SC_Error_t rc;
+
+	rc = scgetuser(&app);
 
 	fprintf(fp, "[SLTest] (getUser)\n");
+
+	if(rc == SC_OK) {
+		res["status"] = true;
+	} else {
+		res["status"] = false;
+	}
+
+	res["rc"] = rc;
+	return writer.write(res);
 }
 
-void TemplateNDK::getBuddyList() {
-	scgetbuddies(&app);
+std::string TemplateNDK::setScore(const std::string& arg) {
+	Json::FastWriter writer;
+	Json::Reader reader;
+	Json::Value root;
+	Json::Value res;
+	SC_Error_t rc = SBSL_BAD_PARAM;
+	double aScore;
+	double aMinorScore;
+	unsigned int aLevel;
+	unsigned int aMode;
+
+
+	bool parse = reader.parse(arg, root);
+
+	if (parse) {
+		aScore = atof(root["majorScore"].asCString());
+		aMinorScore = atof(root["minorScore"].asCString());
+		aLevel = atoi(root["level"].asCString());
+		aMode = atoi(root["mode"].asCString());
+		rc = scsetscore(&app, aScore, &aMinorScore, &aLevel, &aMode);
+	}
+
+
+	fprintf(fp, "[SLTest] (setScore)\n");
+
+	if(rc == SC_OK) {
+		res["status"] = true;
+	} else {
+		res["status"] = false;
+	}
+
+	res["rc"] = rc;
+//	return writer.write(root);
+	return writer.write(res);
+}
+
+std::string TemplateNDK::getBuddyList() {
+	Json::FastWriter writer;
+	Json::Value res;
+	SC_Error_t rc;
+
+	rc = scgetbuddies(&app);
 
 	fprintf(fp, "[SLTest] (getBuddyList)\n");
+
+	if(rc == SC_OK) {
+		res["status"] = true;
+	} else {
+		res["status"] = false;
+	}
+
+	res["rc"] = rc;
+	return writer.write(res);
+}
+
+std::string TemplateNDK::getLeaders(const std::string& arg) {
+	Json::FastWriter writer;
+	Json::Reader reader;
+	Json::Value root;
+	Json::Value res;
+	SC_Error_t rc = SBSL_BAD_PARAM;
+	unsigned int sMode;
+	unsigned int sList;
+	unsigned int rLen;
+	SC_ScoresSearchList_t searchList = SC_SCORES_SEARCH_LIST_ALL;
+
+	bool parse = reader.parse(arg, root);
+
+	if (parse) {
+/*
+ 		res["searchMode"] = root["searchMode"];
+		res["searchList"] = root["searchList"];
+		res["range"] = root["range"];
+
+		res["searchMode"] = atoi(root["searchMode"].asCString());
+		res["searchList"] = atoi(root["searchList"].asCString());
+		res["range"] = atoi(root["range"].asCString());
+*/
+
+		sMode = atoi(root["searchMode"].asCString());
+		sList = atoi(root["searchList"].asCString());
+		rLen = atoi(root["range"].asCString());
+
+ 		switch (sList) {
+		case 1:
+			searchList = SC_SCORES_SEARCH_LIST_24H;
+			break;
+		case 2:
+			searchList = SC_SCORES_SEARCH_LIST_USER_COUNTRY;
+			break;
+		}
+		rc = scgetscores(&app, sMode, searchList, rLen);
+	}
+
+	fprintf(fp, "[SLTest] (getLeaders)\n");
+
+	if(rc == SC_OK) {
+		res["status"] = true;
+	} else {
+		res["status"] = false;
+	}
+
+	res["rc"] = rc;
+
+	return writer.write(res);
 }
 
 /*
@@ -262,6 +383,26 @@ void TemplateNDK::getBuddyListCallback(AppData_t *app) {
 	fprintf(fp, "[SLTest] (getBuddyListCallback)\n");
 
 	std::string event = "community.scoreloop.getBuddyListCallback";
+	m_pParent->NotifyEvent(event + " " + writer.write(root));
+}
+
+void TemplateNDK::getLeadersCallback(AppData_t *app) {
+	Json::FastWriter writer;
+	Json::Value root;
+	unsigned int i;
+
+	for(i = 0; i< app->leaders_c; i++) {
+		root["leaders"][i]["login"] = app->leaders[i]->login;
+		root["leaders"][i]["rank"] = app->leaders[i]->rank;
+		root["leaders"][i]["majorScore"] = app->leaders[i]->majorScore;
+		root["leaders"][i]["minorScore"] = app->leaders[i]->minorScore;
+		root["leaders"][i]["level"] = app->leaders[i]->level;
+		root["leaders"][i]["mode"] = app->leaders[i]->mode;
+	}
+
+	fprintf(fp, "[SLTest] (getLeadersCallback)\n");
+
+	std::string event = "community.scoreloop.getLeadersCallback";
 	m_pParent->NotifyEvent(event + " " + writer.write(root));
 }
 
@@ -423,13 +564,252 @@ SC_Error_t scgetuser(AppData_t *app) {
 	return rc;
 }
 
+
+
+
+
 /*
  * Scores functions
  *
  */
 
+void scoreControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
 
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
+		app->scoreController = NULL;
+		return;
+	}
 
+	SC_ScoreController_Release(app->scoreController); /* Cleanup Controller */
+	app->scoreController = NULL;
+
+}
+
+SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL, unsigned int *aLevel = NULL, unsigned int *aMode = NULL) {
+	SC_Error_t rc;
+
+	// Create Score object
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateScore(app->client, &app->score)) == SC_OK) {
+
+			rc = SC_Score_SetResult(app->score, aScore);
+
+			if(rc == SC_OK) {
+				if(aMinorScore != NULL) {
+					rc = SC_Score_SetMinorResult(app->score, *aMinorScore);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						app->score = NULL;
+						return rc;
+					}
+				}
+
+				if(aLevel != NULL) {
+					rc = SC_Score_SetLevel(app->score, *aLevel);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						app->score = NULL;
+						return rc;
+					}
+				}
+
+				if(aMode != NULL) {
+					rc = SC_Score_SetMode(app->score, *aMode);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						app->score = NULL;
+						return rc;
+					}
+				}
+
+				//create score controller
+				if((rc = SC_Client_CreateScoreController(app->client, &app->scoreController, scoreControllerCallback, app)) == SC_OK) {
+					/* Make the asynchronous request */
+					if((rc = SC_ScoreController_SubmitScore(app->scoreController, app->score)) != SC_OK) {
+						SC_ScoreController_Release(app->scoreController);
+						app->scoreController = NULL;
+					}
+				}
+			}
+		}
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+	return rc;
+}
+
+/*
+ * Leaderboard functions
+ *
+ * Requires call to scfreescores to start an new scgetscores
+ *
+ */
+
+LeaderInfo_t* GetLeaderInfo(SC_User_h user, SC_Score_h oScore) {
+	LeaderInfo_t *leader;
+	if(NULL != (leader = (LeaderInfo_t *) calloc(1, sizeof(LeaderInfo_t)))) {
+		leader->user = SC_Score_GetUser(oScore);
+		leader->login = strdup(SC_String_GetData(SC_User_GetLogin(user)));
+		leader->majorScore = SC_Score_GetResult(oScore);
+		leader->minorScore = SC_Score_GetMinorResult(oScore);
+		leader->mode = SC_Score_GetMode(oScore);
+		leader->level = SC_Score_GetLevel(oScore);
+		leader->rank = SC_Score_GetRank(oScore);
+	}
+	return leader;
+}
+
+void rankingControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	unsigned int urank;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_RankingController_Release(app->rankingController); /* Cleanup Controller */
+		app->rankingController = NULL;
+		return;
+	}
+
+    urank = SC_RankingController_GetRanking(app->rankingController);
+
+    // Process Rank - watch for SC_SCORE_RANK_OUT_OF_RANGE
+
+    app->rank = urank;
+
+	SC_RankingController_Release(app->rankingController); /* Cleanup Controller */
+	app->rankingController = NULL;
+}
+
+void scoresControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	SC_ScoreList_h slist;
+	SC_Score_h oScore;
+	unsigned int scount;
+	LeaderInfo_t **leaderlist = NULL;;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ScoresController_Release(app->scoresController); /* Cleanup Controller */
+		app->scoresController = NULL;
+		return;
+	}
+
+	if(app->leaders != NULL) {
+		for(unsigned int i=0; i< app->leaders_c; i++) {
+			free((void *) app->leaders[i]->login);
+		}
+		free(app->leaders);
+		app->leaders_c = 0;
+		app->leaders = NULL;
+	}
+
+    slist = SC_ScoresController_GetScores(app->scoresController);
+    scount = SC_ScoreList_GetCount(slist);
+
+    leaderlist = (LeaderInfo_t **) calloc(sizeof(LeaderInfo_t *), scount);
+ 	for(unsigned int i=0; i< scount; i++) {
+		oScore = SC_ScoreList_GetAt(slist, i);
+		SC_User_h user = SC_Score_GetUser(oScore);
+		leaderlist[i] = GetLeaderInfo(user, oScore);
+		fprintf(stdout, "[Scoreloop Test] Leader: %u %f %s\n", leaderlist[i]->rank, leaderlist[i]->majorScore, leaderlist[i]->login); fflush(stdout);
+	}
+
+	app->leaders_c = scount;
+	app->leaders = leaderlist;
+
+    TemplateNDK* ndk = static_cast<TemplateNDK*>(app->m_pTemplateNDK);
+	ndk->getLeadersCallback(app);
+
+}
+
+SC_Bool_t scscoreshasnextrange(AppData_t *app) {
+	SC_Bool_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_HasNextRange(app->scoresController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Error_t scscoresgetnextrange(AppData_t *app) {
+	SC_Error_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_LoadNextRange(app->scoresController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Bool_t scscoreshasprevrange(AppData_t *app) {
+	SC_Bool_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_HasPreviousRange(app->scoresController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+SC_Error_t scscoresgetprevrange(AppData_t *app) {
+	SC_Error_t  rc;
+
+	if(app->scoresController != NULL) {
+		rc = SC_ScoresController_LoadPreviousRange(app->scoresController);
+	} else {
+		rc = false;
+	}
+
+	return rc;
+}
+
+// searchList = SC_SCORES_SEARCH_LIST_ALL | SC_SCORES_SEARCH_LIST_24H | SC_SCORES_SEARCH_LIST_USER_COUNTRY.
+SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength) {
+	SC_Error_t rc = SC_INVALID_STATE;
+	//create user controller
+	if(app->scoresController != NULL) {
+		SC_RankingController_Release(app->rankingController);
+		SC_ScoresController_Release(app->scoresController);
+		app->scoresController = NULL;
+		app->rankingController = NULL;
+	}
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateScoresController(app->client, &app->scoresController, scoresControllerCallback, app)) == SC_OK) {
+			if((rc = SC_Client_CreateRankingController(app->client, &app->rankingController, rankingControllerCallback, app)) == SC_OK) {
+				if((rc = SC_ScoresController_SetSearchList(app->scoresController, searchList)) == SC_OK) {
+					if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
+						if((rc = SC_ScoresController_SetMode(app->scoresController, sMode)) == SC_OK) {
+							if((rc = SC_RankingController_LoadRankingForUserInMode(app->rankingController, app->UserInfo->user, sMode)) == SC_OK) {		// Triggers rankingControllerCallback
+								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) == SC_OK) {	// Triggers scoresControllerCallback
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return rc;
+}
 
 
 // Thread functions

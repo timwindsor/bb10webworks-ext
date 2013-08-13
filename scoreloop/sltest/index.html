@@ -47,15 +47,17 @@ input {
 	margin-bottom: 44px;
 }
 
-#content, #infodiv {
+#content, #infodiv, #resdiv, #buddydiv, #logdiv {
 	display: none;
 	height: 720px;
 	width: 720px;
 	}
-	
-#score, #flagdiv {
-	height: 500px;
+
+.contentarea {
+	height: 610px;
 	width: 720px;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 	}
 	
 #score {
@@ -106,10 +108,10 @@ function startsl() {
 	if (community.scoreloop) {
 		
 		res = JSON.parse(community.scoreloop.start( { 
-			slGameId : "cdc1ee7e-403b-4d68-ac1a-cb1ebf36f782",
-			slGameSecret : "dNVkPkrrp68BOeOu4NqUx1ZeF+iWY21BEFF4hT4A7spAuIYUhiE49w==",
+			slGameId : "dad29bdb-8eba-4130-8090-ad36608b8d63",
+			slGameSecret : "AwLYqVR2KcysTFglIkATlqTf48GXcZ6j2/045YMNDU717AD+9nV25w==",
 			slGameVersion : "1.0",
-			slCurrency : "ACF",
+			slCurrency : "AIA",
 			slLanguageCode : "en"
 		}));
 		
@@ -125,14 +127,8 @@ function startsl() {
 		}
 	}
 
-function cbbuddyinfo(data) {
-	if(data) {
-		}
-	}
-	
 function cbuserinfo(data) {
 	if(data) {
-		community.scoreloop.getbuddylist(cbbuddyinfo);
 		}
 	}
 	
@@ -179,6 +175,16 @@ function makeFlagQuestion() {
 		}
 	}
 	
+function switchdiv(id) {
+	document.getElementById('content').style.display = 'none';
+	document.getElementById('infodiv').style.display = 'none';
+	document.getElementById('buddydiv').style.display = 'none';
+	document.getElementById('resdiv').style.display = 'none';
+	document.getElementById('logdiv').style.display = 'none';
+	
+	document.getElementById(id).style.display = 'block';
+	}
+	
 function showFlagQuestion() {
 	var fimg = document.getElementById('flag');
 	var btns = [];
@@ -191,6 +197,7 @@ function showFlagQuestion() {
 	fimg.onload = function () { 
 		fimg.width = fwidth; 
 		fimg.height = fwidth * fhratio; 
+		switchdiv('content');
 		};
 
 	// Show answer candidates
@@ -201,8 +208,6 @@ function showFlagQuestion() {
 
 	qasked++;
 	
-	document.getElementById('content').style.display = 'block';
-	document.getElementById('infodiv').style.display = 'none';
 	}
 	
 function answerFlagQuestion(ans) {
@@ -214,10 +219,73 @@ function answerFlagQuestion(ans) {
 		document.getElementById('score').innerHTML = 'Wrong!<br />It was ...<br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score;
 		}
 		
-	var data = community.scoreloop.readlog();
+	var data = community.scoreloop.setscore( {majorScore: score, minorScore: Math.round((qright * 100) / qasked), level: 0, mode: 0 } );
+	
+	showInfoDiv();
+	}
+	
+function showInfoDiv()
+	{
+	switchdiv('infodiv');
+	}
+	
+function cbrankinginfo(data) {
+	var txt = "";
+	
+	if(data) {
+		var blist = data.leaders;
+		txt += '<table width="99%"><tr><th width="33%">Player</th><th width="33%">Rank</th><th width="33%">Score</th></tr>';
+		for(var i = 0; i< blist.length; i++) {
+			txt += '<tr><td>';
+			txt += blist[i].login + '</td><td>';
+			txt += blist[i].rank + '</td><td>';
+			txt += blist[i].majorScore + '</td></tr>';
+			}
+		txt += "</table>";
+		} else {
+		txt = "No rankings found";
+	}
 
-	document.getElementById('content').style.display = 'none';
-	document.getElementById('infodiv').style.display = 'block';
+	document.getElementById('rankscore').innerHTML = txt;
+	switchdiv('resdiv');
+	}
+	
+function showRanksDiv()
+	{
+	community.scoreloop.getleaders( { searchMode: 0, searchList: 0, range: 25 } , cbrankinginfo);
+	}
+	
+function showLogDiv()
+	{
+	var data = community.scoreloop.readlog();
+	var txt = "";
+	
+	if(data) {
+		txt = data.log.replace(/\n/g, '<br />');
+		}
+	document.getElementById('logpage').innerHTML = txt;
+	switchdiv('logdiv');
+	}
+	
+function cbbuddyinfo(data) {
+	var txt = "";
+	
+	if(data) {
+		var blist = data.buddylist;
+		for(var i = 0; i< blist.length; i++) {
+			txt += blist[i].login + '<br />';
+			}
+		} else {
+		txt = "No buddies found";
+	}
+
+	document.getElementById('buddies').innerHTML = txt;
+	switchdiv('buddydiv');
+	}
+
+function showBuddyDiv()
+	{
+	community.scoreloop.getbuddylist(cbbuddyinfo);
 	}
 	
 function newQuestion()
@@ -271,14 +339,49 @@ function start() {
 	<input id="a3" type="button" class="button" value="" onclick="answerFlagQuestion(3);"/>
 </div>
 
-<div id="infodiv">
-	<div id="score">
+<div id="infodiv" class="infopage">
+	<div id="score" class="contentarea">
 	<!-- Win / Lose text -->
 	&nbsp;
 	</div>
 	
-	<div id="newq">
+	<div>
 	<input id="next" type="button" class="button" value="Next Flag" onclick="newQuestion();"/>
+	<input id="next" type="button" class="button" value="Buddies" onclick="showBuddyDiv();"/>
+	</div>
+</div>
+
+<div id="buddydiv" class="infopage">
+	<div id="buddies" class="contentarea">
+	<!-- Buddylist -->
+	</div>
+	
+	<div>
+	<input id="next" type="button" class="button" value="Next Flag" onclick="newQuestion();"/>
+	<input id="next" type="button" class="button" value="Ranking" onclick="showRanksDiv();"/>
+	<br />
+	</div>
+</div>
+
+<div id="resdiv" class="infopage">
+	<div id="rankscore" style="text-align: left;" class="contentarea">
+	<!-- Rank + Cash -->
+	</div>
+	
+	<div>
+	<input id="next" type="button" class="button" value="Next Flag" onclick="newQuestion();"/>
+	<input id="next" type="button" class="button" value="Logfile" onclick="showLogDiv();"/>
+	</div>
+</div>
+
+<div id="logdiv" class="infopage">
+	<div id="logpage" style="text-align: left;" class="contentarea">
+	<!-- Log -->
+	</div>
+	
+	<div>
+	<input id="next" type="button" class="button" value="Next Flag" onclick="newQuestion();"/>
+	<input id="next" type="button" class="button" value="Answer" onclick="showInfoDiv();"/>
 	</div>
 </div>
 

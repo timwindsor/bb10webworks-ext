@@ -81,9 +81,13 @@ string TemplateJS::InvokeMethod(const string& command) {
  	if (strCommand == "start") {
 		return m_pTemplateController->start(arg);
 	} else if (strCommand == "getuser") {
-		m_pTemplateController->getUser();
+		return m_pTemplateController->getUser();
 	} else if (strCommand == "getbuddylist") {
-		m_pTemplateController->getBuddyList();
+		return m_pTemplateController->getBuddyList();
+	} else if (strCommand == "setscore") {
+		return m_pTemplateController->setScore(arg);
+	} else if (strCommand == "getleaders") {
+		return m_pTemplateController->getLeaders(arg);
 	} else if (strCommand == "readlog") {
 		return m_pTemplateController->readLog();
 	}

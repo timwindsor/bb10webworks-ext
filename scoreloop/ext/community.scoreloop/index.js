@@ -27,12 +27,16 @@ module.exports = {
 	// These methods call into templateJNEXT.js which handles the
 	// communication through the JNEXT plugin to template_js.cpp
 	getbuddylist: function (success, fail) {
-		template.getInstance().getbuddylist();
-		success();
+		success(template.getInstance().getbuddylist());
 	},
 	getuser: function (success, fail) {
-		template.getInstance().getuser();
-		success();
+		success(template.getInstance().getuser());
+	},
+	setscore: function (success, fail, args) {
+		success(template.getInstance().setscore(args));
+	},
+	getleaders: function (success, fail, args) {
+		success(template.getInstance().getleaders(args));
 	},
 	readlog: function (success, fail, args) {
 		success(template.getInstance().readlog());

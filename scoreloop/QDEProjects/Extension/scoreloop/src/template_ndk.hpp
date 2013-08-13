@@ -119,13 +119,19 @@ public:
 	std::string readLog();
 
 	std::string start(const std::string& arg);
-	void getUser();
+
+	std::string getUser();
 	void getUserCallback(AppData_t *app);
 
-	void getBuddyList();
+	std::string getBuddyList();
 	void getBuddyListCallback(AppData_t *app);
 
-		bool isThreadHalt();
+	std::string getLeaders(const std::string& arg);
+	void getLeadersCallback(AppData_t *app);
+
+	std::string setScore(const std::string& arg);
+
+	bool isThreadHalt();
 	std::string templateStartThread();
 	std::string templateStopThread();
 	void templateThreadCallback();

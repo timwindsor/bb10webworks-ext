@@ -22,13 +22,21 @@ var _self = {},
 	// in the index.js of the Extension
 
 	// Simple Synchronous test function to get a string
+	_self.setscore = function (args) {
+//		window.webworks.event.once(_ID, "community.scoreloop.setScoreCallback", callback);
+		return window.webworks.execSync(_ID, "setscore", args);
+	};
 	_self.getbuddylist = function (callback) {
 		window.webworks.event.once(_ID, "community.scoreloop.getBuddyListCallback", callback);
-		window.webworks.execSync(_ID, "getbuddylist", null);
+		return window.webworks.execAsync(_ID, "getbuddylist", null);
+	};
+	_self.getleaders = function (args, callback) {
+		window.webworks.event.once(_ID, "community.scoreloop.getLeadersCallback", callback);
+		return window.webworks.execAsync(_ID, "getleaders", args);
 	};
 	_self.getuser = function (callback) {
 		window.webworks.event.once(_ID, "community.scoreloop.getUserCallback", callback);
-		window.webworks.execSync(_ID, "getuser", null);
+		return window.webworks.execAsync(_ID, "getuser", null);
 	};
 	_self.readlog = function () {
 		return JSON.parse(window.webworks.execSync(_ID, "readlog", null));
