@@ -100,7 +100,9 @@ document.addEventListener('webworksready', function(e) {
 	if (rippleLoaded) return;
 	rippleLoaded = true;
 	var res = false;
-
+	});
+	
+function startsl() {
 	if (community.scoreloop) {
 		
 		res = JSON.parse(community.scoreloop.start( { 
@@ -110,15 +112,42 @@ document.addEventListener('webworksready', function(e) {
 			slCurrency : "ACF",
 			slLanguageCode : "en"
 		}));
+		
 		if(res.status) {
 			community.scoreloop.getuser(cbuserinfo);
-			}
+			window.setTimeout(function () {
+						var data = community.scoreloop.readlog();
+						}
+					, 1000);
+					}
+		} else {
+			alert("Can't find Scoreloop");
 		}
-	});
+	}
 
-function cbuserinfo(data) {
+function cbbuddyinfo(data) {
 	if(data) {
 		}
+	}
+	
+function cbuserinfo(data) {
+	if(data) {
+		community.scoreloop.getbuddylist(cbbuddyinfo);
+		}
+	}
+	
+// Check random answers have not already been chosen - dupes!
+function inarray(answer, qlist, idx) {
+	var found = false;
+	
+	for(var i = 0; i<= idx; i++) {
+		if(qlist[i] == answer) {
+			found = true;
+			break;
+			}
+		}
+	
+	return found;
 	}
 	
 function makeFlagQuestion() {
@@ -133,7 +162,7 @@ function makeFlagQuestion() {
 	for(var i = 1; i <= opts; i++) {
 		do {
 			question = Math.floor((Math.random()*fcount));
-			} while (question == answer); 
+			} while (inarray(question, qlist, i));
 		qlist[i] = question;
 		}
 
@@ -185,6 +214,8 @@ function answerFlagQuestion(ans) {
 		document.getElementById('score').innerHTML = 'Wrong!<br />It was ...<br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score;
 		}
 		
+	var data = community.scoreloop.readlog();
+
 	document.getElementById('content').style.display = 'none';
 	document.getElementById('infodiv').style.display = 'block';
 	}
@@ -204,6 +235,8 @@ function setMode(gmode) {
 	makeFlagQuestion();
 	document.getElementById('modesel').style.display = 'none';
 	showFlagQuestion();
+	
+	startsl();
 	}
 	
 function start() {

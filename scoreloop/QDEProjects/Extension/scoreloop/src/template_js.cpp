@@ -79,9 +79,13 @@ string TemplateJS::InvokeMethod(const string& command) {
 
 	// based on the command given, run the appropriate method in template_ndk.cpp
  	if (strCommand == "start") {
-		return m_pTemplateController->start();
-	} else if (strCommand == "stop") {
-		m_pTemplateController->stop();
+		return m_pTemplateController->start(arg);
+	} else if (strCommand == "getuser") {
+		m_pTemplateController->getUser();
+	} else if (strCommand == "getbuddylist") {
+		m_pTemplateController->getBuddyList();
+	} else if (strCommand == "readlog") {
+		return m_pTemplateController->readLog();
 	}
 
 	strCommand.append(";");

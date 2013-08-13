@@ -69,8 +69,6 @@ typedef struct ChallengeInfo_tag {
 } ChallengeInfo_t;
 
 typedef struct AppData_tag {
-    void *m_pTemplateNDK;
-
 	SC_Client_h client;
 	SC_Score_h score;
 	SC_Challenge_h challenge;
@@ -105,40 +103,42 @@ typedef struct AppData_tag {
 	ChallengeInfo_t **challenges;
 } AppData_t;
 
+void init();
+void kill();
 
-class TemplateJS;
+SC_Error_t userget();
 
-namespace webworks {
+// The extension methods are defined here
+SC_Error_t start();
+SC_Error_t scgetuser(AppData_t *app);
+SC_Error_t scgetbuddies(AppData_t *app);
 
-class TemplateNDK {
-public:
-	explicit TemplateNDK(TemplateJS *parent = NULL);
-	virtual ~TemplateNDK();
+SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
+SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearchList_t searchList, unsigned int rangeLength);
+SC_Error_t scscoresfree(AppData_t *app);
+SC_Bool_t scscoreshasprevrange(AppData_t *app);
+SC_Bool_t scscoreshasnextrange(AppData_t *app);
+SC_Error_t scscoresgetnextrange(AppData_t *app);
+SC_Error_t scscoresgetprevrange(AppData_t *app);
 
-	// The extension methods are defined here
-	std::string readLog();
+SC_Error_t scgetgames(AppData_t *app, SC_GamesSearchList_t filter, unsigned int rangeLength);
+SC_Bool_t scgameshasprevrange(AppData_t *app);
+SC_Bool_t scgameshasnextrange(AppData_t *app);
+SC_Error_t scgamesgetnextrange(AppData_t *app);
+SC_Error_t scgamesgetprevrange(AppData_t *app);
+void scgamesfree(AppData_t *app);
 
-	std::string start(const std::string& arg);
-	void getUser();
-	void getUserCallback(AppData_t *app);
+SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount);
 
-	void getBuddyList();
-	void getBuddyListCallback(AppData_t *app);
+SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against);
+SC_Error_t scgetchallengelist(AppData_t *app);
+void challengesControllerCallback(void *userData, SC_Error_t completionStatus);
 
-		bool isThreadHalt();
-	std::string templateStartThread();
-	std::string templateStopThread();
-	void templateThreadCallback();
 
-private:
-	TemplateJS *m_pParent;
-	int templateProperty;
-	bool threadHalt;
-	pthread_t m_thread;
-	pthread_cond_t cond;
-	pthread_mutex_t mutex;
-};
+std::string templateStartThread();
+std::string templateStopThread();
+bool isThreadHalt();
+void templateThreadCallback();
 
-} // namespace webworks
 
 #endif /* TEMPLATENDK_H_ */

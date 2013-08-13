@@ -48,8 +48,14 @@ JNEXT.Template = function () {
 	// ************************
 
 	// calls into InvokeMethod(string command) in template_js.cpp
+	self.getbuddylist = function () {
+		return JNEXT.invoke(self.m_id, "getbuddylist");
+	};
 	self.getuser = function () {
 		return JNEXT.invoke(self.m_id, "getuser");
+	};
+	self.readlog = function () {
+		return JNEXT.invoke(self.m_id, "readlog");
 	};
 	self.start = function (input) {
 		return JNEXT.invoke(self.m_id, "start " + JSON.stringify(input));
@@ -67,18 +73,13 @@ JNEXT.Template = function () {
 			// Slice off the event name and the rest of the data is our JSON
 			jsonData = arData.slice(1, arData.length).join(" ");
 			_event.trigger("community.scoreloop.getUserCallback", JSON.parse(jsonData));
-		}
-/*
-		else if (strEventDesc === "community.templateExt.aSyncJSONCallbackResult") {
+		} else if (strEventDesc === "community.scoreloop.getBuddyListCallback") {
 			// Slice off the event name and the rest of the data is our JSON
 			jsonData = arData.slice(1, arData.length).join(" ");
-			_event.trigger("community.templateExt.aSyncJSONCallbackResult", JSON.parse(jsonData));
-		} else if (strEventDesc === "community.templateExt.jsonThreadCallback") {
-			// Slice off the event name and the rest of the data is our JSON
-			jsonData = arData.slice(1, arData.length).join(" ");
-			_event.trigger("community.templateExt.jsonThreadEvent", JSON.parse(jsonData));
-		}
-*/
+			_event.trigger("community.scoreloop.getBuddyListCallback", JSON.parse(jsonData));
+		} 
+
+		
 	};
 
 
