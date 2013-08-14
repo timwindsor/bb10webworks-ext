@@ -86,6 +86,10 @@ SC_Bool_t scscoreshasnextrange(AppData_t *app);
 SC_Error_t scscoresgetnextrange(AppData_t *app);
 SC_Error_t scscoresgetprevrange(AppData_t *app);
 
+SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against);
+SC_Error_t scsetchallengescore(AppData_t *app, double aScore, double *aMinorScore, unsigned int *aLevel, unsigned int *aMode);
+SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount);
+
 TemplateNDK::TemplateNDK(TemplateJS *parent) {
 	m_pParent = parent;
 	m_thread = 0;
@@ -277,6 +281,42 @@ std::string TemplateNDK::setScore(const std::string& arg) {
 	return writer.write(res);
 }
 
+std::string TemplateNDK::setChallengeScore(const std::string& arg) {
+	Json::FastWriter writer;
+	Json::Reader reader;
+	Json::Value root;
+	Json::Value res;
+	SC_Error_t rc = SBSL_BAD_PARAM;
+	double aScore;
+	double aMinorScore;
+	unsigned int aLevel;
+	unsigned int aMode;
+
+
+	bool parse = reader.parse(arg, root);
+
+	if (parse) {
+		aScore = atof(root["majorScore"].asCString());
+		aMinorScore = atof(root["minorScore"].asCString());
+		aLevel = atoi(root["level"].asCString());
+		aMode = atoi(root["mode"].asCString());
+		rc = scsetchallengescore(&app, aScore, &aMinorScore, &aLevel, &aMode);
+	}
+
+
+	fprintf(fp, "[SLTest] (setScore)\n");
+
+	if(rc == SC_OK) {
+		res["status"] = true;
+	} else {
+		res["status"] = false;
+	}
+
+	res["rc"] = rc;
+
+	return writer.write(res);
+}
+
 std::string TemplateNDK::getBuddyList() {
 	Json::FastWriter writer;
 	Json::Value res;
@@ -296,6 +336,40 @@ std::string TemplateNDK::getBuddyList() {
 	return writer.write(res);
 }
 
+std::string TemplateNDK::setChallenge(const std::string& arg) {
+	Json::FastWriter writer;
+	Json::Reader reader;
+	Json::Value root;
+	Json::Value res;
+	SC_Error_t rc = SBSL_BAD_PARAM;
+	unsigned int sMode;
+	unsigned int sLevel;
+	unsigned int sWager;
+	SC_User_h against = NULL;
+
+	bool parse = reader.parse(arg, root);
+
+	if (parse) {
+		sMode = atoi(root["mode"].asCString());
+		sLevel = atoi(root["level"].asCString());
+		sWager = atoi(root["wager"].asCString());
+
+		rc = sccreatechallenge(&app, sWager, sMode, sLevel, against);
+	}
+
+	fprintf(fp, "[SLTest] (setChallenge)\n");
+
+	if(rc == SC_OK) {
+		res["status"] = true;
+	} else {
+		res["status"] = false;
+	}
+
+	res["rc"] = rc;
+
+	return writer.write(res);
+}
+
 std::string TemplateNDK::getLeaders(const std::string& arg) {
 	Json::FastWriter writer;
 	Json::Reader reader;
@@ -310,16 +384,6 @@ std::string TemplateNDK::getLeaders(const std::string& arg) {
 	bool parse = reader.parse(arg, root);
 
 	if (parse) {
-/*
- 		res["searchMode"] = root["searchMode"];
-		res["searchList"] = root["searchList"];
-		res["range"] = root["range"];
-
-		res["searchMode"] = atoi(root["searchMode"].asCString());
-		res["searchList"] = atoi(root["searchList"].asCString());
-		res["range"] = atoi(root["range"].asCString());
-*/
-
 		sMode = atoi(root["searchMode"].asCString());
 		sList = atoi(root["searchList"].asCString());
 		rLen = atoi(root["range"].asCString());
@@ -347,6 +411,9 @@ std::string TemplateNDK::getLeaders(const std::string& arg) {
 
 	return writer.write(res);
 }
+
+
+
 
 /*
  * Callbacks for exposed functions
@@ -385,6 +452,17 @@ void TemplateNDK::getBuddyListCallback(AppData_t *app) {
 	std::string event = "community.scoreloop.getBuddyListCallback";
 	m_pParent->NotifyEvent(event + " " + writer.write(root));
 }
+
+void TemplateNDK::setChallengeCallback(AppData_t *app) {
+	Json::FastWriter writer;
+	Json::Value root;
+
+	fprintf(fp, "[SLTest] (setChallengeCallback)\n");
+
+	std::string event = "community.scoreloop.setChallengeCallback";
+	m_pParent->NotifyEvent(event + " " + writer.write(root));
+}
+
 
 void TemplateNDK::getLeadersCallback(AppData_t *app) {
 	Json::FastWriter writer;
@@ -636,6 +714,8 @@ SC_Error_t scsetscore(AppData_t *app, double aScore, double *aMinorScore = NULL,
 					}
 				}
 			}
+			app->score = NULL;
+			SC_Score_Release(app->score);
 		}
 	} else {
 		rc = SC_INVALID_STATE;
@@ -798,8 +878,8 @@ SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearch
 					if((app->UserInfo != NULL) && (app->UserInfo->user != NULL)) {
 						if((rc = SC_ScoresController_SetMode(app->scoresController, sMode)) == SC_OK) {
 							if((rc = SC_RankingController_LoadRankingForUserInMode(app->rankingController, app->UserInfo->user, sMode)) == SC_OK) {		// Triggers rankingControllerCallback
-								if((rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength)) == SC_OK) {	// Triggers scoresControllerCallback
-								}
+								rc = SC_ScoresController_LoadScoresAroundUser(app->scoresController, app->UserInfo->user, rangeLength);	// Triggers scoresControllerCallback
+
 							}
 						}
 					}
@@ -810,6 +890,181 @@ SC_Error_t scgetscores(AppData_t *app, unsigned int sMode, const SC_ScoresSearch
 
 	return rc;
 }
+
+
+
+
+/*
+ * Challenge functions
+ *
+ *
+ */
+
+SC_Error_t scsetchallengescore(AppData_t *app, double aScore, double *aMinorScore = NULL, unsigned int *aLevel = NULL, unsigned int *aMode = NULL) {
+	SC_Error_t rc;
+
+	// Create Score object
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateScore(app->client, &app->score)) == SC_OK) {
+
+			rc = SC_Score_SetResult(app->score, aScore);
+
+			if(rc == SC_OK) {
+				if(aMinorScore != NULL) {
+					rc = SC_Score_SetMinorResult(app->score, *aMinorScore);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						app->score = NULL;
+						return rc;
+					}
+				}
+
+				if(aLevel != NULL) {
+					rc = SC_Score_SetLevel(app->score, *aLevel);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						app->score = NULL;
+						return rc;
+					}
+				}
+
+				if(aMode != NULL) {
+					rc = SC_Score_SetMode(app->score, *aMode);
+					if(rc != SC_OK) {
+						SC_Score_Release(app->score);
+						app->score = NULL;
+						return rc;
+					}
+				}
+
+				/* Make the asynchronous request */
+				if((rc = SC_ChallengeController_SubmitChallengeScore(app->challengeController, app->score)) != SC_OK) {
+					SC_ChallengeController_Release(app->challengeController); /* Cleanup Controller */
+					app->challengeController = NULL;
+				}
+			}
+			app->score = NULL;
+			SC_Score_Release(app->score);
+		}
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+	return rc;
+}
+
+void challengeControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ChallengeController_Release(app->challengeController); /* Cleanup Controller */
+		app->challengeController = NULL;
+	}
+
+    TemplateNDK* ndk = static_cast<TemplateNDK*>(app->m_pTemplateNDK);
+	ndk->setChallengeCallback(app);
+
+
+}
+
+SC_Error_t sccreatechallenge(AppData_t *app, unsigned int amount, unsigned int mode, unsigned int level, SC_User_h against = NULL) {
+	SC_Error_t rc = SBSL_BAD_PARAM;
+
+	if(app->client != NULL) {
+		if(sccreatemoney(app, amount) == SC_OK) {
+			if((rc = SC_Client_CreateChallengeController(app->client, &app->challengeController, challengeControllerCallback, app)) == SC_OK) {
+				if((rc = SC_Client_CreateChallenge(app->client, app->money, against, mode, level, &app->challenge)) == SC_OK) {
+					if(SC_ChallengeController_SetChallenge(app->challengeController, app->challenge) == SC_OK) {
+						rc = SC_ChallengeController_SubmitChallenge(app->challengeController);
+					}
+				}
+			}
+		}
+	}
+
+	return rc;
+}
+
+void challengesControllerCallback(void *userData, SC_Error_t completionStatus)
+{
+	SC_ChallengeList_h clist;
+	SC_Challenge_h oChallenge;
+	unsigned int ccount;
+	ChallengeInfo_t **challengelist;
+
+    /* Get the application from userData argument */
+    AppData_t *app = (AppData_t *) userData;
+
+	/* Check completion status */
+	if (completionStatus != SC_OK) {
+		SC_ChallengesController_Release(app->challengesController); /* Cleanup Controller */
+		app->challengesController = NULL;
+		return;
+	}
+
+/*
+	if(app->challenges != NULL) {
+		scchallengesfree(app);
+	}
+ */
+    clist = SC_ChallengesController_GetChallenges(app->challengesController);
+    ccount = SC_ChallengeList_GetCount(clist);
+
+    challengelist = (ChallengeInfo_t **) calloc(sizeof(ChallengeInfo_t *), ccount);
+ 	for(unsigned int i=0; i< ccount; i++) {
+		oChallenge = SC_ChallengeList_GetAt(clist, i);
+//		challengelist[i] = GetChallengesInfo(oChallenge);
+//		fprintf(stdout, "[Scoreloop Test] Game: %s v %s by %s - %s\n", gamelist[i]->name, gamelist[i]->version, gamelist[i]->publisher, gamelist[i]->dlurl); fflush(stdout);
+	}
+
+	app->challenges_c = ccount;
+	app->challenges = challengelist;
+
+}
+
+SC_Error_t scgetchallengelist(AppData_t *app) {
+	SC_Error_t rc = SBSL_BAD_PARAM;
+
+	if(app->client != NULL) {
+		if((rc = SC_Client_CreateChallengesController(app->client, &app->challengesController, challengesControllerCallback, app)) == SC_OK) {
+			rc = SC_ChallengesController_LoadOpenChallenges(app->challengesController);
+		}
+	}
+
+	return rc;
+}
+
+
+
+
+/*
+ * Money functions
+ *
+ *
+ */
+
+SC_Error_t sccreatemoney(AppData_t *app, unsigned int amount) {
+	SC_Error_t rc;
+	unsigned long cash;
+
+	app->money = NULL;
+
+	if(app->client != NULL) {
+//		SC_Session_h session = SC_Client_GetSession(app->client);
+//		SC_Money_h money_h = SC_Session_GetBalance(session);
+		rc = SC_Client_CreateMoney(app->client, &app->money, amount);
+		cash = SC_Money_GetAmount(app->money);
+	} else {
+		rc = SC_INVALID_STATE;
+	}
+
+	return rc;
+}
+
+
+
 
 
 // Thread functions

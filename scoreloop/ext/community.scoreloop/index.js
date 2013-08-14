@@ -35,6 +35,12 @@ module.exports = {
 	setscore: function (success, fail, args) {
 		success(template.getInstance().setscore(args));
 	},
+	setchallengescore: function (success, fail, args) {
+		success(template.getInstance().setchallengescore(args));
+	},
+	setchallenge: function (success, fail, args) {
+		success(template.getInstance().setchallenge(args));
+	},
 	getleaders: function (success, fail, args) {
 		success(template.getInstance().getleaders(args));
 	},

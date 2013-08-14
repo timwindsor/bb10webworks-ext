@@ -23,12 +23,18 @@ var _self = {},
 
 	// Simple Synchronous test function to get a string
 	_self.setscore = function (args) {
-//		window.webworks.event.once(_ID, "community.scoreloop.setScoreCallback", callback);
 		return window.webworks.execSync(_ID, "setscore", args);
+	};
+	_self.setchallengescore = function (args) {
+		return window.webworks.execSync(_ID, "setchallengescore", args);
 	};
 	_self.getbuddylist = function (callback) {
 		window.webworks.event.once(_ID, "community.scoreloop.getBuddyListCallback", callback);
 		return window.webworks.execAsync(_ID, "getbuddylist", null);
+	};
+	_self.setchallenge = function (args, callback) {
+		window.webworks.event.once(_ID, "community.scoreloop.setChallengeCallback", callback);
+		return window.webworks.execAsync(_ID, "setchallenge", args);
 	};
 	_self.getleaders = function (args, callback) {
 		window.webworks.event.once(_ID, "community.scoreloop.getLeadersCallback", callback);

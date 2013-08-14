@@ -60,6 +60,12 @@ JNEXT.Template = function () {
 	self.setscore = function (input) {
 		return JNEXT.invoke(self.m_id, "setscore " + JSON.stringify(input));
 	};
+	self.setchallengescore = function (input) {
+		return JNEXT.invoke(self.m_id, "setchallengescore " + JSON.stringify(input));
+	};
+	self.setchallenge = function (input) {
+		return JNEXT.invoke(self.m_id, "setchallenge " + JSON.stringify(input));
+	};
 	self.getleaders = function (input) {
 		return JNEXT.invoke(self.m_id, "getleaders " + JSON.stringify(input));
 	};
@@ -87,6 +93,10 @@ JNEXT.Template = function () {
 			// Slice off the event name and the rest of the data is our JSON
 			jsonData = arData.slice(1, arData.length).join(" ");
 			_event.trigger("community.scoreloop.getLeadersCallback", JSON.parse(jsonData));
+		} else if (strEventDesc === "community.scoreloop.setChallengeCallback") {
+			// Slice off the event name and the rest of the data is our JSON
+			jsonData = arData.slice(1, arData.length).join(" ");
+			_event.trigger("community.scoreloop.setChallengeCallback", JSON.parse(jsonData));
 		} 
 
 		

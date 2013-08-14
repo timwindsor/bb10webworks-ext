@@ -129,6 +129,10 @@ public:
 	std::string getLeaders(const std::string& arg);
 	void getLeadersCallback(AppData_t *app);
 
+	std::string setChallenge(const std::string& arg);
+	void setChallengeCallback(AppData_t *app);
+	std::string setChallengeScore(const std::string& arg);
+
 	std::string setScore(const std::string& arg);
 
 	bool isThreadHalt();
