@@ -84,6 +84,10 @@ input {
 	width: 150px;
 	}
 	
+.prespan {
+	font-size: 72px;
+	}
+	
 </style>
 
 <script type="text/javascript" src="local:///chrome/webworks.js"></script>
@@ -107,7 +111,7 @@ var ocf = false; // Open Challenge?
 var coins = 0;
 var res = false;
 var wager = 0;
-var lives = 1;
+var lives = 3;
 
 if(typeof window.devicePixelRatio != 'undefined') // Does device support devicePixelRatio?
 	{
@@ -151,18 +155,10 @@ function startsl() {
 
 function cbuserinfo(data) {
 	if(data) {
-		if(ocf) {
-			coins = data.coins;
-			document.getElementById('moneybag').innerHTML = coins;
-			showChallengeDiv();
-			}
-		else {
-			showFlagQuestion();
-			}
+		coins = data.coins;
+		document.getElementById('moneybag').innerHTML = coins;
 		}
-	else {
-		showFlagQuestion();
-		}
+	switchdiv('menudiv');
 	}
 	
 // Check random answers have not already been chosen - dupes!
@@ -248,10 +244,10 @@ function answerFlagQuestion(ans) {
 		score += flags[answer].score;
 		document.getElementById('score').innerHTML = 'Correct!<br /> <br />You score ' + flags[answer].score + ' points <br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (lives - qasked + qright) + ' lives left</span>';
 		} else {
-		document.getElementById('score').innerHTML = 'Sorry - it was ...<br /><br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (lives - qasked + qright) + 'lives left</span>';
+		document.getElementById('score').innerHTML = 'Sorry - it was ...<br /><br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (lives - qasked + qright) + ' lives left</span>';
 		}
 
-	res = community.scoreloop.setscore( {majorScore: score, minorScore: Math.round((qright * 100) / qasked), level: difficulty, mode: 0 } );
+//	res = community.scoreloop.setscore( {majorScore: score, minorScore: Math.round((qright * 100) / qasked), level: difficulty, mode: 0 } );
 	showInfoDiv();
 	}
 	
@@ -269,6 +265,10 @@ function showInfoDiv()
 	switchdiv('infodiv');
 	}
 	
+function dochallenge(idx) {
+	alert(idx);
+	}
+	
 function cbchallengeinfo(data) {
 	var txt = "";
 	
@@ -276,10 +276,10 @@ function cbchallengeinfo(data) {
 		var blist = data.challenges;
 		txt += '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Level</th><th align="right" width="35%">Prize</th></tr>';
 		for(var i = 0; i< blist.length; i++) {
-			txt += '<tr><td>';
-			txt += blist[i].login + '</td><td>';
+			txt += '<tr onclick="dochallenge(' + i + ');"><td>';
+			txt += blist[i].login + '</td><td align="right">';
 			txt += blist[i].level + '</td><td align="right">';
-			txt += blist[i].prize + '</td><td align="right">';
+			txt += blist[i].prize + '</td></tr>';
 			}
 		txt += "</table>";
 		} else {
@@ -321,9 +321,35 @@ function showRanksDiv()
 	res = community.scoreloop.getleaders( { searchMode: 0, searchList: 0, range: 25 } , cbrankinginfo);
 	}
 	
+function setChallenge() {
+	wager = Number(document.getElementById('youwager').value);
+	if((wager < 1) || (wager !== wager)) { // NaN !== NaN
+		if(!confirm("You did not enter sum to wager.\nCancel the Challenge?")) {
+			ocf = false;
+			showFlagQuestion();
+			} else {
+				return false;
+			}
+		} else if(wager > coins) {
+			alert("You can't bet more coins than you have!");
+			return false;
+		} else {
+			if(wager != parseInt(wager)) {
+				alert("You can't bet fractional coins!");
+				return false;
+				}
+				
+			showFlagQuestion();
+		}
+	}
+	
 function showChallengeDiv()
 	{
-	switchdiv('chaldiv');
+	res = community.scoreloop.getuser(function(data) {
+		coins = data.coins;
+		document.getElementById('moneybag').innerHTML = coins;
+		switchdiv('chaldiv');
+		});
 	}
 	
 function showLogDiv()
@@ -375,8 +401,10 @@ function setMode(gmode) {
 	qasked = 0;
 
 	difficulty = Number(gmode);
-	makeFlagQuestion();
+	switchdiv('menudiv');
+	}
 	
+function setupScoreloop() {
 	switchdiv('slwait');
 	startsl();
 	}
@@ -387,20 +415,11 @@ function start() {
 		var fbut = document.getElementById('m' + i);
 		fbut.value = modetext[i];
 		}			
-	switchdiv('modesel');
+	switchdiv('preload');
 	}
-	
-function toggleChallenge() {
-	var ocb = document.getElementById('oc');
-	var txt = "Create open challenge : ";
-	if(ocf) { // Open Challenge flag
-		ocf = false;
-		txt += 'NO';
-		} else {
-		ocf = true;
-		txt += 'YES';
-		} 
-	ocb.value = txt;
+
+function begin() {
+	setupScoreloop();
 	}
 	
 function doRestart() {
@@ -409,43 +428,19 @@ function doRestart() {
 	qright = 0;
 	qasked = 0;
 	
-	ocf = true;
-	toggleChallenge(); // Artificially set ocf to false to set text on button (lazy)
+	ocf = false;
 
 	var nflag = document.getElementsByClassName('nflag');
 	for(var i=0; i<nflag.length; i++) {
 		nflag[i].value = 'Next Flag';
 		}
 
-	switchdiv('modesel');
+	switchdiv('menudiv');
 	}
 
 function cbsetchallenge(data) {
 	if(data) {
 		alert('Challenge set');
-		}
-	// showFlagQuestion();
-	}
-	
-function setChallenge() {
-	wager = Number(document.getElementById('youwager').value);
-	if((wager < 1) || (wager !== wager)) { // NaN !== NaN
-		if(!confirm("You did not enter sum to wager.\nCancel the Challenge?")) {
-			ocf = false;
-			showFlagQuestion();
-			} else {
-				return false;
-			}
-		} else if(wager > coins) {
-			alert("You can't bet more coins than you have!");
-			return false;
-		} else {
-			if(wager != parseInt(wager)) {
-				alert("You can't bet fractional coins!");
-				return false;
-				}
-				
-			showFlagQuestion();
 		}
 	}
 	
@@ -453,6 +448,23 @@ function setChallenge() {
 
 </head>
 <body style="margin: auto; height: 100%;" onload="start();">
+
+<div id="preload" class="infopage" onclick="begin();">
+	<span class="prespan">Touch Anywhere</span><br />
+	<img src="slbadge.png" width="512" height="512" /><br />
+	<span class="prespan">To Begin</span>
+</div>
+
+<div id="menudiv" class="infopage">
+	<span class="mtext">Menu<br /></span>
+	<input id="menu0" type="button" class="mbutton" value="Select Difficulty" onclick="switchdiv('modesel');"/><br />
+	<input id="menu1" type="button" class="mbutton" value="Start New Game" onclick="newQuestion();"/><br />
+	<input id="menu2" type="button" class="mbutton" value="Show Buddylist" onclick="showBuddyDiv();"/><br />
+	<input id="menu3" type="button" class="mbutton" value="Show Leaderboard" onclick="showRanksDiv();"/><br />
+	<input id="menu4" type="button" class="mbutton" value="Show Challenges" onclick="showChallengeListDiv();"/><br />
+	<input id="menu5" type="button" class="mbutton" value="Create Open Challenge" onclick="showChallengeDiv();"/>
+	<input id="menu6" type="button" class="mbutton" value="Show Logs" onclick="showLogDiv();"/>
+</div>
 
 <div id="modesel" class="infopage">
 	<span class="mtext">DIFFICULTY LEVEL<br /></span>
@@ -463,7 +475,7 @@ function setChallenge() {
 	<input id="m3" type="button" class="mbutton" value="" onclick="setMode(3);"/><br />
 	<input id="m4" type="button" class="mbutton" value="" onclick="setMode(4);"/><br />
 	<br />
-	<input id="oc" type="button" class="cbutton" value="Create open challenge : NO" onclick="toggleChallenge();"/>
+	<input id="rtm" type="button" class="mbutton" value="Return To Menu" onclick="switchdiv('menudiv');"/>
 </div>
 
 <div id="slwait" class="infopage" style="font-size: 96px;">
@@ -490,7 +502,7 @@ function setChallenge() {
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
-	<input id="next" type="button" class="button" value="Buddies" onclick="showBuddyDiv();"/>
+	<input id="next" type="button" class="button" value="Menu" onclick="switchdiv('menudiv');"/>
 	</div>
 </div>
 
@@ -501,7 +513,7 @@ function setChallenge() {
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
-	<input id="next" type="button" class="button" value="Ranking" onclick="showRanksDiv();"/>
+	<input id="next" type="button" class="button" value="Menu" onclick="switchdiv('menudiv');"/>
 	<br />
 	</div>
 </div>
@@ -513,18 +525,18 @@ function setChallenge() {
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
-	<input id="next" type="button" class="button" value="Logfile" onclick="showChallengeListDiv();"/>
+	<input id="next" type="button" class="button" value="Menu" onclick="switchdiv('menudiv');"/>
 	</div>
 </div>
 
-<div id="clistdiv" class="infopage">
+<div id="clistdiv" class="infopage" style="font-size: 64px;">
 	<div id="challenges" style="text-align: left;" class="contentarea">
 	<!-- Challenges -->
 	</div>
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
-	<input id="next" type="button" class="button" value="Logfile" onclick="showLogDiv();"/>
+	<input id="next" type="button" class="button" value="Menu" onclick="switchdiv('menudiv');"/>
 	</div>
 </div>
 
@@ -535,7 +547,7 @@ function setChallenge() {
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
-	<input id="next" type="button" class="button" value="Answer" onclick="showInfoDiv();"/>
+	<input id="next" type="button" class="button" value="Menu" onclick="switchdiv('menudiv');"/>
 	</div>
 </div>
 

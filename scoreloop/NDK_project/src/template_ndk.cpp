@@ -710,38 +710,6 @@ SC_Error_t scgetbuddies(AppData_t *app) {
 	return rc;
 }
 
-void userControllerCallback(void *userData, SC_Error_t completionStatus)
-{
-    /* Get the application from userData argument */
-    AppData_t *app = (AppData_t *) userData;
-
-	/* Check completion status */
-	if (completionStatus != SC_OK) {
-		SC_UserController_Release(app->userController); /* Cleanup Controller */
-		return;
-	}
-
-	/* Get the session from the client. */
-	SC_Session_h session = SC_Client_GetSession(app->client);
-
-	/* Get the session user from the session. */
-	SC_User_h user = SC_Session_GetUser(session);
-
-	app->UserInfo = GetUserInfo(user, false);
-
-	SC_Money_h money_h = SC_Session_GetBalance(session);
-	unsigned long cash = SC_Money_GetAmount(money_h);
-
-	app->cash = cash;
-
-	/* We don't need the UserController anymore, so release it */
-	SC_UserController_Release(app->userController);
-
-    TemplateNDK* ndk = static_cast<TemplateNDK*>(app->m_pTemplateNDK);
-	ndk->getUserCallback(app, completionStatus);
-
-}
-
 
 // Thread functions
 // The following functions are for controlling the main Scoreloop Thread
@@ -806,7 +774,28 @@ std::string TemplateNDK::templateStopThread() {
 	threadHalt = true;
 
 	// Tidy Up
+	if(app.leaders != NULL) {
+		for(unsigned int i=0; i< app.leaders_c; i++) {
+			free((void *) app.leaders[i]->login);
+		}
+		free(app.leaders);
+		app.leaders_c = 0;
+		app.leaders = NULL;
+	}
+
+	if(app.challenges != NULL) {
+		for(unsigned int i=0; i<app.challenges_c; i++) {
+			free((void *) app.challenges[i]->contenderlogin);
+			free((void *) app.challenges[i]->contestantlogin);
+			free((void *) app.challenges[i]->created);
+			}
+		free(app.challenges);
+		app.challenges_c = 0;
+	}
+
+
 	SC_User_Release(app.UserInfo->user);
+	free(app.UserInfo);
 	SC_Client_Release(app.client);
 
 	return "Thread stopped";
@@ -1362,7 +1351,7 @@ static void LoadChallengesCompletionCallback(void *userData, SC_Error_t completi
 {
 	SC_ChallengeList_h clist;
 	SC_Challenge_h oChallenge;
-	unsigned int ccount, i;
+	unsigned int ccount, i, clistc;
 	ChallengeInfo_t **challengelist;
 
     /* Get the application from userData argument */
@@ -1386,11 +1375,15 @@ static void LoadChallengesCompletionCallback(void *userData, SC_Error_t completi
 
     clist = SC_ChallengesController_GetChallenges(app->challengesController);
     ccount = SC_ChallengeList_GetCount(clist);
+    clistc = 0;
 
     challengelist = (ChallengeInfo_t **) calloc(sizeof(ChallengeInfo_t *), ccount);
  	for(i=0; i< ccount; i++) {
 		oChallenge = SC_ChallengeList_GetAt(clist, i);
-		challengelist[i] = GetChallengeInfo(oChallenge);
+ 		if(SC_Challenge_IsPlayableForUser(oChallenge, app->UserInfo->user)) {
+ 			challengelist[clistc] = GetChallengeInfo(oChallenge);
+ 			clistc++;
+ 		}
 	}
 
  	app->challenges_c = ccount;
