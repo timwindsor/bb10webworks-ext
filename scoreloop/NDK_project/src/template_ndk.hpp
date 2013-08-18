@@ -19,7 +19,11 @@
 
 #include <string>
 #include <pthread.h>
+
 #include <scoreloop/scoreloopcore.h>
+
+#define SBSL_BAD_PARAM 32888
+#define ISXDIGIT(x) (isxdigit((int) ((unsigned char) x)))
 
 typedef struct LeaderInfo_tag {
 	SC_User_h user;
@@ -57,15 +61,16 @@ typedef struct UserInfo_tag {
 
 typedef struct ChallengeInfo_tag {
 	SC_User_h contender;
-	unsigned int contenderscore;
-	SC_User_h challenger;
-	unsigned int challengerscore;
-	unsigned int stake;
+	const char* contenderlogin;
+	SC_Score_h contenderscore;
+	SC_User_h contestant;
+	const char* contestantlogin;
+	SC_Score_h contestantscore;
+	SC_Money_h stake;
+	SC_Money_h prize;
 	const char* created;
-	const char* completed;
 	unsigned int mode;
 	unsigned int level;
-	SC_Money_h prize;
 } ChallengeInfo_t;
 
 typedef struct AppData_tag {
@@ -76,7 +81,7 @@ typedef struct AppData_tag {
 	SC_Challenge_h challenge;
 	SC_Money_h money;
 
-	SC_AchievementsController_h achievementsController;
+	SC_LocalAchievementsController_h achievementsController;
 	SC_ActivitiesController_h activitiesController;
 	SC_ChallengeController_h challengeController;
 	SC_ChallengesController_h challengesController;
@@ -121,19 +126,24 @@ public:
 	std::string start(const std::string& arg);
 
 	std::string getUser();
-	void getUserCallback(AppData_t *app);
+	void getUserCallback(AppData_t *app, SC_Error_t rc);
 
 	std::string getBuddyList();
-	void getBuddyListCallback(AppData_t *app);
+	void getBuddyListCallback(AppData_t *app, SC_Error_t rc);
 
 	std::string getLeaders(const std::string& arg);
-	void getLeadersCallback(AppData_t *app);
+	void getLeadersCallback(AppData_t *app, SC_Error_t rc);
 
 	std::string setChallenge(const std::string& arg);
-	void setChallengeCallback(AppData_t *app);
+	void setChallengeCallback(AppData_t *app, SC_Error_t rc);
 	std::string setChallengeScore(const std::string& arg);
+	void setChallengeScoreCallback(AppData_t *app, SC_Error_t rc);
+
+	std::string getChallengeList();
+	void getChallengeListCallback(AppData_t *app, SC_Error_t rc);
 
 	std::string setScore(const std::string& arg);
+	void setScoreCallback(AppData_t *app, SC_Error_t rc);
 
 	bool isThreadHalt();
 	std::string templateStartThread();

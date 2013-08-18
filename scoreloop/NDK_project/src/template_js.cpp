@@ -88,6 +88,8 @@ string TemplateJS::InvokeMethod(const string& command) {
 		return m_pTemplateController->setScore(arg);
 	} else if (strCommand == "setchallenge") {
 		return m_pTemplateController->setChallenge(arg);
+	} else if (strCommand == "getchallengelist") {
+		return m_pTemplateController->getChallengeList();
 	} else if (strCommand == "setchallengescore") {
 		return m_pTemplateController->setChallengeScore(arg);
 	} else if (strCommand == "getleaders") {

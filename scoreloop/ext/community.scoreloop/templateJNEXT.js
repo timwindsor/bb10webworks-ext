@@ -51,6 +51,9 @@ JNEXT.Template = function () {
 	self.getbuddylist = function () {
 		return JNEXT.invoke(self.m_id, "getbuddylist");
 	};
+	self.getchallengelist = function () {
+		return JNEXT.invoke(self.m_id, "getchallengelist");
+	};
 	self.getuser = function () {
 		return JNEXT.invoke(self.m_id, "getuser");
 	};
@@ -97,6 +100,10 @@ JNEXT.Template = function () {
 			// Slice off the event name and the rest of the data is our JSON
 			jsonData = arData.slice(1, arData.length).join(" ");
 			_event.trigger("community.scoreloop.setChallengeCallback", JSON.parse(jsonData));
+		} else if (strEventDesc === "community.scoreloop.getChallengeListCallback") {
+			// Slice off the event name and the rest of the data is our JSON
+			jsonData = arData.slice(1, arData.length).join(" ");
+			_event.trigger("community.scoreloop.getChallengeListCallback", JSON.parse(jsonData));
 		} 
 
 		

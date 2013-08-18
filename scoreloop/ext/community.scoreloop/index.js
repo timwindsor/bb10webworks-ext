@@ -29,6 +29,9 @@ module.exports = {
 	getbuddylist: function (success, fail) {
 		success(template.getInstance().getbuddylist());
 	},
+	getchallengelist: function (success, fail) {
+		success(template.getInstance().getchallengelist());
+	},
 	getuser: function (success, fail) {
 		success(template.getInstance().getuser());
 	},

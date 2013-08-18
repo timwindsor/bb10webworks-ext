@@ -32,6 +32,10 @@ var _self = {},
 		window.webworks.event.once(_ID, "community.scoreloop.getBuddyListCallback", callback);
 		return window.webworks.execAsync(_ID, "getbuddylist", null);
 	};
+	_self.getchallengelist = function (callback) {
+		window.webworks.event.once(_ID, "community.scoreloop.getChallengeListCallback", callback);
+		return window.webworks.execAsync(_ID, "getchallengelist", null);
+	};
 	_self.setchallenge = function (args, callback) {
 		window.webworks.event.once(_ID, "community.scoreloop.setChallengeCallback", callback);
 		return window.webworks.execAsync(_ID, "setchallenge", args);

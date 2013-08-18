@@ -57,7 +57,7 @@ input {
 	color: #0000DD;
 }
 
-#content, #slwait, #betwait, #infodiv, #resdiv, #buddydiv, #logdiv, #chaldiv, #endgame {
+.infopage {
 	display: none;
 	height: 720px;
 	width: 720px;
@@ -79,7 +79,7 @@ input {
 	font-size: 72px;
 	}
 
-#wager {
+#youwager {
 	text-align: right;
 	width: 150px;
 	}
@@ -105,6 +105,9 @@ var qasked = 0; // # of questions attempter
 
 var ocf = false; // Open Challenge?
 var coins = 0;
+var res = false;
+var wager = 0;
+var lives = 1;
 
 if(typeof window.devicePixelRatio != 'undefined') // Does device support devicePixelRatio?
 	{
@@ -124,7 +127,7 @@ document.addEventListener('webworksready', function(e) {
 	// This is a hack for Ripple calling webworksready multiple times
 	if (rippleLoaded) return;
 	rippleLoaded = true;
-	var res = false;
+	res = false;
 	});
 	
 function startsl() {
@@ -139,12 +142,8 @@ function startsl() {
 		}));
 		
 		if(res.status) {
-			community.scoreloop.getuser(cbuserinfo);
-			window.setTimeout(function () {
-						var data = community.scoreloop.readlog();
-						}
-					, 1000);
-					}
+			res = community.scoreloop.getuser(cbuserinfo);
+			}
 		} else {
 			alert("Can't find Scoreloop");
 		}
@@ -210,16 +209,10 @@ function makeFlagQuestion() {
 	}
 	
 function switchdiv(id) {
-	document.getElementById('modesel').style.display = 'none';
-	document.getElementById('slwait').style.display = 'none';
-	document.getElementById('betwait').style.display = 'none';
-	document.getElementById('content').style.display = 'none';
-	document.getElementById('infodiv').style.display = 'none';
-	document.getElementById('buddydiv').style.display = 'none';
-	document.getElementById('resdiv').style.display = 'none';
-	document.getElementById('logdiv').style.display = 'none';
-	document.getElementById('chaldiv').style.display = 'none';
-	document.getElementById('endgame').style.display = 'none';
+		var page = document.getElementsByClassName('infopage');
+		for(var i=0; i<page.length; i++) {
+			page[i].style.display = 'none';
+			}
 	
 	document.getElementById(id).style.display = 'block';
 	}
@@ -253,20 +246,20 @@ function answerFlagQuestion(ans) {
 	if(qlist[ans] == answer) {
 		qright++;
 		score += flags[answer].score;
-		document.getElementById('score').innerHTML = 'Correct!<br /> <br />You score ' + flags[answer].score + ' points <br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (10 - qasked + qright) + ' wrong answers left</span>';
+		document.getElementById('score').innerHTML = 'Correct!<br /> <br />You score ' + flags[answer].score + ' points <br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (lives - qasked + qright) + ' lives left</span>';
 		} else {
-		document.getElementById('score').innerHTML = 'Sorry - it was ...<br /><br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (10 - qasked + qright) + ' wrong answers left</span>';
+		document.getElementById('score').innerHTML = 'Sorry - it was ...<br /><br /><span style="text-transform:capitalize;">' + flags[answer].name + '</span><br /><br />Score : ' + score + ' (' + Math.round((qright * 100) / qasked) + '%)<br /><br /><span style="font-size: 48px">' + (lives - qasked + qright) + 'lives left</span>';
 		}
-	
-	var data = community.scoreloop.setscore( {majorScore: score, minorScore: Math.round((qright * 100) / qasked), level: 0, mode: 0 } );
+
+	res = community.scoreloop.setscore( {majorScore: score, minorScore: Math.round((qright * 100) / qasked), level: difficulty, mode: 0 } );
 	showInfoDiv();
 	}
 	
 function showInfoDiv()
 	{
-	if((qasked - qright) >= 10 ) {
+	if((qasked - qright) >= lives ) {
 		if(ocf) { // Finished a game while setting a challenge
-			var data = community.scoreloop.setchallengescore( {majorScore: score, minorScore: Math.round((qright * 100) / qasked), level: 0, mode: 0 } );
+			res = community.scoreloop.setchallenge({ wager: wager, majorScore: score, minorScore: Math.round((qright * 100) / qasked), level : difficulty, mode: 0 } , cbsetchallenge);
 			}
 		var nflag = document.getElementsByClassName('nflag');
 		for(var i=0; i<nflag.length; i++) {
@@ -276,16 +269,42 @@ function showInfoDiv()
 	switchdiv('infodiv');
 	}
 	
+function cbchallengeinfo(data) {
+	var txt = "";
+	
+	if(data) {
+		var blist = data.challenges;
+		txt += '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Level</th><th align="right" width="35%">Prize</th></tr>';
+		for(var i = 0; i< blist.length; i++) {
+			txt += '<tr><td>';
+			txt += blist[i].login + '</td><td>';
+			txt += blist[i].level + '</td><td align="right">';
+			txt += blist[i].prize + '</td><td align="right">';
+			}
+		txt += "</table>";
+		} else {
+		txt = "No challenges found";
+	}
+
+	document.getElementById('challenges').innerHTML = txt;
+	switchdiv('clistdiv');
+	}
+	
+function showChallengeListDiv()
+	{
+	res = community.scoreloop.getchallengelist(cbchallengeinfo);
+	}
+	
 function cbrankinginfo(data) {
 	var txt = "";
 	
 	if(data) {
 		var blist = data.leaders;
-		txt += '<table width="99%"><tr><th width="33%">Player</th><th width="33%">Rank</th><th width="33%">Score</th></tr>';
+		txt += '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Rank</th><th align="right" width="35%">Score</th></tr>';
 		for(var i = 0; i< blist.length; i++) {
 			txt += '<tr><td>';
-			txt += blist[i].login + '</td><td>';
-			txt += blist[i].rank + '</td><td>';
+			txt += blist[i].login + '</td><td align="right">';
+			txt += blist[i].rank + '</td><td align="right">';
 			txt += blist[i].majorScore + '</td></tr>';
 			}
 		txt += "</table>";
@@ -299,7 +318,7 @@ function cbrankinginfo(data) {
 	
 function showRanksDiv()
 	{
-	community.scoreloop.getleaders( { searchMode: 0, searchList: 0, range: 25 } , cbrankinginfo);
+	res = community.scoreloop.getleaders( { searchMode: 0, searchList: 0, range: 25 } , cbrankinginfo);
 	}
 	
 function showChallengeDiv()
@@ -309,11 +328,11 @@ function showChallengeDiv()
 	
 function showLogDiv()
 	{
-	var data = community.scoreloop.readlog();
+	res = community.scoreloop.readlog();
 	var txt = "";
 	
-	if(data) {
-		txt = data.log.replace(/\n/g, '<br />');
+	if(res) {
+		txt = res.log.replace(/\n/g, '<br />');
 		}
 	document.getElementById('logpage').innerHTML = txt;
 	switchdiv('logdiv');
@@ -337,12 +356,12 @@ function cbbuddyinfo(data) {
 
 function showBuddyDiv()
 	{
-	community.scoreloop.getbuddylist(cbbuddyinfo);
+	res = community.scoreloop.getbuddylist(cbbuddyinfo);
 	}
 	
 function newQuestion()
 	{
-	if((qasked - qright) < 10 ) {
+	if((qasked - qright) < lives ) {
 		makeFlagQuestion();
 		showFlagQuestion();
 		} else {
@@ -368,6 +387,7 @@ function start() {
 		var fbut = document.getElementById('m' + i);
 		fbut.value = modetext[i];
 		}			
+	switchdiv('modesel');
 	}
 	
 function toggleChallenge() {
@@ -401,11 +421,14 @@ function doRestart() {
 	}
 
 function cbsetchallenge(data) {
-	showFlagQuestion();
+	if(data) {
+		alert('Challenge set');
+		}
+	// showFlagQuestion();
 	}
 	
 function setChallenge() {
-	var wager = Number(document.getElementById('wager').value);
+	wager = Number(document.getElementById('youwager').value);
 	if((wager < 1) || (wager !== wager)) { // NaN !== NaN
 		if(!confirm("You did not enter sum to wager.\nCancel the Challenge?")) {
 			ocf = false;
@@ -422,9 +445,7 @@ function setChallenge() {
 				return false;
 				}
 				
-			switchdiv('betwait');
-//			cbsetchallenge(false);
-			community.scoreloop.setchallenge({ wager: wager, level : 0, mode: difficulty } , cbsetchallenge);
+			showFlagQuestion();
 		}
 	}
 	
@@ -433,7 +454,7 @@ function setChallenge() {
 </head>
 <body style="margin: auto; height: 100%;" onload="start();">
 
-<div id="modesel">
+<div id="modesel" class="infopage">
 	<span class="mtext">DIFFICULTY LEVEL<br /></span>
 	<br />
 	<input id="m0" type="button" class="mbutton" value="" onclick="setMode(0);"/><br />
@@ -445,17 +466,12 @@ function setChallenge() {
 	<input id="oc" type="button" class="cbutton" value="Create open challenge : NO" onclick="toggleChallenge();"/>
 </div>
 
-<div id="slwait" style="font-size: 96px;">
+<div id="slwait" class="infopage" style="font-size: 96px;">
 	<br /><br />
 	Connecting to Scoreloop
 </div>
 
-<div id="betwait" style="font-size: 96px;">
-	<br /><br />
-	Setting up Challenge...
-</div>
-
-<div id="content">
+<div id="content" class="infopage">
 	<div id="flagdiv">
 		<img id="flag" src="" style="border: 2px solid black" />
 	</div>
@@ -497,6 +513,17 @@ function setChallenge() {
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
+	<input id="next" type="button" class="button" value="Logfile" onclick="showChallengeListDiv();"/>
+	</div>
+</div>
+
+<div id="clistdiv" class="infopage">
+	<div id="challenges" style="text-align: left;" class="contentarea">
+	<!-- Challenges -->
+	</div>
+	
+	<div>
+	<input id="next" type="button" class="button nflag" value="Next Flag" onclick="newQuestion();"/>
 	<input id="next" type="button" class="button" value="Logfile" onclick="showLogDiv();"/>
 	</div>
 </div>
@@ -517,7 +544,7 @@ function setChallenge() {
 	By creating an Open Challenge you bet a number of coins against an unknown opponent who must pay the same as you wager to play against your challenge.<br /><br />
 	Whoever gets the highest score wins.</br></br>
 	You currently have <span id="moneybag"></span> coins, how many would you like to wager?<br /><br />
-	<input id="wager" type="number" value = "" /> Coins
+	<input id="youwager" type="number" value = "" /> Coins
 	</div>
 	
 	<div>
