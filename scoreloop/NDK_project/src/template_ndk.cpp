@@ -106,7 +106,6 @@ TemplateNDK::TemplateNDK(TemplateJS *parent) {
 	pthread_cond_t cond  = PTHREAD_COND_INITIALIZER;
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 	threadHalt = true;
-
 	// Initialize the platform adaptation object
 	SC_InitData_Init(&initData);
 
@@ -125,19 +124,15 @@ TemplateNDK::TemplateNDK(TemplateJS *parent) {
     }
 
     fplog = fopen ("data/file.txt", "w+");
-
-    // Optionally modify the following fields:
-	// initData.currentVersion = SC_INIT_CURRENT_VERSION;
-	// initData.minimumRequiredVersion = SC_INIT_VERSION_1_0;
-	// initData.runLoopType = SC_RUN_LOOP_TYPE_BPS;
+	fprintf(fplog, "[%10.3f] ScoreLoop Object Created\n", tstamp()); fflush(fplog);
 
 }
-
 
 TemplateNDK::~TemplateNDK() {
 	if(!threadHalt) {
 		templateStopThread();
 	}
+	fprintf(fplog, "[%10.3f] ScoreLoop Object Destroyed\n", tstamp()); fflush(fplog);
 	fclose(fplog);
 	if(buffer != NULL) {
 		free(buffer);
@@ -579,6 +574,8 @@ void TemplateNDK::getLeadersCallback(AppData_t *app, SC_Error_t rc) {
 		res["leaders"][i]["mode"] = app->leaders[i]->mode;
 	}
 
+	res["leader_c"] = app->leaders_c;
+
 	fprintf(fplog, "[%10.3f] (getLeadersCallback) - %d (%s)\n", tstamp(), rc, SC_MapErrorToStr(rc)); fflush(fplog);
 
 	if(rc == SC_OK) {
@@ -732,7 +729,7 @@ void* TemplateThread(void* parent) {
 }
 
 // Starts the thread and returns a message on status
-std::string TemplateNDK::templateStartThread() {
+void TemplateNDK::templateStartThread() {
 	if (!m_thread) {
 		int rc;
 	    rc = pthread_mutex_lock(&mutex);
@@ -747,31 +744,12 @@ std::string TemplateNDK::templateStartThread() {
 		pthread_create(&m_thread, &thread_attr, TemplateThread,
 				static_cast<void *>(this));
 		pthread_attr_destroy(&thread_attr);
-		return "Thread Started";
-	} else {
-		return "Thread Running";
 	}
 }
 
 // Sets the stop value
-std::string TemplateNDK::templateStopThread() {
+void TemplateNDK::templateStopThread() {
 	int rc;
-	// Request thread to set prevent sleep to false and terminate
-	rc = pthread_mutex_lock(&mutex);
-	threadHalt = true;
-	rc = pthread_cond_signal(&cond);
-	rc = pthread_mutex_unlock(&mutex);
-
-    // Wait for the thread to terminate.
-    void *exit_status;
-    rc = pthread_join(m_thread, &exit_status) ;
-
-	// Clean conditional variable and mutex
-	pthread_cond_destroy(&cond);
-	pthread_mutex_destroy(&mutex);
-
-	m_thread = 0;
-	threadHalt = true;
 
 	// Tidy Up
 	if(app.leaders != NULL) {
@@ -793,12 +771,27 @@ std::string TemplateNDK::templateStopThread() {
 		app.challenges_c = 0;
 	}
 
-
 	SC_User_Release(app.UserInfo->user);
 	free(app.UserInfo);
 	SC_Client_Release(app.client);
 
-	return "Thread stopped";
+	// Request thread to set prevent sleep to false and terminate
+	rc = pthread_mutex_lock(&mutex);
+	threadHalt = true;
+	rc = pthread_cond_signal(&cond);
+	rc = pthread_mutex_unlock(&mutex);
+
+    // Wait for the thread to terminate.
+    void *exit_status;
+    rc = pthread_join(m_thread, &exit_status) ;
+
+	// Clean conditional variable and mutex
+	pthread_cond_destroy(&cond);
+	pthread_mutex_destroy(&mutex);
+
+	m_thread = 0;
+	threadHalt = true;
+
 }
 
 // getter for the stop value

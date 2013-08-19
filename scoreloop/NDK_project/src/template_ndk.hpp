@@ -146,8 +146,8 @@ public:
 	void setScoreCallback(AppData_t *app, SC_Error_t rc);
 
 	bool isThreadHalt();
-	std::string templateStartThread();
-	std::string templateStopThread();
+	void templateStartThread();
+	void templateStopThread();
 	void templateThreadCallback();
 
 private:

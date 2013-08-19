@@ -25,9 +25,6 @@ var _self = {},
 	_self.setscore = function (args) {
 		return window.webworks.execSync(_ID, "setscore", args);
 	};
-	_self.setchallengescore = function (args) {
-		return window.webworks.execSync(_ID, "setchallengescore", args);
-	};
 	_self.getbuddylist = function (callback) {
 		window.webworks.event.once(_ID, "community.scoreloop.getBuddyListCallback", callback);
 		return window.webworks.execAsync(_ID, "getbuddylist", null);

@@ -63,9 +63,6 @@ JNEXT.Template = function () {
 	self.setscore = function (input) {
 		return JNEXT.invoke(self.m_id, "setscore " + JSON.stringify(input));
 	};
-	self.setchallengescore = function (input) {
-		return JNEXT.invoke(self.m_id, "setchallengescore " + JSON.stringify(input));
-	};
 	self.setchallenge = function (input) {
 		return JNEXT.invoke(self.m_id, "setchallenge " + JSON.stringify(input));
 	};

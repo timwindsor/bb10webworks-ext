@@ -147,6 +147,8 @@ function startsl() {
 		
 		if(res.status) {
 			res = community.scoreloop.getuser(cbuserinfo);
+			} else {
+				alert("Start Scoreloop");
 			}
 		} else {
 			alert("Can't find Scoreloop");
@@ -270,21 +272,22 @@ function dochallenge(idx) {
 	}
 	
 function cbchallengeinfo(data) {
-	var txt = "";
+	txt = "No challenges found";
 	
 	if(data) {
-		var blist = data.challenges;
-		txt += '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Level</th><th align="right" width="35%">Prize</th></tr>';
-		for(var i = 0; i< blist.length; i++) {
-			txt += '<tr onclick="dochallenge(' + i + ');"><td>';
-			txt += blist[i].login + '</td><td align="right">';
-			txt += blist[i].level + '</td><td align="right">';
-			txt += blist[i].prize + '</td></tr>';
+		if(data.challenge_c > 0) {
+			var blist = data.challenges;
+			txt = '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Level</th><th align="right" width="35%">Prize</th></tr>';
+			for(var i = 0; i< blist.length; i++) {
+				txt += '<tr onclick="dochallenge(' + i + ');"><td>';
+				txt += blist[i].login + '</td><td align="right">';
+				txt += blist[i].level + '</td><td align="right">';
+				txt += blist[i].prize + '</td></tr>';
+				}
+			txt += "</table>";
 			}
-		txt += "</table>";
-		} else {
-		txt = "No challenges found";
-	}
+		}
+
 
 	document.getElementById('challenges').innerHTML = txt;
 	switchdiv('clistdiv');
@@ -296,21 +299,22 @@ function showChallengeListDiv()
 	}
 	
 function cbrankinginfo(data) {
-	var txt = "";
+	txt = "No rankings found";
 	
 	if(data) {
-		var blist = data.leaders;
-		txt += '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Rank</th><th align="right" width="35%">Score</th></tr>';
-		for(var i = 0; i< blist.length; i++) {
-			txt += '<tr><td>';
-			txt += blist[i].login + '</td><td align="right">';
-			txt += blist[i].rank + '</td><td align="right">';
-			txt += blist[i].majorScore + '</td></tr>';
+		if(data.leader_c > 0) {
+			var blist = data.leaders;
+			txt = '<table width="100%"><tr><th width="50%">Player</th><th align="right" width="15%">Rank</th><th align="right" width="35%">Score</th></tr>';
+			for(var i = 0; i< blist.length; i++) {
+				txt += '<tr><td>';
+				txt += blist[i].login + '</td><td align="right">';
+				txt += blist[i].rank + '</td><td align="right">';
+				txt += blist[i].majorScore + '</td></tr>';
+				}
+			txt += "</table>";
 			}
-		txt += "</table>";
-		} else {
-		txt = "No rankings found";
-	}
+		}
+
 
 	document.getElementById('rankscore').innerHTML = txt;
 	switchdiv('resdiv');
@@ -326,7 +330,7 @@ function setChallenge() {
 	if((wager < 1) || (wager !== wager)) { // NaN !== NaN
 		if(!confirm("You did not enter sum to wager.\nCancel the Challenge?")) {
 			ocf = false;
-			showFlagQuestion();
+			newQuestion();
 			} else {
 				return false;
 			}
@@ -339,7 +343,8 @@ function setChallenge() {
 				return false;
 				}
 				
-			showFlagQuestion();
+			ocf = true;
+			newQuestion();
 		}
 	}
 	
@@ -444,7 +449,7 @@ function cbsetchallenge(data) {
 		alert('Challenge set');
 		}
 	}
-	
+
 </script>  
 
 </head>
@@ -562,6 +567,7 @@ function cbsetchallenge(data) {
 	
 	<div>
 	<input id="next" type="button" class="button nflag" value="Continue" onclick="setChallenge();"/>
+	<input id="next" type="button" class="button" value="Menu" onclick="switchdiv('menudiv');"/>
 	</div>
 </div>
 
