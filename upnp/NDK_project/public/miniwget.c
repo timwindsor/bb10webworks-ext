@@ -368,10 +368,10 @@ miniwget3(const char * host,
                  "GET %s HTTP/%s\r\n"
 			     "Host: %s:%d\r\n"
 				 "Connection: Close\r\n"
-				 "User-Agent: " OS_STRING ", UPnP/1.0, MiniUPnPc/" MINIUPNPC_VERSION_STRING "\r\n"
-
+				 "User-Agent: SKY_skyplus\r\n"
 				 "\r\n",
 			   path, httpversion, host, port);
+// Replaced	 "User-Agent: " OS_STRING ", UPnP/1.0, MiniUPnPc/" MINIUPNPC_VERSION_STRING "\r\n"
 	sent = 0;
 	/* sending the HTTP request */
 	while(sent < len)

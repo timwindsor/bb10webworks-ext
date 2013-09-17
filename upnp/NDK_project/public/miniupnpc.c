@@ -321,7 +321,7 @@ parseMSEARCHReply(const char * reply, int size,
  * It is up to the caller to free the chained list
  * delay is in millisecond (poll) */
 LIBSPEC struct UPNPDev *
-upnpDiscover(int delay, const char * multicastif,
+upnpDiscover(int delay, const char *deviceList, const char * multicastif,
              const char * minissdpdsock, int sameport,
              int ipv6,
              int * error)
@@ -337,59 +337,20 @@ upnpDiscover(int delay, const char * multicastif,
 	"MAN: \"ssdp:discover\"\r\n"
 	"MX: %u\r\n"
 	"\r\n";
-	static const char * const deviceList[] = {
-#if 0
-		"urn:schemas-upnp-org:device:InternetGatewayDevice:2",
-		"urn:schemas-upnp-org:service:WANIPConnection:2",
-#endif
-		"urn:schemas-upnp-org:device:InternetGatewayDevice:1",
-		"urn:schemas-upnp-org:service:WANIPConnection:1",
-		"urn:schemas-upnp-org:service:WANPPPConnection:1",
-		"upnp:rootdevice",
-		0
-	};
+
 	int deviceIndex = 0;
 	char bufr[1536];	/* reception and emission buffer */
 	int sudp;
 	int n;
 	struct sockaddr_storage sockudp_r;
 	unsigned int mx;
-#ifdef NO_GETADDRINFO
-	struct sockaddr_storage sockudp_w;
-#else
 	int rv;
 	struct addrinfo hints, *servinfo, *p;
-#endif
-#ifdef _WIN32
-	MIB_IPFORWARDROW ip_forward;
-#endif
 	int linklocal = 1;
 
 	if(error)
 		*error = UPNPDISCOVER_UNKNOWN_ERROR;
-#if !defined(_WIN32) && !defined(__amigaos__) && !defined(__amigaos4__)
-	/* first try to get infos from minissdpd ! */
-	if(!minissdpdsock)
-		minissdpdsock = "/var/run/minissdpd.sock";
-	while(!devlist && deviceList[deviceIndex]) {
-		devlist = getDevicesFromMiniSSDPD(deviceList[deviceIndex],
-		                                  minissdpdsock);
-		/* We return what we have found if it was not only a rootdevice */
-		if(devlist && !strstr(deviceList[deviceIndex], "rootdevice")) {
-			if(error)
-				*error = UPNPDISCOVER_SUCCESS;
-			return devlist;
-		}
-		deviceIndex++;
-	}
-	deviceIndex = 0;
-#endif
-	/* fallback to direct discovery */
-#ifdef _WIN32
-	sudp = socket(ipv6 ? PF_INET6 : PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-#else
 	sudp = socket(ipv6 ? PF_INET6 : PF_INET, SOCK_DGRAM, 0);
-#endif
 	if(sudp < 0)
 	{
 		if(error)
@@ -412,71 +373,7 @@ upnpDiscover(int delay, const char * multicastif,
 			p->sin_port = htons(PORT);
 		p->sin_addr.s_addr = INADDR_ANY;
 	}
-#ifdef _WIN32
-/* This code could help us to use the right Network interface for
- * SSDP multicast traffic */
-/* Get IP associated with the index given in the ip_forward struct
- * in order to give this ip to setsockopt(sudp, IPPROTO_IP, IP_MULTICAST_IF) */
-	if(!ipv6
-	   && (GetBestRoute(inet_addr("223.255.255.255"), 0, &ip_forward) == NO_ERROR)) {
-		DWORD dwRetVal = 0;
-		PMIB_IPADDRTABLE pIPAddrTable;
-		DWORD dwSize = 0;
-#ifdef DEBUG
-		IN_ADDR IPAddr;
-#endif
-		int i;
-#ifdef DEBUG
-		printf("ifIndex=%lu nextHop=%lx \n", ip_forward.dwForwardIfIndex, ip_forward.dwForwardNextHop);
-#endif
-		pIPAddrTable = (MIB_IPADDRTABLE *) malloc(sizeof (MIB_IPADDRTABLE));
-		if (GetIpAddrTable(pIPAddrTable, &dwSize, 0) == ERROR_INSUFFICIENT_BUFFER) {
-			free(pIPAddrTable);
-			pIPAddrTable = (MIB_IPADDRTABLE *) malloc(dwSize);
-		}
-		if(pIPAddrTable) {
-			dwRetVal = GetIpAddrTable( pIPAddrTable, &dwSize, 0 );
-#ifdef DEBUG
-			printf("\tNum Entries: %ld\n", pIPAddrTable->dwNumEntries);
-#endif
-			for (i=0; i < (int) pIPAddrTable->dwNumEntries; i++) {
-#ifdef DEBUG
-				printf("\n\tInterface Index[%d]:\t%ld\n", i, pIPAddrTable->table[i].dwIndex);
-				IPAddr.S_un.S_addr = (u_long) pIPAddrTable->table[i].dwAddr;
-				printf("\tIP Address[%d]:     \t%s\n", i, inet_ntoa(IPAddr) );
-				IPAddr.S_un.S_addr = (u_long) pIPAddrTable->table[i].dwMask;
-				printf("\tSubnet Mask[%d]:    \t%s\n", i, inet_ntoa(IPAddr) );
-				IPAddr.S_un.S_addr = (u_long) pIPAddrTable->table[i].dwBCastAddr;
-				printf("\tBroadCast[%d]:      \t%s (%ld)\n", i, inet_ntoa(IPAddr), pIPAddrTable->table[i].dwBCastAddr);
-				printf("\tReassembly size[%d]:\t%ld\n", i, pIPAddrTable->table[i].dwReasmSize);
-				printf("\tType and State[%d]:", i);
-				printf("\n");
-#endif
-				if (pIPAddrTable->table[i].dwIndex == ip_forward.dwForwardIfIndex) {
-					/* Set the address of this interface to be used */
-					struct in_addr mc_if;
-					memset(&mc_if, 0, sizeof(mc_if));
-					mc_if.s_addr = pIPAddrTable->table[i].dwAddr;
-					if(setsockopt(sudp, IPPROTO_IP, IP_MULTICAST_IF, (const char *)&mc_if, sizeof(mc_if)) < 0) {
-						PRINT_SOCKET_ERROR("setsockopt");
-					}
-					((struct sockaddr_in *)&sockudp_r)->sin_addr.s_addr = pIPAddrTable->table[i].dwAddr;
-#ifndef DEBUG
-					break;
-#endif
-				}
-			}
-			free(pIPAddrTable);
-			pIPAddrTable = NULL;
-		}
-	}
-#endif
-
-#ifdef _WIN32
-	if (setsockopt(sudp, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt, sizeof (opt)) < 0)
-#else
 	if (setsockopt(sudp, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (opt)) < 0)
-#endif
 	{
 		if(error)
 			*error = UPNPDISCOVER_SOCKET_ERROR;
@@ -487,7 +384,6 @@ upnpDiscover(int delay, const char * multicastif,
 	if(multicastif)
 	{
 		if(ipv6) {
-#if !defined(_WIN32)
 			/* according to MSDN, if_nametoindex() is supported since
 			 * MS Windows Vista and MS Windows Server 2008.
 			 * http://msdn.microsoft.com/en-us/library/bb408409%28v=vs.85%29.aspx */
@@ -496,11 +392,6 @@ upnpDiscover(int delay, const char * multicastif,
 			{
 				PRINT_SOCKET_ERROR("setsockopt");
 			}
-#else
-#ifdef DEBUG
-			printf("Setting of multicast interface not supported in IPv6 under Windows.\n");
-#endif
-#endif
 		} else {
 			struct in_addr mc_if;
 			mc_if.s_addr = inet_addr(multicastif); /* ex: 192.168.x.x */
@@ -511,21 +402,6 @@ upnpDiscover(int delay, const char * multicastif,
 				{
 					PRINT_SOCKET_ERROR("setsockopt");
 				}
-			} else {
-#ifdef HAS_IP_MREQN
-				/* was not an ip address, try with an interface name */
-				struct ip_mreqn reqn;	/* only defined with -D_BSD_SOURCE or -D_GNU_SOURCE */
-				memset(&reqn, 0, sizeof(struct ip_mreqn));
-				reqn.imr_ifindex = if_nametoindex(multicastif);
-				if(setsockopt(sudp, IPPROTO_IP, IP_MULTICAST_IF, (const char *)&reqn, sizeof(reqn)) < 0)
-				{
-					PRINT_SOCKET_ERROR("setsockopt");
-				}
-#else
-#ifdef DEBUG
-				printf("Setting of multicast interface not supported with interface name.\n");
-#endif
-#endif
 			}
 		}
 	}
@@ -546,7 +422,7 @@ upnpDiscover(int delay, const char * multicastif,
 	/* Calculating maximum response time in seconds */
 	mx = ((unsigned int)delay) / 1000u;
 	/* receiving SSDP response packet */
-	for(n = 0; deviceList[deviceIndex]; deviceIndex++)
+	for(n = 0; 1; deviceIndex++)
 	{
 	if(n == 0)
 	{
@@ -556,37 +432,7 @@ upnpDiscover(int delay, const char * multicastif,
 		             ipv6 ?
 		             (linklocal ? "[" UPNP_MCAST_LL_ADDR "]" :  "[" UPNP_MCAST_SL_ADDR "]")
 		             : UPNP_MCAST_ADDR,
-		             deviceList[deviceIndex], mx);
-#ifdef DEBUG
-		printf("Sending %s", bufr);
-#endif
-#ifdef NO_GETADDRINFO
-		/* the following code is not using getaddrinfo */
-		/* emission */
-		memset(&sockudp_w, 0, sizeof(struct sockaddr_storage));
-		if(ipv6) {
-			struct sockaddr_in6 * p = (struct sockaddr_in6 *)&sockudp_w;
-			p->sin6_family = AF_INET6;
-			p->sin6_port = htons(PORT);
-			inet_pton(AF_INET6,
-			          linklocal ? UPNP_MCAST_LL_ADDR : UPNP_MCAST_SL_ADDR,
-			          &(p->sin6_addr));
-		} else {
-			struct sockaddr_in * p = (struct sockaddr_in *)&sockudp_w;
-			p->sin_family = AF_INET;
-			p->sin_port = htons(PORT);
-			p->sin_addr.s_addr = inet_addr(UPNP_MCAST_ADDR);
-		}
-		n = sendto(sudp, bufr, n, 0,
-		           &sockudp_w,
-		           ipv6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in));
-		if (n < 0) {
-			if(error)
-				*error = UPNPDISCOVER_SOCKET_ERROR;
-			PRINT_SOCKET_ERROR("sendto");
-			break;
-		}
-#else /* #ifdef NO_GETADDRINFO */
+		             deviceList, mx);
 		memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_UNSPEC; /* AF_INET6 or AF_INET */
 		hints.ai_socktype = SOCK_DGRAM;
@@ -597,23 +443,12 @@ upnpDiscover(int delay, const char * multicastif,
 		                      XSTR(PORT), &hints, &servinfo)) != 0) {
 			if(error)
 				*error = UPNPDISCOVER_SOCKET_ERROR;
-#ifdef _WIN32
-		    fprintf(stderr, "getaddrinfo() failed: %d\n", rv);
-#else
 		    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-#endif
 			break;
 		}
 		for(p = servinfo; p; p = p->ai_next) {
 			n = sendto(sudp, bufr, n, 0, p->ai_addr, p->ai_addrlen);
 			if (n < 0) {
-#ifdef DEBUG
-				char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
-				if (getnameinfo(p->ai_addr, p->ai_addrlen, hbuf, sizeof(hbuf), sbuf,
-						sizeof(sbuf), NI_NUMERICHOST | NI_NUMERICSERV) == 0) {
-					fprintf(stderr, "host:%s port:%s\n", hbuf, sbuf);
-				}
-#endif
 				PRINT_SOCKET_ERROR("sendto");
 				continue;
 			}
@@ -624,7 +459,6 @@ upnpDiscover(int delay, const char * multicastif,
 				*error = UPNPDISCOVER_SOCKET_ERROR;
 			break;
 		}
-#endif /* #ifdef NO_GETADDRINFO */
 	}
 	/* Waiting for SSDP REPLY packet to M-SEARCH */
 	n = receivedata(sudp, bufr, sizeof(bufr), delay, &scope_id);
@@ -658,10 +492,6 @@ upnpDiscover(int delay, const char * multicastif,
 		parseMSEARCHReply(bufr, n, &descURL, &urlsize, &st, &stsize);
 		if(st&&descURL)
 		{
-#ifdef DEBUG
-			printf("M-SEARCH Reply:\nST: %.*s\nLocation: %.*s\n",
-			       stsize, st, urlsize, descURL);
-#endif
 			for(tmp=devlist; tmp; tmp = tmp->pNext) {
 				if(memcmp(tmp->descURL, descURL, urlsize) == 0 &&
 				   tmp->descURL[urlsize] == '\0' &&
@@ -708,6 +538,9 @@ LIBSPEC void freeUPNPDevlist(struct UPNPDev * devlist)
 		devlist = next;
 	}
 }
+
+
+// Kill here on in SBHACK
 
 static void
 url_cpy_or_cat(char * dst, const char * src, int n)

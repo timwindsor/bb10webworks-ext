@@ -14,28 +14,19 @@
 * limitations under the License.
 */
 
-#ifndef TEMPLATENDK_HPP_
-#define TEMPLATENDK_HPP_
+var template = require("./templateJNEXT").template,
+	_event = require("../../lib/event"),
+    _utils = require("../../lib/utils");
 
-#include <string>
-#include <pthread.h>
+module.exports = {
 
-class TemplateJS;
+	// Code can be declared and used outside the module.exports object,
+	// but any functions to be called by client.js need to be declared
+	// here in this object.
 
-namespace webworks {
-
-class TemplateNDK {
-public:
-	explicit TemplateNDK(TemplateJS *parent = NULL);
-	virtual ~TemplateNDK();
-
-	// The extension methods are defined here
-	std::string SDgetSize();
-
-private:
-	TemplateJS *m_pParent;
+	// These methods call into templateJNEXT.js which handles the
+	// communication through the JNEXT plugin to template_js.cpp
+	discover: function (success, fail, args) {
+		success(template.getInstance().discover(args));
+	}
 };
-
-} // namespace webworks
-
-#endif /* TEMPLATENDK_H_ */
