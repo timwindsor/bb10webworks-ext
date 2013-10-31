@@ -33,17 +33,17 @@ window.addEventListener('load',function() {
 		if (webworksreadyFired) return;
 		webworksreadyFired = true;
 		
-		community.events.start();
+		community.events.start(eventHandler);
 		
-		document.addEventListener('community.events', function(e) {
-			var buf = document.getElementById('elist');
-			buf.innerHTML = buf.innerHTML + "Event : " + e + "<br />";
-			}, false);
-
 		ticker();
 		setInterval('ticker();', 1000);
 		});
 	});
+
+function eventHandler(e) {
+	var buf = document.getElementById('elist');
+	buf.innerHTML = buf.innerHTML + "Event : " + e.ecode + "<br />";
+	}
 
 function ticker() {
 	var cnt = community.events.getcount();

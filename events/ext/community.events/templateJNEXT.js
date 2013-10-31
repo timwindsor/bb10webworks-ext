@@ -68,10 +68,10 @@ JNEXT.Template = function () {
 			jsonData;
 		// Event names are set in native code when fired,
 		// and must be checked here.
-		if (strEventDesc === "community.events") {
+		if (strEventDesc === "community.events.eventCallback") {
 			// Slice off the event name and the rest of the data is our JSON
 			jsonData = arData.slice(1, arData.length).join(" ");
-			_event.trigger("community.events", JSON.parse(jsonData));
+			_event.trigger("community.events.eventCallback", JSON.parse(jsonData));
 		}
 	};
 

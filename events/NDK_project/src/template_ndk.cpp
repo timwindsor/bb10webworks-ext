@@ -55,7 +55,8 @@ TemplateNDK::~TemplateNDK() {
 
 void *TemplateNDK::HandleEvents(void *args)
 {
-	TemplateJS *parent = reinterpret_cast<TemplateJS *>(args);
+	//	TemplateJS *parent = reinterpret_cast<TemplateJS *>(args);
+	TemplateNDK *parent = static_cast<TemplateNDK *>(args);
 
     // create channel for events
     m_eventChannel = ChannelCreate(0);
@@ -84,7 +85,8 @@ void *TemplateNDK::HandleEvents(void *args)
 
                 ecnt++;
 
-                parent->NotifyEvent("community.events " + writer.write(root));
+ //               parent->NotifyEvent("community.events " + writer.write(root));
+                parent->templateEventCallback(evt);
             }
         }
     }
@@ -100,7 +102,7 @@ void TemplateNDK::StartEvents()
 {
 	if(!m_eventsEnabled) {
 		if (!m_thread) {
-			int error = pthread_create(&m_thread, NULL, HandleEvents, static_cast<void *>(m_pParent));
+			int error = pthread_create(&m_thread, NULL, HandleEvents, static_cast<void *>(this));
 
 			if (error) {
 				m_thread = 0;
@@ -121,6 +123,15 @@ void TemplateNDK::StopEvents()
 			m_eventsEnabled = false;
 		}
 	}
+}
+
+// The callback method that sends an event through JNEXT
+void TemplateNDK::templateEventCallback(int evt) {
+        std::string event = "community.events.eventCallback";
+        Json::FastWriter writer;
+        Json::Value root;
+        root["ecode"] = evt;
+        m_pParent->NotifyEvent(event + " " + writer.write(root));
 }
 
 // These methods are the true native code we intend to reach from WebWorks

@@ -33,6 +33,7 @@ public:
     static void *HandleEvents(void *);
     void StartEvents();
     void StopEvents();
+    void templateEventCallback(int evt);
     std::string getcount();
 
 	// The extension methods are defined here

@@ -16,7 +16,8 @@
 var _self = {},
 	_ID = require("./manifest.json").namespace;
 
-	_self.start = function () {
+	_self.start = function (callback) {
+		window.webworks.event.add(_ID, "community.events.eventCallback", callback);
 		window.webworks.execSync(_ID, "start", null);
 	};
 	
