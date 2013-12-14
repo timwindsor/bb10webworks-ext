@@ -34,7 +34,7 @@ Whenever you use the below feature id in any of your WebWorks applications this 
 ```
 
 ## The Extension API
-The Prevent Sleep Extension provides the following API:
+The Joypad Extension provides the following API:
 
 ```javascript
 var result = community.joypad.start(callback);
