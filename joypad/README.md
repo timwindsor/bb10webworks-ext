@@ -1,7 +1,7 @@
 Joypad Extension
 ================
 
-This BlackBerry 10 WebWorks extension adds support for joysticks
+This BlackBerry 10 WebWorks extension adds support for joypads
 
 ** Tested On **
 
@@ -13,20 +13,20 @@ BlackBerry 10 Dev Alpha C 10.1.0.4211
 
 ## Building and Testing the Sample
 
-1. Deploy the extension into your BB10 WebWorks SDK by copying the community.joystick folder from the ext folder to the Framework/ext folder in your WebWorks SDK, or run the Ant build script in the /ext folder to do so.
+1. Deploy the extension into your BB10 WebWorks SDK by copying the community.joypad folder from the ext folder to the Framework/ext folder in your WebWorks SDK, or run the Ant build script in the /ext folder to do so.
 2. Package the sample in the sample\_application folder. Use the [Ant Build Script](https://github.com/blackberry/BB10-WebWorks-Community-Samples/tree/master/Ant-Build-Script), or you can do this with the WebWorks packager command:
 	__bbwp__ sample\_application -g _signingpassword_
 3. Load it on your phone using the Ant Build Script, or with the _blackberry-deploy_ command found in the dependencies/tools folder of your WebWorks SDK.
-4. When the application runs the screen pictured below will appear. Joystick button presses and movements will be reflected in the demo.
+4. When the application runs the screen pictured below will appear. Joypad button presses and movements will be reflected in the demo.
 
-* The Joystick must be connected before the demo starts
+* The Joypad must be connected before the demo starts
 
 ![Screenshot](joypad.png)
 
 ## Including the feature in your application
 Whenever you use the below feature id in any of your WebWorks applications this extension will be loaded for use.
 ```xml
-	<feature id="community.joystick" required="true" version="1.0.0.0" />
+	<feature id="community.joypad" required="true" version="1.0.0.0" />
 	<rim:permissions>
 		<rim:permit>use_gamepad</rim:permit>
 	</rim:permissions>
@@ -37,7 +37,7 @@ Whenever you use the below feature id in any of your WebWorks applications this 
 The Prevent Sleep Extension provides the following API:
 
 ```javascript
-var result = community.joystick.start(callback);
+var result = community.joypad.start(callback);
 /* Result is a JSON object
 {	"connected": [<Array of device names>], 
 	"controllers": <controller count>, 
@@ -46,7 +46,7 @@ var result = community.joystick.start(callback);
 	}
 */
 
-callback(e) { } handles all joystick events
+callback(e) { } handles all joypad events
 /* e is a JSON object
 { 	ctrl: <controller - 0/1>,
 	type: <see list 1>,
@@ -54,7 +54,7 @@ callback(e) { } handles all joystick events
 	value: <value for event - button 0/1, analog X/Y = -128 to 127, analog Z = 0 to 255>
 */
 
-community.joystick.stop();
+community.joypad.stop();
 
 ```
 
@@ -109,7 +109,7 @@ Copy the extension folder to a location on your computer to start working with i
 
 1. Open the Momentics IDE. Navigate to the workbench and from the program menu
 select File -> Import and choose "Existing Projects into Workspace".
-2. Choose "Select root directory: " and browse to the NDK_project directory where you copied the extension. Select the joystick project in the Projects list and uncheck "Copy projects into workspace". Click Finish.
+2. Choose "Select root directory: " and browse to the NDK_project directory where you copied the extension. Select the joypad project in the Projects list and uncheck "Copy projects into workspace". Click Finish.
 3. Follow these next steps to build the extension to be sure the setup is working.
 
 #### How to build your native Extension</a>
@@ -119,18 +119,18 @@ select File -> Import and choose "Existing Projects into Workspace".
 3. A window will appear that shows all the available build configurations
 for the project. Select Device-Release and Simulator-Debug and click ok.
 4. You should see the shared libraries generated in the folders for each Build Configuration that you selected.
-5. Copy the .so file(s) to the device and simulator folders under the ext/community.joystick directory. Or you can use the Ant build script to do so.
+5. Copy the .so file(s) to the device and simulator folders under the ext/community.joypad directory. Or you can use the Ant build script to do so.
 
 ### Copying the Extension to the SDK</a>
 
-1. Under the ext folder in this project should be the community.joystick folder:
+1. Under the ext folder in this project should be the community.joypad folder:
 
 If you wish to do the copying manually, continue with these steps:
 
-2. The device and simulator folders should contain the libjoystick.so files built by the NDK.
-3. Copy the community.joystick folder into your WebWorks SDK, placing it in the Framework/ext directory.
+2. The device and simulator folders should contain the libjoypad.so files built by the NDK.
+3. Copy the community.joypad folder into your WebWorks SDK, placing it in the Framework/ext directory.
 
-If you have Ant installed and would like to use the build script provided, edit the script as follows (you will find it in the /ext directory, called [build.xml](https://github.com/blackberry/WebWorks-Community-APIs/tree/master/BB10/joystick/ext/build.xml) ).
+If you have Ant installed and would like to use the build script provided, edit the script as follows (you will find it in the /ext directory, called [build.xml](https://github.com/blackberry/WebWorks-Community-APIs/tree/master/BB10/joypad/ext/build.xml) ).
 
 1. Change the project name to match the extension name in manifest.json.
 2. Change the bbwp.native.dir value to match the SDK you want to deploy to.
@@ -143,13 +143,13 @@ The build script will clean any old extension from your SDK, copy the .so files 
 With the extension copied into your WebWorks SDK as explained above, you can use it in your applications by referencing it as a feature in your config.xml file. 
 
 ```xml
-<feature id="community.joystick" />
+<feature id="community.joypad" />
 ```
 
-All the methods in the extension will be prefixed by that feature id, so a method called setjoystick() supplied in the community.joystick extension will be called in JavaScript like so:
+All the methods in the extension will be prefixed by that feature id, so a method called start() supplied in the community.joypad extension will be called in JavaScript like so:
 
 ```javascript
-community.joystick.start(callback);
+community.joypad.start(callback);
 ```
 
 ### Modifying the Extension
