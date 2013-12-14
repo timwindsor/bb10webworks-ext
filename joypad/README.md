@@ -17,14 +17,20 @@ BlackBerry 10 Dev Alpha C 10.1.0.4211
 2. Package the sample in the sample\_application folder. Use the [Ant Build Script](https://github.com/blackberry/BB10-WebWorks-Community-Samples/tree/master/Ant-Build-Script), or you can do this with the WebWorks packager command:
 	__bbwp__ sample\_application -g _signingpassword_
 3. Load it on your phone using the Ant Build Script, or with the _blackberry-deploy_ command found in the dependencies/tools folder of your WebWorks SDK.
-4. When the application runs, a series of divs on the screen will appear with an orange background, tapping the top div will toggle prevent sleep on and off. When sucessful calls to the extension of any type occur, the div backgrounds will change to blue as the screenshots below.
+4. When the application runs the screen pictured below will appear. Joystick button presses and movements will be reflected in the demo.
+
+* The Joystick must be connected before the demo starts
 
 ![Screenshot](joypad.png)
 
 ## Including the feature in your application
 Whenever you use the below feature id in any of your WebWorks applications this extension will be loaded for use.
 ```xml
-<feature id="community.joystick" required="true" version="1.0.0.0" />
+	<feature id="community.joystick" required="true" version="1.0.0.0" />
+	<rim:permissions>
+		<rim:permit>use_gamepad</rim:permit>
+	</rim:permissions>
+	
 ```
 
 ## The Extension API
