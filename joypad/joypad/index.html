@@ -84,6 +84,24 @@
 		dpr = window.devicePixelRatio;
 	}
 	
+	function showpad(which) {
+		document.getElementById('elist').style.display = 'none';
+		if(which == 0) {
+			document.getElementById('screen_1').style.display = 'none';
+			document.getElementById('screen_0').style.display = 'block';
+			}
+		else {
+			document.getElementById('screen_0').style.display = 'none';
+			document.getElementById('screen_1').style.display = 'block';
+			}
+	}
+	
+	function showmenu() {
+		document.getElementById('elist').style.display = 'block';
+		document.getElementById('screen_0').style.display = 'none';
+		document.getElementById('screen_1').style.display = 'none';
+	}
+	
 	window.addEventListener('load',function() {
 		document.addEventListener('webworksready', function(e) {
 			// This is a hack for Ripple calling webworksready multiple times
@@ -98,15 +116,21 @@
 			buf.style.height = win_height + 'px';		
 			buf.style.fontSize = dfs + 'px';
 
-			var buf = document.getElementById('dlist');
-			buf.style.width = win_width + 'px';		
-
 			var buf = document.getElementById('elist');
 			buf.style.width = win_width + 'px';		
+			buf.style.height = win_height + 'px';		
+			buf.style.fontSize = (dfs * 2) + 'px';
 
 			if(typeof community != 'undefined') {
-				var stat = community.joypad.start(eventHandler);
-				buf.innerHTML = buf.innerHTML + "Status	 : " + stat + "<br />";
+				var res = JSON.parse(community.joypad.start(eventHandler));
+				if(res.controllers > 0) {
+					for(var i=0; i<res.controllers; i++) {
+						buf.innerHTML = buf.innerHTML + "<a href='#' onclick='showpad(" + i + "); return false;'>" + res.connected[i] + "</a><br /><br />";
+						}
+					}
+				else {
+					buf.innerHTML = "No Joypads Detected<br />";
+					}
 				}
 			draw_screen();
 			}, false);
@@ -115,7 +139,7 @@
 	function eventHandler(e) {
 		switch(e.type) {
 			case community.joypad.type.BUTTON:
-				var elm = document.getElementById('b_' + e.id);
+				var elm = document.getElementById('c_' + e.ctrl + '_b_' + e.id);
 				switch(e.value) {
 					case 0:
 						elm.style.backgroundColor = '#FF8080';
@@ -127,7 +151,7 @@
 				break;
 			case community.joypad.type.ANALOG0:
 			case community.joypad.type.ANALOG1:
-				var elm = document.getElementById('s_' + e.type);
+				var elm = document.getElementById('c_' + e.ctrl + '_s_' + e.type);
 				var xoff = 0;
 				if(e.type == community.joypad.type.ANALOG1) {
 					xoff = 1;
@@ -140,7 +164,7 @@
 						elm.style.top = (((2 * vpad) + vsize) + 112 + e.value) + 'px';
 						break;
 					case community.joypad.analog.Z:
-						var elm = document.getElementById('z_' + e.type);
+						var elm = document.getElementById('c_' + e.ctrl + '_z_' + e.type);
 						elm.style.height = e.value + 'px';
 						break;
 					}
@@ -150,68 +174,75 @@
 	
 	function draw_screen() {
 		var x, y;
-		var screen = document.getElementById('screen');
+		var screen;
 		var hpad = Math.round((win_width - ((tilesize * 5) + (padsize * 4))) / 2);
 		stickpad = Math.round((win_width - ((sticksize * 2) + vpad)) / 2);
 		
-		for(y=0; y<4; y++) {
-			for(x=0; x<5; x++) {
+		for(c=0; c<2; c++) {
+		
+			screen = document.getElementById('screen_' + c);
+			
+			screen.innerHTML = "<a href='#' style='font-size: " + (dfs * 2) + "px' onclick='showmenu(); return false;'>&LT;&LT;&LT;</a>";
+
+			for(y=0; y<4; y++) {
+				for(x=0; x<5; x++) {
+					var item = document.createElement('div');
+					item.id = 'c_' + c + '_b_' + (x + (y*5));
+					item.className = 'buttontile';
+					item.innerHTML = btntitle[x + (y*5)];
+					item.style.position = 'absolute';
+					item.style.top = ((y * (tilesize + padsize)) + vpad) + 'px';
+					item.style.left = ((x * (tilesize + padsize)) + hpad) + 'px';
+					
+					screen.appendChild(item);
+					}
+				}
+				
+			for(x=0; x<2; x++) {
 				var item = document.createElement('div');
-				item.id = 'b_' + (x + (y*5));
-				item.className = 'buttontile';
-				item.innerHTML = btntitle[x + (y*5)];
+				item.id = 'c_' + c + '_k_' + x;
+				item.innerHTML = '<img src="img/stickback.png" width="256" height="256" />';
 				item.style.position = 'absolute';
-				item.style.top = ((y * (tilesize + padsize)) + vpad) + 'px';
-				item.style.left = ((x * (tilesize + padsize)) + hpad) + 'px';
+				item.style.top = ((2 * vpad) + vsize) + 'px';
+				item.style.left = ((x * (sticksize + vpad)) + stickpad) + 'px';
 				
 				screen.appendChild(item);
 				}
-			}
-			
-		for(x=0; x<2; x++) {
-			var item = document.createElement('div');
-			item.id = 'k_' + x;
-			item.innerHTML = '<img src="img/stickback.png" width="256" height="256" />';
-			item.style.position = 'absolute';
-			item.style.top = ((2 * vpad) + vsize) + 'px';
-			item.style.left = ((x * (sticksize + vpad)) + stickpad) + 'px';
-			
-			screen.appendChild(item);
-			}
 
-		for(x=0; x<2; x++) {
-			var item = document.createElement('div');
-			item.id = 's_' + (x + 1);
-			item.className = 'stickback';
-			item.innerHTML = '<img src="img/sticktop.png" width="32" height="32" />';
-			item.style.position = 'absolute';
-			item.style.top = (((2 * vpad) + vsize) + 112) + 'px';
-			item.style.left = (((x * (sticksize + vpad)) + stickpad) + 112) + 'px';
-			
-			screen.appendChild(item);
-			}
-			
-		for(x=0; x<2; x++) {
-			var item = document.createElement('div');
-			item.id = 't_' + (x + 1);
-			item.innerHTML = '<img id="z_' + (x + 1) + '" src="img/bar.png" style="width: 16px; height: 0px" />';
-			item.style.position = 'absolute';
-			item.style.top = ((2 * vpad) + vsize) + 'px';
-			item.style.left = 32 + (x * (win_width - 80)) + 'px';
-			item.style.width = '16px';
-			item.style.height = '256px';
-			item.style.backgroundColor = '#8080FF';
-			
-			screen.appendChild(item);
+			for(x=0; x<2; x++) {
+				var item = document.createElement('div');
+				item.id = 'c_' + c + '_s_' + (x + 1);
+				item.className = 'stickback';
+				item.innerHTML = '<img src="img/sticktop.png" width="32" height="32" />';
+				item.style.position = 'absolute';
+				item.style.top = (((2 * vpad) + vsize) + 112) + 'px';
+				item.style.left = (((x * (sticksize + vpad)) + stickpad) + 112) + 'px';
+				
+				screen.appendChild(item);
+				}
+				
+			for(x=0; x<2; x++) {
+				var item = document.createElement('div');
+				item.id = 'c_' + c + '_t_' + (x + 1);
+				item.innerHTML = '<img id="c_' + c + '_z_' + (x + 1) + '" src="img/bar.png" style="width: 16px; height: 0px" />';
+				item.style.position = 'absolute';
+				item.style.top = ((2 * vpad) + vsize) + 'px';
+				item.style.left = 32 + (x * (win_width - 80)) + 'px';
+				item.style.width = '16px';
+				item.style.height = '256px';
+				item.style.backgroundColor = '#8080FF';
+				
+				screen.appendChild(item);
+				}
 			}
 		}
 </script>
 </head>
 <body>
 <div id='content'>
-	<div id='dlist'></div>
-	<div id='elist'></div>
-	<div id='screen'></div>
+	<div id='elist' style='background-color: #000000'></div>
+	<div id='screen_0' style='color: #000000; display: none'></div>
+	<div id='screen_1' style='color: #000000; display: none'></div>
 </div>
 </body>
 </html>
